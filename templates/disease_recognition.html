@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GunduziAI - Disease Recognition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/static/css/style.css"> 
+     <!-- Favicon -->
+     <link href="img/favicon.ico" rel="icon">
+
+     <!-- Google Web Fonts -->
+     <link rel="preconnect" href="https://fonts.gstatic.com">
+     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+ 
+     <!-- Icon Font Stylesheet -->
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+ 
+     <!-- Libraries Stylesheet -->
+     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+ 
+     <!-- Customized Bootstrap Stylesheet -->
+     <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+     <link href="static/css/bootstrap.min.css" rel="stylesheet">
+ 
+     <!-- Template Stylesheet -->
+     <link href="static/css/style.css" rel="stylesheet">
+
+    <style>
+        .navbar {
+            background-color: #4CAF50;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #45a049;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .upload-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .upload-section h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .upload-section input[type="file"] {
+            display: none;
+        }
+        .upload-section label {
+            display: inline-block;
+            background: #FF5722; /* Orange color for Choose Image button */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .upload-section label:hover {
+            background: #E64A19; /* Darker orange on hover */
+        }
+        .upload-section button {
+            background: #4CAF50; /* Green color for Predict button */
+            color: white;
+            border: none;
+            height: 45px;
+            width: 160px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-left: 20px;
+            transition: background-color 0.3s;
+        }
+        .upload-section button:hover {
+            background: #45a049; /* Darker green on hover */
+        }
+        .result {
+            margin-top: 20px;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        .result h2 {
+            font-size: 1.5em;
+            color: #4CAF50;
+        }
+        .result img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .treatment-recommendations {
+            margin-top: 30px;
+            text-align: left;
+            animation: fadeIn 1s ease-in-out;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .treatment-recommendations div {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .treatment-recommendations div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .treatment-recommendations h3 {
+            font-size: 1.2em;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+      <!-- Topbar Start -->
+      <div class="container-fluid px-5 d-none d-lg-block">
+        <div class="row gx-5 py-3 align-items-center">
+            <div class="col-lg-3">
+                <div class="d-flex align-items-center justify-content-start">
+                    <i class="bi bi-phone-vibrate fs-1 text-primary me-2"></i>
+                    <h2 class="mb-0">+254 768653509 </h2>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center justify-content-center">
+                    <a href="index.html" class="navbar-brand ms-lg-5">
+                        <h1 class="m-0 display-4 text-primary"><span class="text-secondary">🌿GunduziAI</span>Prediction</h1>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="d-flex align-items-center justify-content-end">
+                    <a class="btn btn-primary btn-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-primary btn-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-primary btn-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-primary btn-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
+        <a href="/" class="navbar-brand d-flex align-items-center">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav mx-auto py-0">
+                <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+                <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}text-warning{% endif %}">About Us</a>
+                <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
+                <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
+                <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+            </div>
+            <div class="d-flex">
+                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
+                <a href="/signup" class="btn btn-warning {% if request.path == '/signup' %}active{% endif %}">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Navbar End -->
+    
+    
+    <!-- DISEASE DETECTION START-->
+    <div class="content">
+        <div class="upload-section">
+            <h1>Are you worried of the Disease?</h1>
+            <form id="upload-form" action="/disease_recognition" method="POST" enctype="multipart/form-data">
+                <label for="file-upload">Choose Image</label>
+                <input id="file-upload" type="file" name="file" accept="image/*" required>
+                <button type="submit">Predict</button>
+            </form>
+
+            <!-- Preview Section -->
+            <div id="preview-section" style="display: none; margin-top: 20px;">
+                <h3>Selected Image</h3>
+                <p><strong>Image Name:</strong> <span id="preview-image-name"></span></p>
+                <img id="preview-image" src="" alt="Selected Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
+            </div>
+        </div>
+
+        <!-- Result Section (Initially Hidden) -->
+        <div id="result-section" style="display: none;">
+            <div class="result">
+                <h2>Prediction Result</h2>
+                <p><strong>Predicted Disease:</strong> <span id="prediction"></span></p>
+                <p><strong>Percentage Confidence:</strong> <span id="confidence"></span>%</p>
+                <p><strong>Image Name:</strong> <span id="image-name"></span></p>
+                <img id="uploaded-image" src="" alt="Uploaded Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
+            </div>
+
+            <h3>Treatment Recommendations</h3>
+            <div class="treatment-recommendations">
+               
+                <div>
+                    <h3>Preventive Measures</h3>
+                    <p>Use disease-resistant plant varieties, practice crop rotation, and maintain proper spacing between plants.</p>
+                </div>
+                <div>
+                    <h3>Chemical Treatments</h3>
+                    <p>Apply fungicides or pesticides as recommended by agricultural experts.</p>
+                </div>
+                <div>
+                    <h3>Organic Solutions</h3>
+                    <p>Use neem oil, garlic spray, or other organic remedies to control the disease.</p>
+                </div>
+                <div>
+                    <h3>Best Farming Practices</h3>
+                    <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle file input change to display the selected image and its name
+        document.getElementById('file-upload').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    // Reset the result section
+                    document.getElementById('result-section').style.display = 'none';
+                    document.getElementById('prediction').textContent = '';
+                    document.getElementById('confidence').textContent = '';
+                    document.getElementById('image-name').textContent = '';
+                    document.getElementById('uploaded-image').src = '';
+
+                    // Display the selected image and its name
+                    document.getElementById('preview-image').src = event.target.result;
+                    document.getElementById('preview-image-name').textContent = file.name;
+                    document.getElementById('preview-section').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('upload-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            // Show spinner
+            const spinner = document.createElement('div');
+            spinner.className = 'spinner';
+            document.querySelector('.upload-section').appendChild(spinner);
+
+            // Simulate a 2-3 second delay for analysis
+            setTimeout(() => {
+                fetch('/disease_recognition', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove spinner
+                    spinner.remove();
+
+                    if (data.success) {
+                        // Hide the preview section
+                        document.getElementById('preview-section').style.display = 'none';
+
+                        // Show SweetAlert notification
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Analyzed Successfuly!',
+                            text: `Image "${data.image_url}" has been uploaded and analyzed.`,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Update the result section dynamically
+                            document.getElementById('prediction').textContent = data.prediction;
+                            document.getElementById('confidence').textContent = data.confidence.toFixed(2);
+                            document.getElementById('image-name').textContent = data.image_url;
+                            document.getElementById('uploaded-image').src = `/static/uploads/${data.image_url}`;
+
+                            // Show the result section
+                            document.getElementById('result-section').style.display = 'block';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Upload Failed',
+                            text: data.error || 'There was an issue uploading your image. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    spinner.remove();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }, 1500); // 1 and half-second delay
+        });
+    </script>
+        <!-- DISEASE DETECTION END-->
+    
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-footer bg-primary text-white mt-5">
+        <div class="container">
+            <div class="row gx-5">
+                <div class="col-lg-8 col-md-6">
+                    <div class="row gx-5">
+                        <div class="col-lg-4 col-md-12 pt-5 mb-5">
+                            <h4 class="text-white mb-4">Get In Touch</h4>
+                            <div class="d-flex mb-2">
+                                <i class="bi bi-geo-alt text-white me-2"></i>
+                                <p class="text-white mb-0">Nairobi, Kenya</p>
+                            </div>
+                            <div class="d-flex mb-2">
+                                <i class="bi bi-envelope-open text-white me-2"></i>
+                                <p class="text-white mb-0">info@gunduzi.ai</p>
+                            </div>
+                            <div class="d-flex mb-2">
+                                <i class="bi bi-telephone text-white me-2"></i>
+                                <p class="text-white mb-0">+254 768653509</p>
+                            </div>
+                            <div class="d-flex mt-4">
+                                <a class="btn btn-secondary btn-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
+                                <a class="btn btn-secondary btn-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn btn-secondary btn-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a class="btn btn-secondary btn-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
+                            <h4 class="text-white mb-4">Quick Links</h4>
+                            <div class="d-flex flex-column justify-content-start">
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Our Services</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Meet The Team</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Latest Blog</a>
+                                <a class="text-white" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
+                            <h4 class="text-white mb-4">Popular Links</h4>
+                            <div class="d-flex flex-column justify-content-start">
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Our Services</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Meet The Team</a>
+                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Latest Blog</a>
+                                <a class="text-white" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-lg-n5">
+                    <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 bg-secondary p-5">
+                        <h4 class="text-white">Newsletter</h4>
+                        <h6 class="text-white">Subscribe Our Newsletter</h6>
+                        <p>To get more information and notifications on our updates</p>
+                        <form action="">
+                            <div class="input-group">
+                                <input type="text" class="form-control border-white p-3" placeholder="Your Email">
+                                <button class="btn btn-primary">Sign Up</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <a class="text-secondary fw-bold" href="#">GunduziAi AI-driven Plant Disease detection System</a>. All Rights Reserved. Designed by <a class="text-secondary fw-bold" href="Gunduzi">Gunduzi</a></p>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-secondary py-3 fs-4 back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

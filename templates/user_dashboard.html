@@ -1,0 +1,58 @@
+<!-- user_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - GunduziAI</title>
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 px-3">
+        <a href="/" class="navbar-brand">
+            <img src="/static/img/logo.png" alt="GunduziAI Logo" style="height: 40px; width: auto;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav mx-auto py-0">
+                <a href="/dashboard" class="nav-item nav-link active">Dashboard</a>
+                <a href="/profile" class="nav-item nav-link">Profile</a>
+                <a href="/history" class="nav-item nav-link">Detection History</a>
+                <a href="/logout" class="nav-item nav-link text-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <h2>Welcome, {{ user.username }}</h2>
+        <p>Your last login: {{ user.last_login }}</p>
+        
+        <h4>Recent Disease Detections</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Disease</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detection in detections %}
+                <tr>
+                    <td><img src="/static/uploads/{{ detection.image }}" width="80"></td>
+                    <td>{{ detection.disease }}</td>
+                    <td>{{ detection.confidence }}%</td>
+                    <td>{{ detection.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
