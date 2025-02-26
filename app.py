@@ -32,6 +32,7 @@ model = load_model()
 def home():
     if 'first_name' not in session:
         return redirect(url_for('login'))
+    
     return render_template("index.html", first_name=session['first_name'])
 
 @app.route("/set_session", methods=["POST"])
