@@ -102,7 +102,7 @@ def login():
     if request.method == "POST":
         # Handle login logic here
         return redirect(url_for("home"))
-    return render_template("login.html")
+    return render_template("login_signUp.html")
 
 # SignUp Page
 @app.route("/signup", methods=["GET", "POST"])
@@ -110,7 +110,7 @@ def signup():
     if request.method == "POST":
         # Handle signup logic here
         return redirect(url_for("login"))
-    return render_template("signup.html")
+    return render_template("login_signUp.html")
 
 # Contact Page
 @app.route("/contact")
