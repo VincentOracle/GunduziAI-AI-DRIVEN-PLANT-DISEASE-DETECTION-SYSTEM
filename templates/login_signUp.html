@@ -145,97 +145,124 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script type="module">
-      // Firebase and SweetAlert integration
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+    
 
-      // const firebaseConfig = {
-      //   apiKey: "AIzaSyCN1qAlq6Gu3AWuUSDfoDqmBgW5rPFbtFI",
-      //   authDomain: "myweb-a63a5.firebaseapp.com",
-      //   projectId: "myweb-a63a5",
-      //   storageBucket: "myweb-a63a5.appspot.com",
-      //   messagingSenderId: "302218796184",
-      //   appId: "1:302218796184:web:88ef90009c191d9e0dc4ed",
-      //   measurementId: "G-HSWT341Y2D",
-      // };
-      const firebaseConfig = {
-      apiKey: "AIzaSyBhLVUakKUeEoOF2JCoijLViWaEPsYdE6g",
-      authDomain: "gunduziai.firebaseapp.com",
-      projectId: "gunduziai",
-      storageBucket: "gunduziai.firebasestorage.app",
-      messagingSenderId: "340515946915",
-      appId: "1:340515946915:web:1601c25ebe2c57283fda16",
-      measurementId: "G-SXT2J5XX1H"
+  <!-- cript to handle Firebase authentication, SweetAlert integration and session storage -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhLVUakKUeEoOF2JCoijLViWaEPsYdE6g",
+    authDomain: "gunduziai.firebaseapp.com",
+    projectId: "gunduziai",
+    storageBucket: "gunduziai.firebasestorage.app",
+    messagingSenderId: "340515946915",
+    appId: "1:340515946915:web:1601c25ebe2c57283fda16",
+    measurementId: "G-SXT2J5XX1H"
   };
 
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
+  // Password Visibility Toggle
+  const togglePassword = document.querySelector('#togglePassword');
+  const passwordInput = document.querySelector('#password_input');
+  togglePassword.addEventListener('click', function () {
+  const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  passwordInput.setAttribute('type', type);
+  this.classList.toggle('fa-eye-slash');
+  });
 
-      // Password Visibility Toggle
-      const togglePassword = document.querySelector('#togglePassword');
-      const passwordInput = document.querySelector('#password_input');
-      togglePassword.addEventListener('click', function () {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye-slash');
-      });
+  const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+  const confirmPasswordInput = document.querySelector('#confirm_password');
+  toggleConfirmPassword.addEventListener('click', function () {
+  const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  confirmPasswordInput.setAttribute('type', type);
+  this.classList.toggle('fa-eye-slash');
+  });
 
-      const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
-      const confirmPasswordInput = document.querySelector('#confirm_password');
-      toggleConfirmPassword.addEventListener('click', function () {
-        const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        confirmPasswordInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye-slash');
-      });
+  const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
+  const loginPasswordInput = document.querySelector('#login_password');
+  toggleLoginPassword.addEventListener('click', function () {
+    const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    loginPasswordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye-slash');
+  });
 
-      const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
-      const loginPasswordInput = document.querySelector('#login_password');
-      toggleLoginPassword.addEventListener('click', function () {
-        const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        loginPasswordInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye-slash');
-      });
-
-      // Registration
+//  Registration
       document.getElementById('btn_signup').addEventListener('click', function () {
         const email = document.getElementById('email_input').value;
         const password = document.getElementById('password_input').value;
         const confirmPassword = document.getElementById('confirm_password').value;
+        const firstName = document.getElementById('first_name').value;
 
         if (password !== confirmPassword) {
           Swal.fire('Error', 'Passwords do not match!', 'error');
           return;
         }
 
-        createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            Swal.fire('Success', 'Registration successful!', 'success').then(() => {
-              // Redirect to login form after successful registration
-              container.classList.remove("right-panel-active");
-            });
-          })
-          .catch((error) => {
-            Swal.fire('Error', error.message, 'error');
-          });
-      });
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Store the user's first name in the session
+        fetch('/set_session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ first_name: firstName }),
+        }).then(() => {
 
-      // Login
-      document.getElementById('btn_signin').addEventListener('click', function () {
-        const email = document.getElementById('login_email').value;
-        const password = document.getElementById('login_password').value;
-
-        signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            Swal.fire('Success', 'Login successful!', 'success').then(() => {
-              window.location.href = 'index.html';
-            });
-          })
-          .catch((error) => {
-            Swal.fire('Error', error.message, 'error');
-          });
+          const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
       });
-    </script>
-  </body>
+      Toast.fire({
+      icon: "success",
+      title: "Registration successful! Back to login"
+      }).then(() => {
+            container.classList.remove("right-panel-active");
+          });
+        });
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.message, 'error');
+      });
+  });
+
+  // Login
+  document.getElementById('btn_signin').addEventListener('click', function () {
+    const email = document.getElementById('login_email').value;
+    const password = document.getElementById('login_password').value;
+    const firstName = document.getElementById('first_name').value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Store the user's first name in the session
+        fetch('/set_session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ first_name: userCredential.user.email }), // Use email or fetch first name from Firestore
+        }).then(() => {
+          Swal.fire('Success', 'Login successful!', 'success').then(() => {
+            window.location.href = '/';
+          });
+        });
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.message, 'error');
+        Swal.fire('Error', 'Invalid username/Password!', 'error');
+      });
+  });
+</script>
+</body>
 </html>

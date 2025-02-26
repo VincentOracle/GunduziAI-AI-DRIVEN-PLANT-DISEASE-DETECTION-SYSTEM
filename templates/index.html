@@ -26,9 +26,31 @@
  
      <!-- The Stylesheet -->
      <link href="static/css/style.css" rel="stylesheet">
-
+     
 </head>
 <body>
+    <script>
+        function displayGreeting() {
+            const first_name = "{{ first_name }}";
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = 'Hello';
+
+            if (hour < 12) {
+                greeting += ', good morning';
+            } else if (hour < 18) {
+                greeting += ', good afternoon';
+            } else {
+                greeting += ', good evening';
+            }
+
+            greeting += ` ${first_name}`;
+            document.getElementById('greeting').innerText = greeting;
+        }
+        window.onload = displayGreeting;
+    </script>
+
+    <div id="greeting" style="position: absolute; top: 10px; right: 10px; color: white; font-weight: bold;"></div>
       <!-- Topbar Start -->
 <div class="container-fluid px-5 d-none d-lg-block">
     <div class="row gx-5 py-3 align-items-center">
@@ -56,8 +78,6 @@
     </div>
 </div>
 <!-- Topbar End -->
-
-<!-- Navbar Start -->
 
 <!-- Navbar Start -->
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
@@ -486,7 +506,6 @@
     </div>
     <!-- Blog End -->
     
-
     <!-- Footer Start -->
     <div class="container-fluid bg-footer bg-primary text-white mt-5">
         <div class="container">
@@ -560,7 +579,6 @@
         </div>
     </div>
     <!-- Footer End -->
-
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-secondary py-3 fs-4 back-to-top"><i class="bi bi-arrow-up"></i></a>

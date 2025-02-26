@@ -1,6 +1,7 @@
 
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, session, flash
+import os
 import tensorflow as tf
 import numpy as np
 import os
@@ -28,16 +29,38 @@ model = load_model()
 # Home Page
 @app.route("/")
 def home():
-    return render_template("index.html")
+    if 'first_name' not in session:
+        return redirect(url_for('login'))
+    return render_template("index.html", first_name=session['first_name'])
 
-# About Page
+@app.route("/set_session", methods=["POST"])
+def set_session():
+    data = request.get_json()
+    session['first_name'] = data['first_name']
+    return jsonify({"success": True})
+
+# Login Page
+@app.route("/login")
+def login():
+    return render_template("login_signUp.html")
+
+# Logout
+@app.route("/logout")
+def logout():
+    session.pop('first_name', None)
+    return redirect(url_for('login'))
+
+# Protected Routes
 @app.route("/about")
 def about():
+    if 'first_name' not in session:
+        return redirect(url_for('login'))
     return render_template("about.html")
 
-# Disease Recognition Page
 @app.route("/disease_recognition", methods=["GET", "POST"])
 def disease_recognition():
+    if 'first_name' not in session:
+        return redirect(url_for('login'))
     if request.method == "POST":
         if "file" not in request.files:
             return jsonify({"success": False, "error": "No file uploaded"})
@@ -91,38 +114,19 @@ def disease_recognition():
     
     return render_template("disease_recognition.html")
 
-# Expert Page
+# Experts page
 @app.route("/expert")
 def expert():
+    if 'first_name' not in session:
+        return redirect(url_for('login'))
     return render_template("expert.html")
 
-# Login Page
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        # Handle login logic here
-        return redirect(url_for("home"))
-    return render_template("login_signUp.html")
-
-# SignUp Page
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        # Handle signup logic here
-        return redirect(url_for("login"))
-    return render_template("login_signUp.html")
-
-# Contact Page
+# Contact page
 @app.route("/contact")
 def contact():
+    if 'first_name' not in session:
+        return redirect(url_for('login'))
     return render_template("contact.html")
 
-# Serve static files (images, CSS, JS)
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
-
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
-
-
+    app.run(debug=True)
