@@ -109,19 +109,19 @@
             <i class="fa fa-eye" id="toggleLoginPassword" style="right: 10px; left: auto;"></i>
           </div>
           <h6><span id="pass_warning"></span></h6>
-          <a class="forgot_password" href="#">Forgot Your Password?</a>
+          <label for="forgot_password" id="forgetPassLabel"><a class="forgot_password" href="#">Forgot Your Password?</a></label>
           <button type="button" id="btn_signin" name="btn_signin_success" class="btn_signIn">Sign In</button>
         </form>
       </div>
       <div class="overlay-container">
         <div class="overlay">
           <div class="overlay-panels overlay-left">
-            <h1 id="h1">Welcome Back!</h1>
+            <h1  style="color: aliceblue;" id="h1">Welcome Back!</h1>
             <p id="paragraph">To keep connected with us please login with your personal info</p>
             <button class="ghost" id="signIn">Sign In</button>
           </div>
           <div class="overlay-panels overlay-right">
-            <h1 id="h1">Hello! Welcome to GunduziAi🌿</h1>
+            <h1 style="color: aliceblue;" id="h1">Hello! Welcome to GunduziAi🌿</h1>
             <p id="paragraph">Enter your details and start journey with us</p>
             <button class="ghost" id="signUp">Sign Up</button>
           </div>
@@ -134,7 +134,7 @@
       const signInButton = document.getElementById("signIn");
       const container = document.getElementById("containers");
       signUpButton.addEventListener("click", () => {
-        container.classList.add("right-panel-active");
+      container.classList.add("right-panel-active");
       });
       signInButton.addEventListener("click", () => {
         container.classList.remove("right-panel-active");
@@ -147,10 +147,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 
-  <!-- cript to handle Firebase authentication, SweetAlert integration and session storage -->
+  <!-- Script to handle Firebase authentication, SweetAlert integration and session storage -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBhLVUakKUeEoOF2JCoijLViWaEPsYdE6g",
@@ -165,21 +165,24 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  // Forgot password functionality
+  const forgetPassLabel = document.getElementById("forgetPassLabel");
+
   // Password Visibility Toggle
   const togglePassword = document.querySelector('#togglePassword');
   const passwordInput = document.querySelector('#password_input');
   togglePassword.addEventListener('click', function () {
-  const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-  passwordInput.setAttribute('type', type);
-  this.classList.toggle('fa-eye-slash');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye-slash');
   });
 
   const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
   const confirmPasswordInput = document.querySelector('#confirm_password');
   toggleConfirmPassword.addEventListener('click', function () {
-  const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-  confirmPasswordInput.setAttribute('type', type);
-  this.classList.toggle('fa-eye-slash');
+    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    confirmPasswordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye-slash');
   });
 
   const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
@@ -190,17 +193,17 @@
     this.classList.toggle('fa-eye-slash');
   });
 
-//  Registration
-      document.getElementById('btn_signup').addEventListener('click', function () {
-        const email = document.getElementById('email_input').value;
-        const password = document.getElementById('password_input').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
-        const firstName = document.getElementById('first_name').value;
+  // Registration
+  document.getElementById('btn_signup').addEventListener('click', function () {
+    const email = document.getElementById('email_input').value;
+    const password = document.getElementById('password_input').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const firstName = document.getElementById('first_name').value;
 
-        if (password !== confirmPassword) {
-          Swal.fire('Error', 'Passwords do not match!', 'error');
-          return;
-        }
+    if (password !== confirmPassword) {
+      Swal.fire('Error', 'Passwords do not match!', 'error');
+      return;
+    }
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -212,22 +215,21 @@
           },
           body: JSON.stringify({ first_name: firstName }),
         }).then(() => {
-
           const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3500,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        }
-      });
-      Toast.fire({
-      icon: "success",
-      title: "Registration successful! Back to login"
-      }).then(() => {
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Registration successful! Back to login"
+          }).then(() => {
             container.classList.remove("right-panel-active");
           });
         });
@@ -241,7 +243,6 @@
   document.getElementById('btn_signin').addEventListener('click', function () {
     const email = document.getElementById('login_email').value;
     const password = document.getElementById('login_password').value;
-    const firstName = document.getElementById('first_name').value;
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -253,14 +254,45 @@
           },
           body: JSON.stringify({ first_name: userCredential.user.email }), // Use email or fetch first name from Firestore
         }).then(() => {
-          Swal.fire('Success', 'Login successful!', 'success').then(() => {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Login successful!"
+          }).then(() => {
             window.location.href = '/';
           });
         });
       })
       .catch((error) => {
+        Swal.fire('Error', 'Invalid Username/Password!', 'error');
+      });
+  });
+
+  // Reset Password
+  forgetPassLabel.addEventListener("click", function () {
+    const email = document.getElementById('login_email').value;
+
+    if (!email) {
+      Swal.fire('Error', 'Please enter your email address.', 'error');
+      return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        Swal.fire('Success', 'A password reset link has been sent to your email.', 'success');
+      })
+      .catch((error) => {
         Swal.fire('Error', error.message, 'error');
-        Swal.fire('Error', 'Invalid username/Password!', 'error');
       });
   });
 </script>
