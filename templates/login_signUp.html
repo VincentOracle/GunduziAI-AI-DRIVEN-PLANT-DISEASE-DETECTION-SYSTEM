@@ -193,18 +193,47 @@
     this.classList.toggle('fa-eye-slash');
   });
 
+  // Phone Number Validation Regex
+  const phoneRegex = /^(?:\+254|0)[17]\d{8}$/;
+
+  // Password Validation Regex
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   // Registration
   document.getElementById('btn_signup').addEventListener('click', function () {
+    const firstName = document.getElementById('first_name').value;
+    const lastName = document.getElementById('last_name').value;
+    const userRole = document.getElementById('user_role').value;
+    const phoneNumber = document.getElementById('phone_number').value;
     const email = document.getElementById('email_input').value;
     const password = document.getElementById('password_input').value;
     const confirmPassword = document.getElementById('confirm_password').value;
-    const firstName = document.getElementById('first_name').value;
 
+    // Validate phone number
+    if (!phoneRegex.test(phoneNumber)) {
+        Swal.fire('Error', 'Please enter a valid phone number (e.g., +254712345678 or 0712345678).', 'error');
+        return;
+    }
+
+    // Check if all fields are filled
+    if (!firstName || !lastName || !userRole || !phoneNumber || !email || !password || !confirmPassword) {
+      Swal.fire('Error', 'Please fill in all fields.', 'error');
+      return;
+    }
+
+    // Validate password strength
+    if (!passwordRegex.test(password)) {
+      Swal.fire('Error', 'Password must be at least 8 characters long and include atleast an uppercase, lowercase, numbers, and special characters.', 'error');
+      return;
+    }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
       Swal.fire('Error', 'Passwords do not match!', 'error');
       return;
     }
 
+    // Proceed with Firebase registration
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Store the user's first name in the session
@@ -258,7 +287,7 @@
             toast: true,
             position: "top-end",
             showConfirmButton: false,
-            timer: 3500,
+            timer: 1500,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;
