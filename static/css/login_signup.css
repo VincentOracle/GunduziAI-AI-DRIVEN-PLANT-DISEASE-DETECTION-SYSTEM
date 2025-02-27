@@ -101,8 +101,8 @@
 #btn_signin {
   border-radius: 20px;
   border: 1px solid #f7310e;
-  background-color: #f5bd04;
-  /* background-color: #FF4B2B; */
+  /* background-color: #f5bd04; */
+  background-color: #FF9933;
   color: #FFFFFF;
   font-size: 14px;
   font-weight: bold;
@@ -179,8 +179,8 @@
 
 .overlay {
   background: #FF416C;
-  /* background: linear-gradient(to right, #FF4B2B, #FF416C); */
-  background: linear-gradient(to right, #11802c, #25d316);
+  background: linear-gradient(to right, #11802c, #34AD54);
+  /* background: linear-gradient(to right, #11802c, #25d316); */
   background-repeat: no-repeat;
   background-size: cover;
   color: #FFFFFF;
