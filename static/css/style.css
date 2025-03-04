@@ -293,4 +293,90 @@
     }
 }
 
+/* Disease recognition html start*/
+.disease-info {
+    background: #f1f8f3;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0.1, 0.1, 0.1, 0.2);
+    margin-top: 20px;
+}
+.disease-info-title {
+    font-size: 1.5em;
+    color: #101110;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px;
+}
+
+.disease-info-content {
+    display: grid;
+    gap: 15px;
+}
+
+.disease-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.disease-info-label {
+    font-weight: 600;
+    color: #333;
+    min-width: 120px;
+}
+
+.disease-info-value {
+    color: #555;
+}
+
+.symptoms-list {
+    list-style-type: decimal;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.symptoms-list li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.severity-level {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.severity-icon {
+    font-size: 1.2em;
+}
+
+.severity-icon.high {
+    color: #ff4444; /* Red for high severity */
+}
+
+.severity-icon.moderate {
+    color: #ffbb33; /* Yellow for moderate severity */
+}
+
+.severity-icon.none {
+    color: #00C851; /* Green for no severity */
+}
+
+.severity-text {
+    font-weight: 500;
+}
+
+.recommendation_title{
+    padding-top: 60px;
+}
+.recommendations_title{
+    font-size: 1.5em;
+    color: #101110;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px; 
+}
+/* Disease recognition html end */
+
 /* GunduziAi DISEASES DETECTION CSS END */

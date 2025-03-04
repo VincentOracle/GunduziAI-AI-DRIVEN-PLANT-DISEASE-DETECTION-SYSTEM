@@ -121,7 +121,8 @@
             gap: 20px;
         }
         .treatment-recommendations div {
-            background: white;
+            /* background: white; */
+            background: #f1f8f3;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -240,10 +241,38 @@
                 <p><strong>Image Name:</strong> <span id="image-name"></span></p>
                 <img id="uploaded-image" src="" alt="Uploaded Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
             </div>
+<!-- Disease Info -->
+<div id="disease-info" class="disease-info">
+    <h3 class="disease-info-title">Disease Information</h3>
+    <div class="disease-info-content">
+        <div class="disease-info-item">
+            <span class="disease-info-label">Disease Name:</span>
+            <span id="disease-name" class="disease-info-value"></span>
+        </div>
+        <div class="disease-info-item">
+            <span class="disease-info-label">Symptoms:</span>
+            <ol id="symptoms-list" class="symptoms-list"></ol>
+        </div>
+        <div class="disease-info-item">
+            <span class="disease-info-label">Severity Level:</span>
+            <span id="severity-level" class="severity-level">
+                <i class="severity-icon"></i>
+                <span class="severity-text"></span>
+            </span>
+        </div>
+        <div class="disease-info-item">
+            <span class="disease-info-label">Similar Diseases:</span>
+            <span id="similar-diseases" class="disease-info-value"></span>
+        </div>
+    </div>
+</div>
 
-            <h3>Treatment Recommendations</h3>
+           <div class="recommendation_title">
+            <!-- <h3 class="recommendations_title">Treatment Recommendations</h3> -->
+            <h3 class="disease-info-title">Treatment Recommendations</h3>
+           </div>
             <div class="treatment-recommendations">
-               
+             
                 <div>
                     <h3>Preventive Measures</h3>
                     <p>Use disease-resistant plant varieties, practice crop rotation, and maintain proper spacing between plants.</p>
@@ -264,94 +293,510 @@
         </div>
     </div>
 
-    <script>
-        // Handle file input change to display the selected image and its name
-        document.getElementById('file-upload').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    // Reset the result section
-                    document.getElementById('result-section').style.display = 'none';
-                    document.getElementById('prediction').textContent = '';
-                    document.getElementById('confidence').textContent = '';
-                    document.getElementById('image-name').textContent = '';
-                    document.getElementById('uploaded-image').src = '';
+  
+<script>
+    // Function to format disease name (e.g., Apple___Cedar_apple_rust → Apple Cedar Rust)
+    function formatDiseaseName(diseaseClass) {
+        return diseaseClass
+            .replace(/___/g, ' ') // Replace triple underscores with a space
+            .replace(/_/g, ' ')   // Replace single underscores with a space
+            .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
+    }
+   
+    // Function to format disease name (e.g., Apple___Cedar_apple_rust → Apple Cedar Rust)
+    function formatDiseaseName(diseaseClass) {
+        return diseaseClass
+            .replace(/___/g, ' ') // Replace triple underscores with a space
+            .replace(/_/g, ' ')   // Replace single underscores with a space
+            .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
+    }
 
-                    // Display the selected image and its name
-                    document.getElementById('preview-image').src = event.target.result;
-                    document.getElementById('preview-image-name').textContent = file.name;
-                    document.getElementById('preview-section').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
+    // Function to display disease information
+    function displayDiseaseInfo(diseaseClass) {
+        const diseaseInfo = plant_disease_info[diseaseClass];
+
+        if (!diseaseInfo) {
+            console.error('Disease information not found for:', diseaseClass);
+            return;
+        }
+
+        // Format disease name
+        const diseaseName = formatDiseaseName(diseaseClass);
+
+        // Update the UI
+        document.getElementById('disease-name').textContent = diseaseName;
+
+        // Populate symptoms list
+        const symptomsList = document.getElementById('symptoms-list');
+        symptomsList.innerHTML = ''; // Clear previous content
+        diseaseInfo.Symptoms.forEach((symptom) => {
+            const li = document.createElement('li');
+            li.textContent = symptom;
+            symptomsList.appendChild(li);
         });
 
-        // Handle form submission
-        document.getElementById('upload-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+        // Update severity level with icon
+        const severityLevel = document.getElementById('severity-level');
+        const severityIcon = severityLevel.querySelector('.severity-icon');
+        const severityText = severityLevel.querySelector('.severity-text');
+        const severity = diseaseInfo.Severity || 'Moderate';
 
-            // Show spinner
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner';
-            document.querySelector('.upload-section').appendChild(spinner);
+        severityText.textContent = severity;
+        severityIcon.className = 'severity-icon'; // Reset class
+        if (severity.toLowerCase() === 'high') {
+            severityIcon.classList.add('high');
+            severityIcon.innerHTML = '⚠️'; // Warning icon for high severity
+        } else if (severity.toLowerCase() === 'moderate') {
+            severityIcon.classList.add('moderate');
+            severityIcon.innerHTML = '🔸'; // Orange diamond icon for moderate severity
+        } else {
+            severityIcon.classList.add('none');
+            severityIcon.innerHTML = '✅'; // Checkmark icon for no severity
+        }
 
-            // Simulate a 2-3 second delay for analysis
-            setTimeout(() => {
-                fetch('/disease_recognition', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Remove spinner
-                    spinner.remove();
+        // Display similar diseases
+        document.getElementById('similar-diseases').textContent = diseaseInfo.Similar_Diseases.join(', ');
+    }
 
-                    if (data.success) {
-                        // Hide the preview section
-                        document.getElementById('preview-section').style.display = 'none';
+    // Handle file input change to display the selected image and its name
+    document.getElementById('file-upload').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                // Reset the result section
+                document.getElementById('result-section').style.display = 'none';
+                document.getElementById('prediction').textContent = '';
+                document.getElementById('confidence').textContent = '';
+                document.getElementById('image-name').textContent = '';
+                document.getElementById('uploaded-image').src = '';
 
-                        // Show SweetAlert notification
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Analyzed Successfuly!',
-                            text: `Image "${data.image_url}" has been uploaded quality checked and analyzed.`,
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            // Update the result section dynamically
-                            document.getElementById('prediction').textContent = data.prediction;
-                            document.getElementById('confidence').textContent = data.confidence.toFixed(2);
-                            document.getElementById('image-name').textContent = data.image_url;
-                            document.getElementById('uploaded-image').src = `/static/uploads/${data.image_url}`;
+                // Display the selected image and its name
+                document.getElementById('preview-image').src = event.target.result;
+                document.getElementById('preview-image-name').textContent = file.name;
+                document.getElementById('preview-section').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-                            // Show the result section
-                            document.getElementById('result-section').style.display = 'block';
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Upload Failed',
-                            text: data.error || 'There was an issue uploading your image. Please try again.',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
-                .catch(error => {
-                    spinner.remove();
+    // Handle form submission
+    document.getElementById('upload-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        // Show spinner
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner';
+        document.querySelector('.upload-section').appendChild(spinner);
+
+        // Simulate a 1.5-second delay for analysis
+        setTimeout(() => {
+            fetch('/disease_recognition', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove spinner
+                spinner.remove();
+
+                if (data.success) {
+                    // Hide the preview section
+                    document.getElementById('preview-section').style.display = 'none';
+
+                    // Show SweetAlert notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Analyzed Successfully!',
+                        text: `Image "${data.image_url}" has been uploaded, quality checked, and analyzed.`,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Update the result section dynamically
+                        document.getElementById('prediction').textContent = data.prediction;
+                        document.getElementById('confidence').textContent = data.confidence.toFixed(2);
+                        document.getElementById('image-name').textContent = data.image_url;
+                        document.getElementById('uploaded-image').src = `/static/uploads/${data.image_url}`;
+
+                        // Display disease information
+                        displayDiseaseInfo(data.prediction);
+
+                        // Show the result section
+                        document.getElementById('result-section').style.display = 'block';
+                    });
+                } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred. Please try again.',
+                        title: 'Upload Failed',
+                        text: data.error || 'There was an issue uploading your image. Please try again.',
                         confirmButtonText: 'OK'
                     });
+                }
+            })
+            .catch(error => {
+                spinner.remove();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonText: 'OK'
                 });
-            }, 1500); // 1 and half-second delay
-        });
-    </script>
-        <!-- DISEASE DETECTION END-->
-    
+            });
+        }, 1500); // 1.5-second delay
+    });
+   </script>
 
+<script>
+const plant_disease_info = {
+    'Apple___Apple_scab': {
+        'Symptoms': [
+            'Olive-green or black velvety spots on leaves',
+            'Yellowing and premature leaf drop',
+            'Scabby, cracked fruit surface',
+            'Lesions on young twigs',
+            'Reduced fruit yield'
+        ],
+        'Similar_Diseases': ['Cedar Apple Rust', 'Sooty Blotch'],
+        'Severity': 'High'
+    },
+    'Apple___Black_rot': {
+        'Symptoms': [
+            'Circular brown lesions on leaves',
+            'Sunken black spots on fruit',
+            'Fruit shriveling and mummification',
+            'Bark cankers on branches',
+            'Wilting of shoots'
+        ],
+        'Similar_Diseases': ['Bitter Rot', 'Frogeye Leaf Spot'],
+        'Severity': 'Moderate'
+    },
+    'Apple___Cedar_apple_rust': {
+        'Symptoms': [
+            'Orange gelatinous spots on apple leaves',
+            'Yellowing and premature defoliation',
+            'Twig infections leading to branch dieback',
+            'Gall formation on juniper trees (alternate host)',
+            'Fruit deformation and blemishes'
+        ],
+        'Similar_Diseases': ['Quince Rust', 'Hawthorn Rust'],
+        'Severity': 'Moderate'
+    },
+    'Apple___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Blueberry___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Cherry_(including_sour)___Powdery_mildew': {
+        'Symptoms': [
+            'White powdery fungal growth on leaves and twigs',
+            'Curled and distorted leaves',
+            'Premature leaf drop',
+            'Stunted fruit development',
+            'Reduced photosynthesis efficiency'
+        ],
+        'Similar_Diseases': ['Rust', 'Leaf Spot'],
+        'Severity': 'Moderate'
+    },
+    'Cherry_(including_sour)___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
+        'Symptoms': [
+            'Narrow, rectangular grayish-brown lesions on leaves',
+            'Yellow halo around spots',
+            'Leaf necrosis and premature death',
+            'Reduced grain filling',
+            'High humidity accelerates disease progression'
+        ],
+        'Similar_Diseases': ['Common Rust', 'Northern Leaf Blight'],
+        'Severity': 'High'
+    },
+    'Corn_(maize)___Common_rust_': {
+        'Symptoms': [
+            'Reddish-brown pustules on leaves',
+            'Pustules release powdery rust spores',
+            'Leaves may yellow and die prematurely',
+            'Weakened plant leading to reduced yields',
+            'Occurs more in cool, wet conditions'
+        ],
+        'Similar_Diseases': ['Gray Leaf Spot', 'Southern Rust'],
+        'Severity': 'Moderate'
+    },
+    'Corn_(maize)___Northern_Leaf_Blight': {
+        'Symptoms': [
+            'Long, cigar-shaped gray-green lesions on leaves',
+            'Lesions turn tan and develop spores',
+            'Premature leaf wilting and death',
+            'Reduced ear development and yield loss',
+            'More severe in warm, humid environments'
+        ],
+        'Similar_Diseases': ['Gray Leaf Spot', 'Southern Corn Leaf Blight'],
+        'Severity': 'High'
+    },
+    'Corn_(maize)___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Grape___Black_rot': {
+        'Symptoms': [
+            'Small, circular brown spots on leaves with black edges',
+            'Dark sunken lesions on fruit that later shrivel into hard black mummies',
+            'Infected stems develop dark streaks',
+            'Premature leaf drop and reduced fruit yield',
+            'Sticky spores visible on infected areas in humid conditions'
+        ],
+        'Similar_Diseases': ['Grape Downy Mildew', 'Grape Powdery Mildew'],
+        'Severity': 'High'
+    },
+    'Grape___Esca_(Black_Measles)': {
+        'Symptoms': [
+            'Dark streaks appear on woody stems',
+            'Irregular brown spots on leaves with yellow halos',
+            'Grapes show sunken brown lesions and dry out',
+            'Sudden vine collapse in severe cases',
+            'Black fungal spores present on pruning wounds'
+        ],
+        'Similar_Diseases': ['Botryosphaeria Canker', 'Eutypa Dieback'],
+        'Severity': 'High'
+    },
+    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': {
+        'Symptoms': [
+            'Irregular dark brown leaf spots with yellow halos',
+            'Severe infection leads to leaf curling and premature drop',
+            'Leaves develop a brittle texture',
+            'Spots merge, forming large necrotic areas',
+            'Reduced fruit quality due to leaf loss'
+        ],
+        'Similar_Diseases': ['Downy Mildew', 'Anthracnose'],
+        'Severity': 'Moderate'
+    },
+    'Grape___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Orange___Haunglongbing_(Citrus_greening)': {
+        'Symptoms': [
+            'Yellowing leaves with asymmetrical blotches',
+            'Small, lopsided, bitter-tasting fruits',
+            'Premature fruit drop',
+            'Twig dieback and tree decline',
+            'Slow tree growth with sparse canopy'
+        ],
+        'Similar_Diseases': ['Citrus Tristeza Virus', 'Citrus Canker'],
+        'Severity': 'High'
+    },
+    'Peach___Bacterial_spot': {
+        'Symptoms': [
+            'Small, water-soaked lesions on leaves and fruit',
+            'Lesions turn dark brown with irregular edges',
+            'Premature leaf drop leads to defoliation',
+            'Fruits develop black, sunken pits',
+            'Weak growth due to leaf loss'
+        ],
+        'Similar_Diseases': ['Peach Scab', 'Coryneum Blight'],
+        'Severity': 'Moderate'
+    },
+    'Peach___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Pepper,_bell___Bacterial_spot': {
+        'Symptoms': [
+            'Small, dark, water-soaked spots on leaves',
+            'Leaf spots grow and merge, causing defoliation',
+            'Sunken, black lesions on fruit',
+            'Fruit cracking and distortion',
+            'Reduced yield and weak plants'
+        ],
+        'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
+        'Severity': 'Moderate'
+    },
+    'Pepper,_bell___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Potato___Early_blight': {
+        'Symptoms': [
+            'Small, dark brown spots with concentric rings on older leaves',
+            'Yellowing of surrounding leaf tissue, forming a "target-like" pattern',
+            'Lesions expand, causing premature defoliation',
+            'Dark sunken spots on tubers with dry, leathery texture',
+            'Weakened plants leading to reduced tuber production'
+        ],
+        'Similar_Diseases': ['Late Blight', 'Bacterial Wilt'],
+        'Severity': 'High'
+    },
+    'Potato___Late_blight': {
+        'Symptoms': [
+            'Large, dark water-soaked lesions on leaves',
+            'White fungal growth under humid conditions',
+            'Rapid leaf wilting and death',
+            'Dark brown lesions on tubers',
+            'Foul smell in infected potatoes'
+        ],
+        'Similar_Diseases': ['Early Blight', 'Blackleg'],
+        'Severity': 'High'
+    },
+    'Potato___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Raspberry___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Soybean___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Squash___Powdery_mildew': {
+        'Symptoms': [
+            'White powdery spots on leaves and stems',
+            'Yellowing and curling of leaves',
+            'Premature leaf drop',
+            'Stunted plant growth',
+            'Reduced fruit yield'
+        ],
+        'Similar_Diseases': ['Downy Mildew', 'Leaf Spot'],
+        'Severity': 'Moderate'
+    },
+    'Strawberry___Leaf_scorch': {
+        'Symptoms': [
+            'Reddish-purple spots on leaves',
+            'Leaves dry out and curl at the edges',
+            'Premature defoliation',
+            'Reduced fruit size and yield',
+            'Weakened plants'
+        ],
+        'Similar_Diseases': ['Leaf Spot', 'Powdery Mildew'],
+        'Severity': 'Moderate'
+    },
+    'Strawberry___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    },
+    'Tomato___Bacterial_spot': {
+        'Symptoms': [
+            'Small, dark, water-soaked spots on leaves',
+            'Leaf spots grow and merge, causing defoliation',
+            'Sunken, black lesions on fruit',
+            'Fruit cracking and distortion',
+            'Reduced yield and weak plants'
+        ],
+        'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
+        'Severity': 'Moderate'
+    },
+    'Tomato___Early_blight': {
+        'Symptoms': [
+            'Dark, concentric rings on older leaves',
+            'Yellowing and wilting of leaves',
+            'Stem lesions with dark, sunken spots',
+            'Fruit rot and premature drop',
+            'Reduced plant vigor'
+        ],
+        'Similar_Diseases': ['Late Blight', 'Septoria Leaf Spot'],
+        'Severity': 'High'
+    },
+    'Tomato___Late_blight': {
+        'Symptoms': [
+            'Dark, water-soaked lesions on leaves',
+            'White mold-like growth under leaves',
+            'Rapid spread during humid conditions',
+            'Brown sunken spots on fruits',
+            'Defoliation and plant collapse'
+        ],
+        'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+        'Severity': 'High'
+    },
+    'Tomato___Leaf_Mold': {
+        'Symptoms': [
+            'Yellow spots on upper leaf surfaces',
+            'Grayish-white mold on lower leaf surfaces',
+            'Leaf curling and premature drop',
+            'Reduced fruit yield',
+            'Weakened plants'
+        ],
+        'Similar_Diseases': ['Powdery Mildew', 'Early Blight'],
+        'Severity': 'Moderate'
+    },
+    'Tomato___Septoria_leaf_spot': {
+        'Symptoms': [
+            'Small, circular spots with gray centers and dark edges',
+            'Yellowing and wilting of leaves',
+            'Premature leaf drop',
+            'Reduced fruit yield',
+            'Weakened plants'
+        ],
+        'Similar_Diseases': ['Early Blight', 'Leaf Mold'],
+        'Severity': 'Moderate'
+    },
+    'Tomato___Spider_mites Two-spotted_spider_mite': {
+        'Symptoms': [
+            'Fine webbing on leaves and stems',
+            'Yellow or white speckling on leaves',
+            'Leaf curling and wilting',
+            'Reduced plant vigor',
+            'Premature leaf drop'
+        ],
+        'Similar_Diseases': ['Aphid Infestation', 'Thrips Damage'],
+        'Severity': 'Moderate'
+    },
+    'Tomato___Target_Spot': {
+        'Symptoms': [
+            'Dark, concentric rings on leaves and stems',
+            'Yellowing and wilting of leaves',
+            'Premature leaf drop',
+            'Reduced fruit yield',
+            'Weakened plants'
+        ],
+        'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+        'Severity': 'Moderate'
+    },
+    'Tomato___Tomato_Yellow_Leaf_Curl_Virus': {
+        'Symptoms': [
+            'Upward curling of leaves',
+            'Yellowing and stunted growth',
+            'Reduced fruit production',
+            'Whitefly infestations',
+            'Brittle leaves with vein clearing'
+        ],
+        'Similar_Diseases': ['Tomato Mosaic Virus', 'Cucumber Mosaic Virus'],
+        'Severity': 'High'
+    },
+    'Tomato___Tomato_mosaic_virus': {
+        'Symptoms': [
+            'Mottled light and dark green patterns on leaves',
+            'Leaf curling and distortion',
+            'Stunted plant growth',
+            'Reduced fruit yield',
+            'Fruit discoloration and deformation'
+        ],
+        'Similar_Diseases': ['Tomato Yellow Leaf Curl Virus', 'Cucumber Mosaic Virus'],
+        'Severity': 'High'
+    },
+    'Tomato___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar_Diseases': ['None'],
+        'Severity': 'None'
+    }
+};
+
+</script>
     <!-- Footer Start -->
     <div class="container-fluid bg-footer bg-primary text-white mt-5">
         <div class="container">
