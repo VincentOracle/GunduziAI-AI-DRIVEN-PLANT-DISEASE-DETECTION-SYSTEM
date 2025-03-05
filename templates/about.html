@@ -46,8 +46,8 @@
      <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
      
  
-     <!-- Template Stylesheet -->
-     <!-- <link href="css/style.css" rel="stylesheet"> -->
+     <!-- The Stylesheet -->
+    
      <link href="static/css/style.css" rel="stylesheet">
 </head>
 
@@ -79,34 +79,29 @@
         </div>
     </div>
     <!-- Topbar End -->
-    
-    <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
-        <a href="/" class="navbar-brand d-flex align-items-center">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav mx-auto py-0">
-                <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-                <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}text-warning{% endif %}">About Us</a>
-                <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
-                <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
-                <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
-            </div>
-            <!-- <div class="d-flex">
-                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
-                <a href="/signup" class="btn btn-warning {% if request.path == '/signup' %}active{% endif %}">Sign Up</a>
-            </div> -->
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
+    <a href="/" class="navbar-brand d-flex align-items-center">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav mx-auto py-0">
+            <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+            <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}text-warning{% endif %}">About Us</a>
+            <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
+            <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
+            <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
         </div>
-    </nav>
-    
+        <div class="d-flex">
+            <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
+            <a href="/login" class="btn btn-warning {% if request.path == '/login' %}active{% endif %}">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
 <!-- Navbar End -->
-
-    <!-- Navbar End -->
-
-
     <!-- Hero Start -->
     <div class="container-fluid bg-primary py-5 bg-hero mb-5">
         <div class="container py-5">
@@ -128,7 +123,7 @@
         <div class="row gx-5">
             <div class="col-lg-6 mb-5 mb-lg-0">
                 <div class="d-flex h-100 border border-5 border-primary border-bottom-0 pt-4">
-                    <img class="img-fluid mt-auto mx-auto" src="/static/img/about.png" alt="GunduziAI Plant Disease Detection">
+                    <img style="height: 590px; width: 600px; object-fit: cover;" class="img-fluid mt-auto mx-auto" src="/static/img/about.png" alt="GunduziAI Plant Disease Detection">
                 </div>
             </div>
             <div class="col-lg-6 pb-5">

@@ -10,6 +10,7 @@ from PIL import Image
 
 app = Flask(__name__)
 
+app.secret_key = 'your_secret_key'
 # Define the upload folder for images
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -32,7 +33,6 @@ model = load_model()
 def home():
     if 'first_name' not in session:
         return redirect(url_for('login'))
-    
     return render_template("index.html", first_name=session['first_name'])
 
 @app.route("/set_session", methods=["POST"])
