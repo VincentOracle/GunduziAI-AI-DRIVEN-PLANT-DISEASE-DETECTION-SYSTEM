@@ -294,36 +294,223 @@
 }
 
 /* Disease recognition html start*/
-.disease-info {
-    background: #f1f8f3;
+
+*.navbar {
+    background-color: #4CAF50;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+.navbar a:hover {
+    background-color: #45a049;
+}
+.content {
+    padding: 20px;
+    text-align: center;
+}
+.upload-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    animation: fadeIn 1s ease-in-out;
+}
+.upload-section h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+.upload-section input[type="file"] {
+    display: none;
+}
+.upload-section label {
+    display: inline-block;
+    background: #FF5722; /* Orange color for Choose Image button */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.upload-section label:hover {
+    background: #E64A19; /* Darker orange on hover */
+}
+.upload-section button {
+    background: #4CAF50; /* Green color for Predict button */
+    color: white;
+    border: none;
+    height: 45px;
+    width: 160px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 20px;
+    transition: background-color 0.3s;
+}
+.upload-section button:hover {
+    background: #45a049; /* Darker green on hover */
+}
+
+/* Drag-and-Drop Zone */
+.drag-drop-zone {
+    border: 2px dashed #4CAF50;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.drag-drop-zone:hover {
+    background: #f0f0f0;
+    border-color: #45a049;
+}
+
+.drag-drop-zone p {
+    margin: 0;
+    color: #555;
+}
+
+.drag-drop-zone .browse-link {
+    color: #4CAF50;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.drag-drop-zone .browse-link:hover {
+    color: #45a049;
+}
+
+#file-upload {
+    display: none; /* Hide the default file input */
+}
+
+/* Diseeases information start */
+ /* Keyframes for animations */
+ @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes cardHover {
+    from {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    to {
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+}
+/* Results and treatment recommendations Start */
+/* Result Section */
+/* Spinner for loading */
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+#result-section {
+    max-width: 1000px; /* Increased width for the entire result section */
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.result {
+    background: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0.1, 0.1, 0.1, 0.2);
-    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 700px; /* Prediction Result card width */
+    margin-left: auto;
+    margin-right: auto;
+    animation: slideIn 0.5s ease-in-out;
 }
+
+.result h2 {
+    font-size: 1.8em;
+    color: #4CAF50;
+    margin-bottom: 15px;
+}
+
+.result p {
+    font-size: 1.1em;
+    color: #333;
+    margin: 10px 0;
+}
+
+.uploaded-image {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Disease Info */
+.disease-info {
+    background: #f1f8f3;
+    padding: 30px; /* Increased padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    max-width: 900px; /* Increased width for Disease Info */
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeIn 0.8s ease-out; /* Fade-in animation */
+}
+
 .disease-info-title {
     font-size: 1.5em;
     color: #101110;
     margin-bottom: 15px;
     border-bottom: 2px solid #4CAF50;
     padding-bottom: 10px;
+    text-align: center;
 }
 
 .disease-info-content {
     display: grid;
-    gap: 15px;
+    gap: 20px; /* Increased gap */
 }
 
 .disease-info-item {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 15px; /* Increased gap */
 }
 
 .disease-info-label {
     font-weight: 600;
     color: #333;
-    min-width: 120px;
+    min-width: 140px; /* Increased min-width */
 }
 
 .disease-info-value {
@@ -332,19 +519,19 @@
 
 .symptoms-list {
     list-style-type: decimal;
-    padding-left: 20px;
+    padding-left: 25px; /* Increased padding */
     margin: 0;
 }
 
 .symptoms-list li {
-    margin-bottom: 8px;
+    margin-bottom: 10px; /* Increased margin */
     color: #555;
 }
 
 .severity-level {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px; /* Increased gap */
 }
 
 .severity-icon {
@@ -367,16 +554,52 @@
     font-weight: 500;
 }
 
-.recommendation_title{
-    padding-top: 60px;
+/* Treatment Recommendations */
+.recommendation_title {
+    padding-top: 40px;
+    text-align: center;
 }
-.recommendations_title{
-    font-size: 1.5em;
-    color: #101110;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #4CAF50;
-    padding-bottom: 10px; 
-}
-/* Disease recognition html end */
 
+.treatment-recommendations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Increased min-width */
+    gap: 25px; /* Increased gap */
+    margin-top: 20px;
+    max-width: 900px; /* Increased width for Treatment Recommendations */
+    /* margin-left: auto;
+    margin-right: auto; */
+    margin-left: 10px;
+    margin-right: 10px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.recommendation-item {
+    background: #f1f8f3;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    margin-left: 10px;
+    margin-right: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.recommendation-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.recommendation-item h3 {
+    font-size: 1.4em; 
+    color: #4CAF50;
+    margin-bottom: 15px; 
+}
+
+.recommendation-item p {
+    font-size: 1.1em; 
+    color: #555;
+    line-height: 1.6; 
+}
+
+/* Results and treatment recommendations End */
 /* GunduziAi DISEASES DETECTION CSS END */
