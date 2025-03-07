@@ -74,16 +74,17 @@
           <div class="input-container">
             <i class="fa fa-envelope icon"></i>
             <input type="email" id="email_input" name="email" placeholder="Email" required />
+            <label id="email_error" class="error-message" style="display: none; color: red;"></label>
           </div>
           <div class="input-container">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="password_input" name="password" placeholder="Password" required />
-            <i class="fa fa-eye" id="togglePassword" style="right: 10px; left: auto;"></i>
+            <i class="fa fa-eye" id="togglePassword" style="right: -70px; left: auto;"></i>
           </div>
           <div class="input-container">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
-            <i class="fa fa-eye" id="toggleConfirmPassword" style="right: 10px; left: auto;"></i>
+            <i class="fa fa-eye" id="toggleConfirmPassword" style="right: -70px; left: auto;"></i>
           </div>
           <button type="button" id="btn_signup" name="sign_up" class="btn_signin_success">SignUp</button>
         </form>
@@ -106,7 +107,7 @@
           <div class="input-container">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="login_password" name="password" placeholder="Password" required />
-            <i class="fa fa-eye" id="toggleLoginPassword" style="right: 10px; left: auto;"></i>
+            <i class="fa fa-eye" id="toggleLoginPassword" style="right: -70px; left: auto;"></i>
           </div>
           <h6><span id="pass_warning"></span></h6>
           <label for="forgot_password" id="forgetPassLabel"><a class="forgot_password" href="#">Forgot Your Password?</a></label>
@@ -117,12 +118,12 @@
         <div class="overlay">
           <div class="overlay-panels overlay-left">
             <h1  style="color: aliceblue;" id="h1">Welcome Back!</h1>
-            <p id="paragraph">To keep connected with us please login with your personal info</p>
+            <p id="paragraph">To keep connected with us please login with your personal info.</p>
             <button class="ghost" id="signIn">Sign In</button>
           </div>
           <div class="overlay-panels overlay-right">
             <h1 style="color: aliceblue;" id="h1">Hello! Welcome to GunduziAi🌿</h1>
-            <p id="paragraph">Enter your details and start journey with us</p>
+            <p id="paragraph">Enter your details and start your journey with us.</p>
             <button class="ghost" id="signUp">Sign Up</button>
           </div>
         </div>
@@ -148,6 +149,8 @@
     
 
   <!-- Script to handle Firebase authentication, SweetAlert integration and session storage -->
+
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
@@ -188,9 +191,9 @@
   const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
   const loginPasswordInput = document.querySelector('#login_password');
   toggleLoginPassword.addEventListener('click', function () {
-    const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    loginPasswordInput.setAttribute('type', type);
-    this.classList.toggle('fa-eye-slash');
+  const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  loginPasswordInput.setAttribute('type', type);
+  this.classList.toggle('fa-eye-slash');
   });
 
   // Phone Number Validation Regex
@@ -324,6 +327,7 @@
         Swal.fire('Error', error.message, 'error');
       });
   });
-</script>
+</script> 
+
 </body>
 </html>

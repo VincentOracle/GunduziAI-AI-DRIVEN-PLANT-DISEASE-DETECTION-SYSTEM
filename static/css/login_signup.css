@@ -50,7 +50,8 @@
 #h1 {
   font-weight: bold;
   margin: 0;
-  font-size: 24px;
+  font-size: 26px;
+  padding-left: 10px;
 }
 
 #h2 {
@@ -67,6 +68,7 @@
 
 #span {
   font-size: 12px;
+  padding-left: 10px;
 }
 
 #links {
@@ -101,7 +103,6 @@
 #btn_signin {
   border-radius: 20px;
   border: 1px solid #f7310e;
-  /* background-color: #f5bd04; */
   background-color: #FF9933;
   color: #FFFFFF;
   font-size: 14px;
@@ -180,7 +181,6 @@
 .overlay {
   background: #FF416C;
   background: linear-gradient(to right, #11802c, #34AD54);
-  /* background: linear-gradient(to right, #11802c, #25d316); */
   background-repeat: no-repeat;
   background-size: cover;
   color: #FFFFFF;
@@ -234,7 +234,7 @@
 
 .input-container input,
 .input-container select {
-  width: 100%;
+  width: 140%;
   padding: 12px 40px;
   border: 1px solid #ccc;
   border-radius: 5px;
