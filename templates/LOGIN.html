@@ -8,51 +8,35 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <!-- Site Metas -->
-    <meta name="keywords" content="Fruity" />
-    <meta name="description" content="Fruits Store" />
-    <meta name="author" content="VincentOracle" />
-
-    <title>Fruity signUp/SignIn</title>
-    <!-- slider stylesheet -->
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
-    />
-
-    <!-- bootstrap core css -->
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-
-    <!-- fonts style -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Poppins:400,700|Raleway:400,700&display=swap"
-      rel="stylesheet"
-    />
-    <!-- responsive style -->
-
-    <link href="/static/css/login_signup.css" rel="stylesheet" />
-
-    <link href="css/style.css" rel="stylesheet" />
-
-    <!-- <link rel="icon" href="\images\Fruit2.jpg" type="image/x-icon" />
-    <link
-      rel="shortcut icon"
-      href="\Fruity Stores\Fruity stores\images\Fruit2.jpg"
-      type="image/x-icon"
-    /> -->
-    <link rel="icon" href="images\Fruit2.jpg" type="image/x-icon" />
+    <meta name="keywords" content="GunduziAi" />
+    <meta name="description" content="GunduziAi" />
+    <meta name="author" content="Vincent Were" />
+    <title>GunduziAi SignUp/SignIn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fruity SignUp/Sign In</title>
+  
     <link rel="stylesheet" type="text/css" href="css/login_signup.css" />
     <link
       rel="stylesheet"
-      href="https://cdnsjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <!-- SweetAlert CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- The Stylesheet -->
+    <link href="/static/css/login_signup.css" rel="stylesheet">
   </head>
   <body class="login_signup">
-    <div>
-      <h1>Login Here</h1>
-    </div>
     <div class="containers" id="containers">
       <div class="form-containers sign-up-container">
         <form
@@ -64,53 +48,47 @@
           enctype="multipart/form-data"
         >
           <h1 id="h1">Create Account</h1>
-          <div class="social-containers">
-            <a href="#" id="links" class="social"
-              ><i class="fa fa-google"
-                ><img
-                  id="social_img"
-                  src="images/google.png"
-                  alt="google_img" /></i
-            ></a>
-            <a href="#" id="links" class="social"
-              ><i class="fa fa-facebook"
-                ><img
-                  id="social_img"
-                  src="images/fb.png"
-                  alt="facebook_img" /></i
-            ></a>
-            <a href="#" id="links" class="social"
-              ><i class="fa fa-microsoft"
-                ><img
-                  id="social_img"
-                  src="images/microsoft.png"
-                  alt="microsoft_img" /></i
-            ></a>
+          <span id="span">Enter your details to register</span>
+          <div class="input-container">
+            <i class="fa fa-user icon"></i>
+            <input type="text" id="first_name" name="first_name" placeholder="First Name" required />
           </div>
-          <span id="span">or use your email for registration</span>
-          <input type="text" id="name_input" name="name" placeholder="UserName" required="true"/>
-          <input
-            type="email"
-            id="email_input"
-            name="email"
-            placeholder="Email"
-          />
-          <input
-            id="password_input"
-            type="password"
-            name="password"
-            placeholder="Password"
-          />
-          <button
-            type="button"
-            id="btn_signup"
-            name="sign_up"
-            class="btn_signin_success"
-          >
-            SignUp
-          </button>
+          <div class="input-container">
+            <i class="fa fa-user icon"></i>
+            <input type="text" id="last_name" name="last_name" placeholder="Last Name" required />
+          </div>
+          <div class="input-container">
+            <i class="fa fa-briefcase icon"></i>
+            <select id="user_role" name="user_role" required>
+              <option value="" disabled selected>Select Role</option>
+              <option value="farmer">Farmer/Grower</option>
+              <option value="agronomist">Agronomist/Expert</option>
+              <option value="researcher">Researcher/Scientist</option>
+              <!-- <option value="admin">System Administrator</option> -->
+            </select>
+          </div>
+          <div class="input-container">
+            <i class="fa fa-phone icon"></i>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Phone Number" required />
+          </div>
+          <div class="input-container">
+            <i class="fa fa-envelope icon"></i>
+            <input type="email" id="email_input" name="email" placeholder="Email" required />
+          </div>
+          <div class="input-container">
+            <i class="fa fa-lock icon"></i>
+            <input type="password" id="password_input" name="password" placeholder="Password" required />
+            <i class="fa fa-eye" id="togglePassword" style="right: -70px; left: auto;"></i>
+          </div>
+          <div class="input-container">
+            <i class="fa fa-lock icon"></i>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
+            <i class="fa fa-eye" id="toggleConfirmPassword" style="right: -70px; left: auto;"></i>
+          </div>
+          <button type="button" id="btn_signup" name="sign_up" class="btn_signin_success">SignUp</button>
         </form>
       </div>
+     
       <div class="form-containers sign-in-container">
         <form
           name="login_form"
@@ -121,80 +99,31 @@
           enctype="multipart/form-data"
         >
           <h1 id="h1">Sign In</h1>
-          <h3 id="span">with</h3>
-          <div class="social-containers">
-            <a href="#" id="links" class="social"
-              ><i class="fa fa-google"
-                ><img
-                  id="social_img"
-                  src="images/google.png"
-                  alt="google_img" /></i
-            ></a>
-            <a href="#" id="links" class="social"
-              ><i class="fa fa-facebook"
-                ><img
-                  id="social_img"
-                  src="images/fb.png"
-                  alt="facebook_img" /></i
-            ></a>
-
-            <a href="#" id="links" class="social"
-              ><i class="fa fa-microsoft"
-                ><img
-                  id="social_img"
-                  src="images/microsoft.png"
-                  alt="microsoft_img" /></i
-            ></a>
+          <span id="span">Enter your credentials to login</span>
+          <div class="input-container">
+            <i class="fa fa-envelope icon"></i>
+            <input type="email" id="login_email" name="email" placeholder="Email" required />
           </div>
-          <span id="span">or use your account</span>
-          <input
-            id="login_email"
-            type="email"
-            name="email"
-            placeholder="Email"
-          />
-          <input
-            id="login_password"
-            type="password"
-            name="password"
-            placeholder="Password"
-          />
+          <div class="input-container">
+            <i class="fa fa-lock icon"></i>
+            <input type="password" id="login_password" name="password" placeholder="Password" required />
+            <i class="fa fa-eye" id="toggleLoginPassword" style="right: -70px; left: auto;"></i>
+          </div>
           <h6><span id="pass_warning"></span></h6>
-          <a class="forgot_password" href="#">Forgot Your Password?</a>
-          </button>
-          <button
-            type="button"
-            id="btn_signin"
-            name="btn_signin_success"
-            class="btn_signIn"
-          >
-            Sign In
-          </button>
+          <label for="forgot_password" id="forgetPassLabel"><a class="forgot_password" href="#">Forgot Your Password?</a></label>
+          <button type="button" id="btn_signin" name="btn_signin_success" class="btn_signIn">Sign In</button>
         </form>
-        <script>
-         const form = document.getElementById("login_form");
-         const username_value = document.getElementById("login_email");
-         form.addEventListener("submit",function(e){
-          e.preventDefault();
-          const userNameValue = username_value.value();
-          sessionStorage.setItem('username',userNameValue);
-          window.location.href="index.html";
-         });
-
-        </script>
       </div>
       <div class="overlay-container">
         <div class="overlay">
           <div class="overlay-panels overlay-left">
-            <h1 id="h1">Welcome Back!</h1>
-            <p id="paragraph">
-              To keep connected with us please login with your personal info
-            </p>
+            <h1  style="color: aliceblue;" id="h1">Welcome Back!</h1>
+            <p id="paragraph">To keep connected with us please login with your personal info.</p>
             <button class="ghost" id="signIn">Sign In</button>
           </div>
           <div class="overlay-panels overlay-right">
-            <h1 id="h1">Hello, Friend!<br>Welcome to Fruity</h1>
-            <p id="paragraph">Enter your details and start journey with us</p>
+            <h1 style="color: aliceblue;" id="h1">Hello! Welcome to GunduziAi🌿</h1>
+            <p id="paragraph">Enter your details and start your journey with us.</p>
             <button class="ghost" id="signUp">Sign Up</button>
           </div>
         </div>
@@ -206,229 +135,199 @@
       const signInButton = document.getElementById("signIn");
       const container = document.getElementById("containers");
       signUpButton.addEventListener("click", () => {
-        container.classList.add("right-panel-active");
+      container.classList.add("right-panel-active");
       });
       signInButton.addEventListener("click", () => {
         container.classList.remove("right-panel-active");
       });
     </script>
-    <div>
-      <br />
-    </div>
-    <!-- end contact section -->
-    <!-- subscribe section -->
-    <section class="subscribe_section">
-      <div class="container">
-        <form class="subscribe"action="#">
-          <div class="row">
-            <div class="col-lg-3 col-md-4">
-              <label for="subEmail"> Our Newsletter </label>
-            </div>
-            <div class="col-lg-9 col-md-8">
-              <div class="box">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  id="subEmail"
-                />
-                <button>Subscribe</button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </section>
 
-    <!-- end subscribe section -->
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
 
-    <!-- footer section -->
-    <section class="container-fluid footer_section">
-      <div class="social_container">
-        <h4>Follow on</h4>
-        <div class="social-box">
-          <a href="https://www.facebook.com/were.vincente">
-            <img src="images/fb.png" id="facebook" alt="Our facebook page" />
-          </a>
-          <a href="https://twitter.com/Wereouma1">
-            <img src="images/twitter.png" id="twitter" alt="Our twitter Page" />
-          </a>
-          <a href="https://www.linkedin.com/in/were-vincent-a097a4220/">
-            <img
-              src="images/linkedin.png"
-              id="linkedin"
-              alt="Our linkedin Page"
-            />
-          </a>
-          <a href="https://www.youtube.com/channel/UCZpNO4cfryOGcr1p1RHfouA">
-            <img
-              src="images/youtube.png"
-              id="youtube"
-              alt="Our youtube Channel"
-            />
-          </a>
-          <a
-            href="https://wa.me/254768653509 https://www.instagram.com/vincenteoracle/"
-          >
-            <img
-              src="images/instagram.jpg"
-              id="instagram"
-              alt="Our instagram Channel"
-            />
-          </a>
-        </div>
-      </div>
-      <p class="copyright">
-        &copy;Copyright 2023&mdash;<span id="currYear"></span> All Rights
-        Reserved. Design by
-        <a href="https://index.html">Offmarket Fruits Stores</a>
-      </p>
-    </section>
-    <script>
-      var date = new Date();
-      var year = date.getFullYear();
-      document.getElementById("currYear").innerHTML = year;
-    </script>
-    <!-- footer section -->
+  <!-- Script to handle Firebase authentication, SweetAlert integration and session storage -->
 
-    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
-    ></script>
 
-    <script>
-      function openNav() {
-        document.getElementById("myNav").classList.toggle("menu_width");
-        document
-          .querySelector(".custom_menu-btn")
-          .classList.toggle("menu_btn-style");
-      }
-    </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
 
-    <!-- owl carousel script -->
-    <script type="text/javascript">
-      $(".owl-carousel").owlCarousel({
-        loop: true,
-        margin: 35,
-        navText: [],
-        autoplay: true,
-        autoplayHoverPause: true,
-        responsive: {
-          0: {
-            items: 1,
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhLVUakKUeEoOF2JCoijLViWaEPsYdE6g",
+    authDomain: "gunduziai.firebaseapp.com",
+    projectId: "gunduziai",
+    storageBucket: "gunduziai.firebasestorage.app",
+    messagingSenderId: "340515946915",
+    appId: "1:340515946915:web:1601c25ebe2c57283fda16",
+    measurementId: "G-SXT2J5XX1H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Forgot password functionality
+  const forgetPassLabel = document.getElementById("forgetPassLabel");
+
+  // Password Visibility Toggle
+  const togglePassword = document.querySelector('#togglePassword');
+  const passwordInput = document.querySelector('#password_input');
+  togglePassword.addEventListener('click', function () {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye-slash');
+  });
+
+  const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+  const confirmPasswordInput = document.querySelector('#confirm_password');
+  toggleConfirmPassword.addEventListener('click', function () {
+    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    confirmPasswordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye-slash');
+  });
+
+  const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
+  const loginPasswordInput = document.querySelector('#login_password');
+  toggleLoginPassword.addEventListener('click', function () {
+  const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  loginPasswordInput.setAttribute('type', type);
+  this.classList.toggle('fa-eye-slash');
+  });
+
+  // Phone Number Validation Regex
+  const phoneRegex = /^(?:\+254|0)[17]\d{8}$/;
+
+  // Password Validation Regex
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  // Registration
+  document.getElementById('btn_signup').addEventListener('click', function () {
+    const firstName = document.getElementById('first_name').value;
+    const lastName = document.getElementById('last_name').value;
+    const userRole = document.getElementById('user_role').value;
+    const phoneNumber = document.getElementById('phone_number').value;
+    const email = document.getElementById('email_input').value;
+    const password = document.getElementById('password_input').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+
+    // Validate phone number
+    if (!phoneRegex.test(phoneNumber)) {
+        Swal.fire('Error', 'Please enter a valid phone number (e.g., +254712345678 or 0712345678).', 'error');
+        return;
+    }
+
+    // Check if all fields are filled
+    if (!firstName || !lastName || !userRole || !phoneNumber || !email || !password || !confirmPassword) {
+      Swal.fire('Error', 'Please fill in all fields.', 'error');
+      return;
+    }
+
+    // Validate password strength
+    if (!passwordRegex.test(password)) {
+      Swal.fire('Error', 'Password must be at least 8 characters long and include atleast an uppercase, lowercase, numbers, and special characters.', 'error');
+      return;
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      Swal.fire('Error', 'Passwords do not match!', 'error');
+      return;
+    }
+
+    // Proceed with Firebase registration
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Store the user's first name in the session
+        fetch('/set_session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          400: {
-            items: 2,
-          },
-          600: {
-            items: 3,
-          },
-          1000: {
-            items: 4,
-          },
-        },
+          body: JSON.stringify({ first_name: firstName }),
+        }).then(() => {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Registration successful! Back to login"
+          }).then(() => {
+            container.classList.remove("right-panel-active");
+          });
+        });
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.message, 'error');
       });
-    </script>
-    <!-- end owl carousel script -->
-  </body>
+  });
 
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut,
-    } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+  // Login
+  document.getElementById('btn_signin').addEventListener('click', function () {
+    const email = document.getElementById('login_email').value;
+    const password = document.getElementById('login_password').value;
 
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-      apiKey: "AIzaSyCN1qAlq6Gu3AWuUSDfoDqmBgW5rPFbtFI",
-      authDomain: "myweb-a63a5.firebaseapp.com",
-      projectId: "myweb-a63a5",
-      storageBucket: "myweb-a63a5.appspot.com",
-      messagingSenderId: "302218796184",
-      appId: "1:302218796184:web:88ef90009c191d9e0dc4ed",
-      measurementId: "G-HSWT341Y2D",
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth();
-    console.log(app);
-
-    //----- New Registration code start
-    document.getElementById("btn_signup").addEventListener("click", function () {
-      var name = document.getElementById("name_input").value;
-      var email = document.getElementById("email_input").value;
-      var password = document.getElementById("password_input").value;
-      //For new registration
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(user);
-          alert("Registration successfully!!");
-          alert("Login to Continue");
-			    window.location.assign("login-signUp.html");
-          // ...
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // ..
-          console.log(errorMessage);
-          alert(error);
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Store the user's first name in the session
+        fetch('/set_session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ first_name: userCredential.user.email }), // Use email or fetch first name from Firestore
+        }).then(() => {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Login successful!"
+          }).then(() => {
+            window.location.href = '/';
+          });
         });
-    });
-    //----- End
+      })
+      .catch((error) => {
+        Swal.fire('Error', 'Invalid Username/Password!', 'error');
+      });
+  });
 
-    //----- Login code start
-    document.getElementById("btn_signin").addEventListener("click", function () {
-      var email = document.getElementById("login_email").value;
-      var password = document.getElementById("login_password").value;
+  // Reset Password
+  forgetPassLabel.addEventListener("click", function () {
+    const email = document.getElementById('login_email').value;
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(user);
-          document.getElementById('pass_warning').innerHTML=" ";
-          window.location.assign("index.html");
-          // alert(user.email + " Login successfully!!!");
-          document.getElementById("logout").style.display = "block";
-          // ...
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorMessage);
-          // alert(errorMessage);
-          document.getElementById('pass_warning').innerHTML="Incorrect Email/Password";
-        });
-    });
-    //----- End
+    if (!email) {
+      Swal.fire('Error', 'Please enter your email address.', 'error');
+      return;
+    }
 
-    //----- Logout code start
-    document.getElementById("logout").addEventListener("click", function () {
-      signOut(auth)
-        .then(() => {
-          // Sign-out successful.
-          console.log("Sign-out successful.");
-          alert("Sign-out successful.");
-          document.getElementById("logout").style.display = "none";
-        })
-        .catch((error) => {
-          // An error happened.
-          console.log("An error happened.");
-        });
-    });
-    //----- End
-  </script>
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        Swal.fire('Success', 'A password reset link has been sent to your email.', 'success');
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.message, 'error');
+      });
+  });
+</script> 
 
+</body>
 </html>
