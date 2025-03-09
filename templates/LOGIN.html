@@ -35,6 +35,15 @@
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
     <!-- The Stylesheet -->
     <link href="/static/css/login_signup.css" rel="stylesheet">
+    <style>
+      .error-message {
+        font-size: 0.8em; /* Smaller font size for error messages */
+        margin-top: 5px;
+        color: red; /* Red text for errors */
+        display: none; /* Hidden by default */
+        
+      }
+    </style>
   </head>
   <body class="login_signup">
     <div class="containers" id="containers">
@@ -44,7 +53,7 @@
           name="sign_up_form"
           id="sign_up_form"
           method="post"
-          action="#"
+          action="{{ url_for('login') }}"
           enctype="multipart/form-data"
         >
           <h1 id="h1">Create Account</h1>
@@ -64,31 +73,36 @@
               <option value="farmer">Farmer/Grower</option>
               <option value="agronomist">Agronomist/Expert</option>
               <option value="researcher">Researcher/Scientist</option>
-              <!-- <option value="admin">System Administrator</option> -->
             </select>
           </div>
           <div class="input-container">
             <i class="fa fa-phone icon"></i>
             <input type="tel" id="phone_number" name="phone_number" placeholder="Phone Number" required />
+            <!-- <label id="phone_error" class="error-message"></label> -->
           </div>
+          <label id="phone_error" class="error-message"></label>
           <div class="input-container">
             <i class="fa fa-envelope icon"></i>
             <input type="email" id="email_input" name="email" placeholder="Email" required />
+            <!-- <label id="email_error" class="error-message"></label> -->
           </div>
+          <label id="email_error" class="error-message"></label>
           <div class="input-container">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="password_input" name="password" placeholder="Password" required />
             <i class="fa fa-eye" id="togglePassword" style="right: -70px; left: auto;"></i>
+            <!-- <label id="password_error" class="error-message"></label> -->
           </div>
+          <label id="password_error" class="error-message"></label>
           <div class="input-container">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
             <i class="fa fa-eye" id="toggleConfirmPassword" style="right: -70px; left: auto;"></i>
+            <label id="confirm_password_error" class="error-message"></label>
           </div>
           <button type="button" id="btn_signup" name="sign_up" class="btn_signin_success">SignUp</button>
         </form>
       </div>
-     
       <div class="form-containers sign-in-container">
         <form
           name="login_form"
@@ -149,8 +163,6 @@
     
 
   <!-- Script to handle Firebase authentication, SweetAlert integration and session storage -->
-
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
@@ -191,13 +203,16 @@
   const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
   const loginPasswordInput = document.querySelector('#login_password');
   toggleLoginPassword.addEventListener('click', function () {
-  const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-  loginPasswordInput.setAttribute('type', type);
-  this.classList.toggle('fa-eye-slash');
+    const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    loginPasswordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye-slash');
   });
 
   // Phone Number Validation Regex
   const phoneRegex = /^(?:\+254|0)[17]\d{8}$/;
+
+  // Email Validation Regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // Password Validation Regex
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -212,27 +227,37 @@
     const password = document.getElementById('password_input').value;
     const confirmPassword = document.getElementById('confirm_password').value;
 
+    // Reset error messages
+    document.getElementById('phone_error').style.display = 'none';
+    document.getElementById('email_error').style.display = 'none';
+    document.getElementById('password_error').style.display = 'none';
+    document.getElementById('confirm_password_error').style.display = 'none';
+
     // Validate phone number
     if (!phoneRegex.test(phoneNumber)) {
-        Swal.fire('Error', 'Please enter a valid phone number (e.g., +254712345678 or 0712345678).', 'error');
-        return;
+      document.getElementById('phone_error').textContent = 'Please enter a valid phone number (e.g., +254712345678 or 0712345678).';
+      document.getElementById('phone_error').style.display = 'block';
+      return;
     }
 
-    // Check if all fields are filled
-    if (!firstName || !lastName || !userRole || !phoneNumber || !email || !password || !confirmPassword) {
-      Swal.fire('Error', 'Please fill in all fields.', 'error');
+    // Validate email
+    if (!emailRegex.test(email)) {
+      document.getElementById('email_error').textContent = 'Please enter a valid email address.';
+      document.getElementById('email_error').style.display = 'block';
       return;
     }
 
     // Validate password strength
     if (!passwordRegex.test(password)) {
-      Swal.fire('Error', 'Password must be at least 8 characters long and include atleast an uppercase, lowercase, numbers, and special characters.', 'error');
+      document.getElementById('password_error').textContent = 'Password must be atleast 8 characters long,include an uppercase,lowercase, number(s), and special characters.';
+      document.getElementById('password_error').style.display = 'block';
       return;
     }
 
     // Check if passwords match
     if (password !== confirmPassword) {
-      Swal.fire('Error', 'Passwords do not match!', 'error');
+      document.getElementById('confirm_password_error').textContent = 'Passwords do not match!';
+      document.getElementById('confirm_password_error').style.display = 'block';
       return;
     }
 
@@ -328,6 +353,5 @@
       });
   });
 </script> 
-
 </body>
 </html>
