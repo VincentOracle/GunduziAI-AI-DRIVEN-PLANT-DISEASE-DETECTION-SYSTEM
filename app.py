@@ -1,16 +1,14 @@
+# Main Application
 
-# Main flask Application
-
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, session, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 import os
 import tensorflow as tf
 import numpy as np
-import os
 from PIL import Image
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a real secret key
 
-app.secret_key = 'your_secret_key'
 # Define the upload folder for images
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -28,40 +26,56 @@ def load_model():
 
 model = load_model()
 
-# Home Page
+# Helper function to check if the user is logged in
+def is_logged_in():
+    return 'email' in session and 'first_name' in session
+
 @app.route("/")
 def home():
-    if 'first_name' not in session:
-        return redirect(url_for('login'))
-    return render_template("index.html", first_name=session['first_name'])
+    first_name = session.get('first_name', 'Guest')  # Default to 'Guest' if not logged in
+    return render_template("index.html", first_name=first_name)
 
 @app.route("/set_session", methods=["POST"])
 def set_session():
     data = request.get_json()
-    session['first_name'] = data['first_name']
+    session['first_name'] = data.get('first_name')
+    session['email'] = data.get('email')
     return jsonify({"success": True})
 
 # Login Page
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        data = request.get_json()
+        email = request.form.get('email')
+        password = request.form.get('password')
+        # Here you would typically validate the user's credentials
+        # For now, we'll just set the session variables
+        session['email'] = email
+        # Fetch the first name from the database or session (if available)
+        # For now, we'll simulate it by setting it to the email prefix
+        session['first_name'] = email.split('@')[0]  
+        # Simulate first name from email
+        session['first_name'] = data.get('first_name')
+        return redirect(url_for('home'))
     return render_template("login_signUp.html")
 
 # Logout
 @app.route("/logout")
 def logout():
+    session.pop('email', None)
     session.pop('first_name', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
-# Protected Routes
+# About Page (Public)
 @app.route("/about")
 def about():
-    if 'first_name' not in session:
-        return redirect(url_for('login'))
     return render_template("about.html")
 
+# Disease Recognition Page (Protected)
 @app.route("/disease_recognition", methods=["GET", "POST"])
 def disease_recognition():
-    if 'first_name' not in session:
+    if not is_logged_in():
         return redirect(url_for('login'))
     if request.method == "POST":
         if "file" not in request.files:
@@ -76,17 +90,14 @@ def disease_recognition():
                 # Save the uploaded file
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
                 file.save(filepath)
-
                 # Process the image
                 image = Image.open(filepath)
                 image = image.resize((128, 128))  # Resize image to match model input size
                 input_arr = tf.keras.preprocessing.image.img_to_array(image)
                 img_array = np.array([input_arr])
-
                 # Prediction
                 prediction = model.predict(img_array)
                 confidence = np.max(prediction) * 100  # Get confidence score
-
                 # Actual labels from the 38 classes
                 labels = [
                     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_rust', 'Apple___healthy',
@@ -104,7 +115,6 @@ def disease_recognition():
                     'Tomato___healthy'
                 ]
                 predicted_label = labels[np.argmax(prediction)]
-
                 return jsonify({
                     "success": True,
                     "prediction": predicted_label,
@@ -113,22 +123,29 @@ def disease_recognition():
                 })
             except Exception as e:
                 return jsonify({"success": False, "error": str(e)})
-    
     return render_template("disease_recognition.html")
 
-# Experts page
+# Expert Consultation Page (Protected)
 @app.route("/expert")
 def expert():
-    if 'first_name' not in session:
+    if not is_logged_in():
         return redirect(url_for('login'))
     return render_template("expert.html")
 
-# Contact page
+# User Dashboard Page (Protected)
+@app.route("/user_dashboard")
+def user_dashboard():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    return render_template("user_dashboard.html")
+
+# Contact Page (Protected)
 @app.route("/contact")
 def contact():
-    if 'first_name' not in session:
+    if not is_logged_in():
         return redirect(url_for('login'))
     return render_template("contact.html")
 
+# Run the Flask App
 if __name__ == "__main__":
     app.run(debug=True)

@@ -69,31 +69,72 @@
         </div>
     </div>
     <!-- Topbar End -->
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
+    <a href="/" class="navbar-brand d-flex align-items-center">
+        <!-- Add your logo or brand name here -->
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav mx-auto py-0">
+            <!-- Public Links -->
+            <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+            <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
 
-
-    <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
-        <a href="/" class="navbar-brand d-flex align-items-center">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav mx-auto py-0">
-                <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-                <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}text-warning{% endif %}">About Us</a>
+            <!-- Protected Links (Only accessible when logged in) -->
+            {% if session.email %}
                 <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
                 <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
+                <!-- <a href="/user_dashboard" class="nav-item nav-link {% if request.path == '/user_dashboard' %}active{% endif %}">Dashboard</a> -->
                 <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
-            </div>
-            <!-- <div class="d-flex">
-                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
-                <a href="/signup" class="btn btn-warning {% if request.path == '/signup' %}active{% endif %}">Sign Up</a>
-            </div> -->
+            {% else %}
+                <!-- Placeholder links for non-logged-in users (redirect to login) -->
+                <a href="/login" class="nav-item nav-link">Disease Recognition</a>
+                <a href="/login" class="nav-item nav-link">Expert Consultation</a>
+                <a href="/login" class="nav-item nav-link">Dashboard</a>
+                <a href="/login" class="nav-item nav-link">Contact</a>
+            {% endif %}
         </div>
-    </nav>
-    
-    <!-- Navbar End -->
+        <div class="d-flex">
+            {% if session.email %}
+                <!-- Greeting and Logout Button (Visible when logged in) -->
+                <span style=" top: 10px; right: 65px; color: rgb(27, 25, 25); font-weight: bold;font-size: 20px;" class="navbar-text me-3" id="greeting">Hello, {{ session.first_name }}!</span><span style="top: 15px; right: 65px; font-weight: bold;font-size: 25px; padding-right:17px; margin-left:-13px;">👋</span>
+                <a href="/logout" class="btn btn-outline-light me-2">Logout</a>
+            {% else %}
+                <!-- Login and Sign Up Buttons (Visible when not logged in) -->
+                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
+                <a href="/login" class="btn btn-warning {% if request.path == '/login' %}active{% endif %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+<!-- Greeting Script -->
+<script>
+    function displayGreeting() {
+        const first_name = "{{ session.first_name }}";  // Use the first_name from the session
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting = 'Hello';
+
+        if (hour < 12) {
+            greeting += ', Good morning';
+        } else if (hour < 18) {
+            greeting += ', Good afternoon';
+        } else {
+            greeting += ', Good evening';
+        }
+        greeting += ` ${first_name}!`;
+        document.getElementById('greeting').innerText = greeting;
+    }
+
+    // Call the function when the page loads
+    window.onload = displayGreeting;
+</script>
+<!-- Navbar End -->
+
+   
  <!-- Hero Section -->
  <div class="container-fluid bg-primary py-5 bg-hero mb-5">
     <div class="container py-5">

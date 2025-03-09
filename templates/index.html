@@ -42,29 +42,6 @@
     </script>
     <!--End of Tawk.to Script-->
 <body>
-    <script>
-        function displayGreeting() {
-            const first_name = "{{ first_name }}";
-            const now = new Date();
-            const hour = now.getHours();
-            let greeting = 'Hello';
-
-            if (hour < 12) {
-                greeting += ', good morning';
-            } else if (hour < 18) {
-                greeting += ', good afternoon';
-            } else {
-                greeting += ', good evening';
-            }
-
-            greeting += ` ${first_name}`;
-            document.getElementById('greeting').innerText = greeting;
-        }
-        window.onload = displayGreeting;
-    </script>
-
-    <div id="greeting" style="position: absolute; top: 10px; right: 10px; color: white; font-weight: bold;"></div>
-      <!-- Topbar Start -->
 <div class="container-fluid px-5 d-none d-lg-block">
     <div class="row gx-5 py-3 align-items-center">
         <div class="col-lg-3">
@@ -91,7 +68,6 @@
     </div>
 </div>
 <!-- Topbar End -->
-
 <!-- Navbar Start -->
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -101,19 +77,59 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav mx-auto py-0">
+            <!-- Public Links -->
             <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-            <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}text-warning{% endif %}">About Us</a>
-            <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
-            <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
-            <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+            <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
+
+            <!-- Protected Links (Only accessible when logged in) -->
+            {% if session.email %}
+                <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
+                <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
+                <!-- <a href="/user_dashboard" class="nav-item nav-link {% if request.path == '/user_dashboard' %}active{% endif %}">Dashboard</a> -->
+                <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+            {% else %}
+                <!-- Placeholder links for non-logged-in users (redirect to login) -->
+                <a href="/login" class="nav-item nav-link">Disease Recognition</a>
+                <a href="/login" class="nav-item nav-link">Expert Consultation</a>
+                <!-- <a href="/login" class="nav-item nav-link">Dashboard</a> -->
+                <a href="/login" class="nav-item nav-link">Contact</a>
+            {% endif %}
         </div>
         <div class="d-flex">
-            <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
-            <a href="/login" class="btn btn-warning {% if request.path == '/login' %}active{% endif %}">Sign Up</a>
+            {% if session.email %}
+                <!-- Greeting and Logout Button (Visible when logged in) -->
+                <span style=" top: 10px; right: 65px; color: rgb(27, 25, 25); font-weight: bold;font-size: 20px;" class="navbar-text me-3" id="greeting">Hello, {{ session.first_name }}!</span><span style="top: 15px; right: 65px; font-weight: bold;font-size: 25px; padding-right:17px; margin-left:-13px;">👋</span>
+                <a href="/logout" class="btn btn-outline-light me-2">Logout</a>
+            {% else %}
+                <!-- Login and Sign Up Buttons (Visible when not logged in) -->
+                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
+                <a href="/login" class="btn btn-warning {% if request.path == '/login' %}active{% endif %}">Sign Up</a>
+            {% endif %}
         </div>
     </div>
 </nav>
+<!-- Greeting Script -->
+<script>
+    function displayGreeting() {
+        const first_name = "{{ session.first_name }}";  // Use the first_name from the session
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting = 'Hello';
 
+        if (hour < 12) {
+            greeting += ', Good morning';
+        } else if (hour < 18) {
+            greeting += ', Good afternoon';
+        } else {
+            greeting += ', Good evening';
+        }
+        greeting += ` ${first_name}!`;
+        document.getElementById('greeting').innerText = greeting;
+    }
+
+    // Call the function when the page loads
+    window.onload = displayGreeting;
+</script>
 <!-- Navbar End -->
 
    <!-- Carousel Start -->
@@ -308,7 +324,7 @@
                     <div class="service-item bg-light text-center p-5">
                         <i class="fa fa-globe display-1 text-primary mb-3"></i>
                         <h4>Global Reach</h4>
-                        <p class="mb-0">Helping farmers across the  ountry access modern AI-driven plant health solutions.</p>
+                        <p class="mb-0">Helping farmers across the  country access modern AI-driven plant health solutions.</p>
                     </div>
                 </div>
             </div>
@@ -337,7 +353,7 @@
                             <i class="fa fa-globe fs-4 text-white"></i>
                         </div>
                         <h4 class="text-white">Worldwide Accessibility</h4>
-                        <p class="mb-0">Available for farmers and agronomists worldwide with multilingual support.</p>
+                        <p class="mb-0">Available for farmers and agronomists Countrywide with language support.</p>
                     </div>
                 </div>
                 <div class="col-lg-6">
