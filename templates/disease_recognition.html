@@ -281,6 +281,45 @@
             <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
         </div>
     </div>
+<!-- Feedback Section -->
+<div class="feedback-section">
+    <h3 class="feedback-title">Feedback & Learning</h3>
+    <p class="feedback-description">
+        Help us improve! Provide feedback on the AI prediction accuracy, rate the system, and share your comments.
+    </p>
+    <form id="feedback-form">
+        <!-- AI Prediction Accuracy -->
+        <div class="form-group">
+            <label for="accuracy">AI Prediction Accuracy (%)</label>
+            <input type="number" id="accuracy" name="accuracy" min="0" max="100" placeholder="Enter a percentage (0-100)" required>
+        </div>
+
+        <!-- Rating System (1-5 Stars) -->
+        <div class="form-group">
+            <label for="rating">Rate the System (1-5 Stars)</label>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <input type="hidden" id="rating" name="rating" required>
+        </div>
+
+        <!-- Feedback Comments -->
+        <div class="form-group">
+            <label for="comments">Comments</label>
+            <textarea id="comments" name="comments" rows="4" placeholder="Share your feedback or report incorrect diagnoses..." required></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <!-- <button type="submit" class="btn-submit">Send Feedback</button> -->
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-paper-plane"></i> Send Feedback
+        </button>
+    </form>
+</div>
 </div>
 
 <script>
@@ -425,7 +464,6 @@
         }, 1000); // 1-second delay
     });
    </script>
-
 <script>
 const plant_disease_info = {
     'Apple___Apple_scab': {
@@ -777,6 +815,58 @@ const plant_disease_info = {
 };
 </script>
 
+<!-- SweetAlert Script for Feedback Submission -->
+<script>
+    // Star Rating System
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = star.getAttribute('data-value');
+            ratingInput.value = value; // Set the hidden input value
+            stars.forEach(s => s.classList.remove('selected')); // Reset all stars
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add('selected'); // Highlight selected stars
+            }
+        });
+    });
+
+    // Handle Feedback Form Submission
+    document.getElementById('feedback-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Get form data
+        const accuracy = document.getElementById('accuracy').value;
+        const rating = document.getElementById('rating').value;
+        const comments = document.getElementById('comments').value;
+
+        // Validate form inputs
+        if (!accuracy || !rating || !comments) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill out all fields before submitting!',
+            });
+            return;
+        }
+
+        // Simulate sending feedback to the database
+        setTimeout(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Feedback Sent!',
+                text: 'Thank you for helping us improve our system.',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Reset the form
+                document.getElementById('feedback-form').reset();
+                stars.forEach(star => star.classList.remove('selected')); // Reset stars
+            });
+        }, 1000); // Simulate a 1-second delay
+    });
+</script>
+
     <!-- Footer Start -->
     <div class="container-fluid bg-footer bg-primary text-white mt-5">
         <div class="container">
@@ -848,7 +938,6 @@ const plant_disease_info = {
         </div>
     </div>
     <!-- Footer End -->
-
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-secondary py-3 fs-4 back-to-top"><i class="bi bi-arrow-up"></i></a>
