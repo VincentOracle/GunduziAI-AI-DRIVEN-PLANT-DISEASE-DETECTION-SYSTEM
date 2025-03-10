@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - GunduziAi</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <style>
+        /* Previous CSS styles remain the same */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 20px;
+            border: 3px solid #3498db;
+        }
+
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #34495e;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .manage-users-panel {
+            display: none; /* Hidden by default */
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .manage-users-panel h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .user-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .action-buttons button.edit {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .action-buttons button.delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .action-buttons button.add {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .action-buttons button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100px;
+            }
+
+            .sidebar h4,
+            .sidebar a span {
+                display: none;
+            }
+
+            .sidebar a {
+                text-align: center;
+            }
+
+            .sidebar a i {
+                margin-right: 0;
+            }
+
+            .content {
+                margin-left: 100px;
+                width: calc(100% - 100px);
+            }
+        }
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background: #2c3e50;
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .disease-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="/static/img/team-3.jpg" alt="Admin Profile">
+        <h4>Admin Panel</h4>
+        <a href="#" id="manage-users-link"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+        <a href="#" id="update-database-link"><i class="fas fa-database"></i> <span>Update Database</span></a>
+        <a href="#"><i class="fas fa-chart-line"></i> <span>System Reports</span></a>
+        <a href="#"><i class="fas fa-cogs"></i> <span>Settings</span></a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h2 class="mb-4">Admin Dashboard</h2>
+
+        <!-- Cards Section -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card p-3 bg-primary text-white">
+                    <h4>Total Users</h4>
+                    <p>1,250</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 bg-success text-white">
+                    <h4>Reports Generated</h4>
+                    <p>350</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 bg-warning text-dark">
+                    <h4>Active Diagnoses</h4>
+                    <p>78</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Users Panel -->
+        <div class="manage-users-panel" id="manage-users-panel">
+            <h3>Manage Users</h3>
+            <button class="btn add mb-3" onclick="addUser()">
+                <i class="fas fa-plus"></i> Add User
+            </button>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dummy Data -->
+                    <tr>
+                        <td>John Doe</td>
+                        <td>john.doe@example.com</td>
+                        <td>********</td>
+                        <td>Farmer</td>
+                        <td class="action-buttons">
+                            <button class="edit" onclick="editUser(1)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete" onclick="deleteUser(1)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>jane.smith@example.com</td>
+                        <td>********</td>
+                        <td>Expert</td>
+                        <td class="action-buttons">
+                            <button class="edit" onclick="editUser(2)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete" onclick="deleteUser(2)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Alice Johnson</td>
+                        <td>alice.johnson@example.com</td>
+                        <td>********</td>
+                        <td>Researcher</td>
+                        <td class="action-buttons">
+                            <button class="edit" onclick="editUser(3)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete" onclick="deleteUser(3)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h3>User Activity (Line Graph)</h3>
+                    <canvas id="userChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h3>System Performance (Bar Graph)</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Database Modal -->
+<div class="modal fade" id="updateDatabaseModal" tabindex="-1" aria-labelledby="updateDatabaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateDatabaseModalLabel">Disease Database Management</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Existing Diseases Section -->
+                <div class="existing-diseases mb-4">
+                    <h4>Existing Plant Diseases</h4>
+                    <div class="disease-list">
+                        <!-- Dummy Disease Data -->
+                        <div class="disease-item card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <img src="https://via.placeholder.com/150" alt="Disease Image" class="disease-image img-fluid">
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h5 class="card-title">Tomato Blight</h5>
+                                        <p class="card-text"><strong>Symptoms:</strong> Brown spots on leaves, wilting, fruit rot.</p>
+                                        <p class="card-text"><strong>Preventive Measures:</strong> Rotate crops, use resistant varieties.</p>
+                                        <p class="card-text"><strong>Chemical Treatments:</strong> Fungicides like chlorothalonil.</p>
+                                        <p class="card-text"><strong>Organic Solutions:</strong> Neem oil, copper sprays.</p>
+                                        <p class="card-text"><strong>Best Farming Practices:</strong> Proper spacing, avoid overhead watering.</p>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary" onclick="editDisease(1)">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(1)">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="disease-item card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <img src="https://via.placeholder.com/150" alt="Disease Image" class="disease-image img-fluid">
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h5 class="card-title">Powdery Mildew</h5>
+                                        <p class="card-text"><strong>Symptoms:</strong> White powdery spots on leaves and stems.</p>
+                                        <p class="card-text"><strong>Preventive Measures:</strong> Improve air circulation, reduce humidity.</p>
+                                        <p class="card-text"><strong>Chemical Treatments:</strong> Sulfur-based fungicides.</p>
+                                        <p class="card-text"><strong>Organic Solutions:</strong> Baking soda spray, milk solution.</p>
+                                        <p class="card-text"><strong>Best Farming Practices:</strong> Prune infected parts, avoid overcrowding.</p>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary" onclick="editDisease(2)">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(2)">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Disease Form -->
+                <form id="diseaseForm">
+                    <div class="form-group">
+                        <label for="diseaseName">Disease Name</label>
+                        <input type="text" id="diseaseName" name="diseaseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="symptoms">Symptoms</label>
+                        <textarea id="symptoms" name="symptoms" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preventiveMeasures">Preventive Measures</label>
+                        <textarea id="preventiveMeasures" name="preventiveMeasures" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="chemicalTreatments">Chemical Treatments</label>
+                        <textarea id="chemicalTreatments" name="chemicalTreatments" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="organicSolutions">Organic Solutions</label>
+                        <textarea id="organicSolutions" name="organicSolutions" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="bestPractices">Best Farming Practices</label>
+                        <textarea id="bestPractices" name="bestPractices" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="diseaseImage">Upload Disease Image</label>
+                        <input type="file" id="diseaseImage" name="diseaseImage" accept="image/*">
+                        <img id="diseaseImagePreview" src="#" alt="Disease Image Preview" class="disease-image" style="display: none;">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Save Disease</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteDisease()">Delete Disease</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    // Handle Edit Disease
+function editDisease(diseaseId) {
+    // Fetch disease data (dummy data for now)
+    const disease = {
+        name: "Tomato Blight",
+        symptoms: "Brown spots on leaves, wilting, fruit rot.",
+        preventiveMeasures: "Rotate crops, use resistant varieties.",
+        chemicalTreatments: "Fungicides like chlorothalonil.",
+        organicSolutions: "Neem oil, copper sprays.",
+        bestPractices: "Proper spacing, avoid overhead watering.",
+        image: "https://via.placeholder.com/150"
+    };
+
+    // Populate the form with disease data
+    document.getElementById('diseaseName').value = disease.name;
+    document.getElementById('symptoms').value = disease.symptoms;
+    document.getElementById('preventiveMeasures').value = disease.preventiveMeasures;
+    document.getElementById('chemicalTreatments').value = disease.chemicalTreatments;
+    document.getElementById('organicSolutions').value = disease.organicSolutions;
+    document.getElementById('bestPractices').value = disease.bestPractices;
+    document.getElementById('diseaseImagePreview').src = disease.image;
+    document.getElementById('diseaseImagePreview').style.display = 'block';
+
+    alert(`Editing Disease with ID: ${diseaseId}`);
+}
+
+// Handle Delete Disease
+function deleteDisease(diseaseId) {
+    if (confirm('Are you sure you want to delete this disease?')) {
+        alert(`Deleting Disease with ID: ${diseaseId}`);
+        // Here you would typically send a request to the server to delete the disease
+    }
+}
+</script>
+    <!-- JavaScript for Manage Users Panel -->
+    <script>
+        // Toggle Manage Users Panel
+        const manageUsersLink = document.getElementById('manage-users-link');
+        const manageUsersPanel = document.getElementById('manage-users-panel');
+
+        manageUsersLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            manageUsersPanel.style.display = manageUsersPanel.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Dummy Functions for Actions
+        function addUser() {
+            alert('Add User functionality will be implemented here.');
+        }
+
+        function editUser(userId) {
+            alert(`Edit User with ID: ${userId}`);
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                alert(`Delete User with ID: ${userId}`);
+            }
+        }
+    </script>
+
+    <!-- Chart.js Scripts -->
+    <script>
+        // Line Graph for User Activity
+        const userCtx = document.getElementById('userChart').getContext('2d');
+        new Chart(userCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'New Users',
+                    data: [10, 30, 50, 40, 60, 80],
+                    borderColor: '#3498db',
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Bar Graph for System Performance
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Diagnosis 1', 'Diagnosis 2', 'Diagnosis 3', 'Diagnosis 4'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [30, 50, 40, 60],
+                    backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript for Update Database Modal -->
+    <script>
+        // Show Update Database Modal
+        const updateDatabaseLink = document.getElementById('update-database-link');
+        const updateDatabaseModal = new bootstrap.Modal(document.getElementById('updateDatabaseModal'));
+
+        updateDatabaseLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            updateDatabaseModal.show();
+        });
+
+        // Handle Disease Image Preview
+        const diseaseImageInput = document.getElementById('diseaseImage');
+        const diseaseImagePreview = document.getElementById('diseaseImagePreview');
+
+        diseaseImageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    diseaseImagePreview.src = e.target.result;
+                    diseaseImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle Disease Form Submission
+        const diseaseForm = document.getElementById('diseaseForm');
+
+        diseaseForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const diseaseName = document.getElementById('diseaseName').value;
+            const symptoms = document.getElementById('symptoms').value;
+            const preventiveMeasures = document.getElementById('preventiveMeasures').value;
+            const chemicalTreatments = document.getElementById('chemicalTreatments').value;
+            const organicSolutions = document.getElementById('organicSolutions').value;
+            const bestPractices = document.getElementById('bestPractices').value;
+            const diseaseImage = diseaseImageInput.files[0];
+
+            // Here you would typically send this data to the server
+            console.log({
+                diseaseName,
+                symptoms,
+                preventiveMeasures,
+                chemicalTreatments,
+                organicSolutions,
+                bestPractices,
+                diseaseImage
+            });
+
+            alert('Disease information saved successfully!');
+            updateDatabaseModal.hide();
+        });
+
+        // Handle Delete Disease
+        function deleteDisease() {
+            if (confirm('Are you sure you want to delete this disease?')) {
+                alert('Disease deleted successfully!');
+                updateDatabaseModal.hide();
+            }
+        }
+    </script>
+</body>
+</html>
