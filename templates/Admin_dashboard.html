@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Chart.js for Graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for PDF Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- SheetJS for Excel Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
+    
     <!-- Custom Styles -->
     <style>
         /* Previous CSS styles remain the same */
@@ -268,7 +277,115 @@
             border-radius: 5px;
             margin-top: 10px;
         }
-    </style>
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.system-reports-panel {
+    display: none; /* Hidden by default */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-left: 250px; /* Align with the sidebar */
+    width: calc(100% - 250px); /* Adjust width to fit content */
+}
+
+.system-reports-panel.active {
+    display: block; /* Show when active */
+}
+
+/* admin settings styles */
+.settings-panel {
+    display: none; /* Hidden by default */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.settings-panel.active {
+    display: block; /* Show when active */
+}
+
+.profile-pic-preview {
+    max-width: 100px;
+    height: auto;
+    border-radius: 50%;
+    margin-top: 10px;
+    display: none; /* Hidden by default */
+}
+
+.password-field .input-group-text {
+    cursor: pointer;
+    background-color: #fff;
+    border-left: none;
+    transition: background-color 0.3s ease;
+}
+
+.password-field .input-group-text:hover {
+    background-color: #f8f9fa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .settings-panel {
+        padding: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group-append {
+        margin-top: 10px;
+    }
+}
+
+/* Interactive Styles */
+.btn-primary {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+.spinner-border {
+    margin-left: 10px;
+}
+ </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -277,8 +394,8 @@
         <h4>Admin Panel</h4>
         <a href="#" id="manage-users-link"><i class="fas fa-users"></i> <span>Manage Users</span></a>
         <a href="#" id="update-database-link"><i class="fas fa-database"></i> <span>Update Database</span></a>
-        <a href="#"><i class="fas fa-chart-line"></i> <span>System Reports</span></a>
-        <a href="#"><i class="fas fa-cogs"></i> <span>Settings</span></a>
+        <a href="#" id="system-reports-link"><i class="fas fa-chart-line"></i> <span>System Reports</span></a>
+        <a href="#" id="settings-link"><i class="fas fa-cogs"></i> <span>Settings</span></a>
         <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
     </div>
 
@@ -403,14 +520,14 @@
                     <h4>Existing Plant Diseases</h4>
                     <div class="disease-list">
                         <!-- Dummy Disease Data -->
-                        <div class="disease-item card mb-3">
+                        <div class="disease-item card mb-3" data-id="1">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <img src="https://via.placeholder.com/150" alt="Disease Image" class="disease-image img-fluid">
+                                        <img src="/static/img/AppleCedarRust1.JPG" alt="Disease Image" class="disease-image img-fluid">
                                     </div>
                                     <div class="col-md-9">
-                                        <h5 class="card-title">Tomato Blight</h5>
+                                        <h5 class="card-title">Apple___Apple_scab</h5>
                                         <p class="card-text"><strong>Symptoms:</strong> Brown spots on leaves, wilting, fruit rot.</p>
                                         <p class="card-text"><strong>Preventive Measures:</strong> Rotate crops, use resistant varieties.</p>
                                         <p class="card-text"><strong>Chemical Treatments:</strong> Fungicides like chlorothalonil.</p>
@@ -428,19 +545,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="disease-item card mb-3">
+                        <div class="disease-item card mb-3" data-id="2">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <img src="https://via.placeholder.com/150" alt="Disease Image" class="disease-image img-fluid">
+                                        <img src="/static/img/TomatoEarlyBlight3.JPG" alt="Disease Image" class="disease-image img-fluid">
                                     </div>
                                     <div class="col-md-9">
-                                        <h5 class="card-title">Powdery Mildew</h5>
-                                        <p class="card-text"><strong>Symptoms:</strong> White powdery spots on leaves and stems.</p>
-                                        <p class="card-text"><strong>Preventive Measures:</strong> Improve air circulation, reduce humidity.</p>
-                                        <p class="card-text"><strong>Chemical Treatments:</strong> Sulfur-based fungicides.</p>
-                                        <p class="card-text"><strong>Organic Solutions:</strong> Baking soda spray, milk solution.</p>
-                                        <p class="card-text"><strong>Best Farming Practices:</strong> Prune infected parts, avoid overcrowding.</p>
+                                        <h5 class="card-title">Tomato___Bacterial_spot</h5>
+                                        <p class="card-text"><strong>Symptoms:</strong> Dark spots on leaves and fruit.</p>
+                                        <p class="card-text"><strong>Preventive Measures:</strong> Use disease-free seeds.</p>
+                                        <p class="card-text"><strong>Chemical Treatments:</strong> Copper-based fungicides.</p>
+                                        <p class="card-text"><strong>Organic Solutions:</strong> Baking soda spray.</p>
+                                        <p class="card-text"><strong>Best Farming Practices:</strong> Avoid overhead irrigation.</p>
                                         <div class="action-buttons">
                                             <button class="btn btn-sm btn-primary" onclick="editDisease(2)">
                                                 <i class="fas fa-edit"></i> Edit
@@ -453,6 +570,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Add more diseases here -->
                     </div>
                 </div>
 
@@ -499,42 +617,105 @@
         </div>
     </div>
 </div>
-<script>
 
-    // Handle Edit Disease
-function editDisease(diseaseId) {
-    // Fetch disease data (dummy data for now)
-    const disease = {
-        name: "Tomato Blight",
+<script>
+// Dummy Data for Diseases
+const diseases = [
+    {
+        id: 1,
+        name: "Apple___Apple_scab",
         symptoms: "Brown spots on leaves, wilting, fruit rot.",
         preventiveMeasures: "Rotate crops, use resistant varieties.",
         chemicalTreatments: "Fungicides like chlorothalonil.",
         organicSolutions: "Neem oil, copper sprays.",
         bestPractices: "Proper spacing, avoid overhead watering.",
         image: "https://via.placeholder.com/150"
-    };
+    },
+    {
+        id: 2,
+        name: "Tomato___Bacterial_spot",
+        symptoms: "Dark spots on leaves and fruit.",
+        preventiveMeasures: "Use disease-free seeds.",
+        chemicalTreatments: "Copper-based fungicides.",
+        organicSolutions: "Baking soda spray.",
+        bestPractices: "Avoid overhead irrigation.",
+        image: "https://via.placeholder.com/150"
+    },
+    // Add more diseases here
+];
 
-    // Populate the form with disease data
-    document.getElementById('diseaseName').value = disease.name;
-    document.getElementById('symptoms').value = disease.symptoms;
-    document.getElementById('preventiveMeasures').value = disease.preventiveMeasures;
-    document.getElementById('chemicalTreatments').value = disease.chemicalTreatments;
-    document.getElementById('organicSolutions').value = disease.organicSolutions;
-    document.getElementById('bestPractices').value = disease.bestPractices;
-    document.getElementById('diseaseImagePreview').src = disease.image;
-    document.getElementById('diseaseImagePreview').style.display = 'block';
+// Handle Edit Disease
+function editDisease(diseaseId) {
+    const disease = diseases.find(d => d.id === diseaseId);
+    if (disease) {
+        // Populate the form with disease data
+        document.getElementById('diseaseName').value = disease.name;
+        document.getElementById('symptoms').value = disease.symptoms;
+        document.getElementById('preventiveMeasures').value = disease.preventiveMeasures;
+        document.getElementById('chemicalTreatments').value = disease.chemicalTreatments;
+        document.getElementById('organicSolutions').value = disease.organicSolutions;
+        document.getElementById('bestPractices').value = disease.bestPractices;
+        document.getElementById('diseaseImagePreview').src = disease.image;
+        document.getElementById('diseaseImagePreview').style.display = 'block';
 
-    alert(`Editing Disease with ID: ${diseaseId}`);
+        // Set the form to edit mode
+        document.getElementById('diseaseForm').dataset.mode = 'edit';
+        document.getElementById('diseaseForm').dataset.diseaseId = diseaseId;
+    }
 }
 
 // Handle Delete Disease
 function deleteDisease(diseaseId) {
     if (confirm('Are you sure you want to delete this disease?')) {
-        alert(`Deleting Disease with ID: ${diseaseId}`);
-        // Here you would typically send a request to the server to delete the disease
+        // Remove the disease from the list (dummy implementation)
+        const index = diseases.findIndex(d => d.id === diseaseId);
+        if (index !== -1) {
+            diseases.splice(index, 1);
+            alert(`Disease with ID: ${diseaseId} deleted successfully!`);
+            // Refresh the list (in a real app, this would involve re-rendering the list or fetching from the server)
+        }
     }
 }
+
+// Handle Form Submission
+document.getElementById('diseaseForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const mode = this.dataset.mode; // 'add' or 'edit'
+    const diseaseId = this.dataset.diseaseId;
+
+    const diseaseData = {
+        name: document.getElementById('diseaseName').value,
+        symptoms: document.getElementById('symptoms').value,
+        preventiveMeasures: document.getElementById('preventiveMeasures').value,
+        chemicalTreatments: document.getElementById('chemicalTreatments').value,
+        organicSolutions: document.getElementById('organicSolutions').value,
+        bestPractices: document.getElementById('bestPractices').value,
+        image: document.getElementById('diseaseImagePreview').src
+    };
+
+    if (mode === 'edit') {
+        // Update the disease in the list (dummy implementation)
+        const disease = diseases.find(d => d.id === parseInt(diseaseId));
+        if (disease) {
+            Object.assign(disease, diseaseData);
+            alert(`Disease with ID: ${diseaseId} updated successfully!`);
+        }
+    } else {
+        // Add a new disease (dummy implementation)
+        const newDisease = { id: diseases.length + 1, ...diseaseData };
+        diseases.push(newDisease);
+        alert('New disease added successfully!');
+    }
+
+    // Reset the form
+    this.reset();
+    document.getElementById('diseaseImagePreview').style.display = 'none';
+    this.dataset.mode = 'add';
+    this.dataset.diseaseId = '';
+});
+
 </script>
+
     <!-- JavaScript for Manage Users Panel -->
     <script>
         // Toggle Manage Users Panel
@@ -676,5 +857,432 @@ function deleteDisease(diseaseId) {
             }
         }
     </script>
+   
+   <!-- System Reports Panel -->
+<div class="system-reports-panel" id="system-reports-panel">
+    <h3>System Reports</h3>
+
+    <!-- Report Filters -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label for="reportType">Select Report Type</label>
+            <select id="reportType" class="form-select">
+                <option value="loggedUsers">Logged-In Users</option>
+                <option value="plantDiseases">Plant Diseases</option>
+                <option value="userFeedback">User Feedback</option>
+                <option value="diseaseTrends">Disease Detection Trends</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="dateRange">Select Date Range</label>
+            <input type="date" id="dateRange" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-primary mt-4" onclick="generateReport()">
+                <i class="fas fa-chart-line"></i> Generate Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h3>Logged-In Users (Line Graph)</h3>
+                <canvas id="loggedUsersChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h3>Plant Diseases (Bar Graph)</h3>
+                <canvas id="plantDiseasesChart"></canvas>
+            </div>
+        </div>
+    </div>
+<!-- User Feedback Table -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="chart-container">
+            <h3>User Feedback</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dummy Data -->
+                    <tr>
+                        <td>John Doe</td>
+                        <td>john.doe@example.com</td>
+                        <td>Great system! Very helpful for diagnosing plant diseases.</td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>jane.smith@example.com</td>
+                        <td>The system is easy to use, but I encountered some bugs.</td>
+                    </tr>
+                    <tr>
+                        <td>Alice Johnson</td>
+                        <td>alice.johnson@example.com</td>
+                        <td>Excellent tool for farmers. Highly recommended!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    <!-- Export Buttons -->
+    <div class="row mt-4">
+        <div class="col-md-12 text-end">
+            <button class="btn btn-success" onclick="exportToPDF()">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </button>
+            <button class="btn btn-warning" onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Admin settings start -->
+<!-- Admin settings start -->
+<div class="content">
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <h2 class="mb-4">Admin Settings</h2>
+        <form id="settingsForm">
+            <!-- Name -->
+            <div class="form-group">
+                <label for="adminName">Name</label>
+                <input type="text" id="adminName" name="adminName" class="form-control" placeholder="Enter your name" required>
+            </div>
+
+            <!-- Profile Picture -->
+            <div class="form-group">
+                <label for="profilePic">Profile Picture</label>
+                <input type="file" id="profilePic" name="profilePic" class="form-control" accept="image/*">
+                <img id="profilePicPreview" src="#" alt="Profile Picture Preview" class="profile-pic-preview" style="display: none;">
+            </div>
+
+            <!-- Login Email -->
+            <div class="form-group">
+                <label for="adminEmail">Login Email</label>
+                <input type="email" id="adminEmail" name="adminEmail" class="form-control" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group password-field">
+                <label for="adminPassword">Password</label>
+                <div class="input-group">
+                    <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="Enter new password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('adminPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group password-field">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Passwords must match.</small>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" id="submitButton">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <div class="spinner-border text-primary d-none" id="loadingSpinner" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* General Styles */
+
+</style>
+
+<script>
+// Toggle Settings Panel
+const settingsLink = document.getElementById('settings-link');
+const settingsPanel = document.getElementById('settings-panel');
+
+settingsLink.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent the default link behavior
+    settingsPanel.classList.toggle('active'); // Toggle the 'active' class
+});
+
+// Handle Profile Picture Preview
+const profilePicInput = document.getElementById('profilePic');
+const profilePicPreview = document.getElementById('profilePicPreview');
+
+profilePicInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            profilePicPreview.src = e.target.result;
+            profilePicPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Handle Settings Form Submission
+document.getElementById('settingsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Show loading spinner
+    const submitButton = document.getElementById('submitButton');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    submitButton.disabled = true;
+    loadingSpinner.classList.remove('d-none');
+
+    // Simulate API call delay
+    setTimeout(() => {
+        // Get form values
+        const adminName = document.getElementById('adminName').value;
+        const adminEmail = document.getElementById('adminEmail').value;
+        const adminPassword = document.getElementById('adminPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validate passwords match
+        if (adminPassword !== confirmPassword) {
+            alert('Passwords do not match. Please try again.');
+            submitButton.disabled = false;
+            loadingSpinner.classList.add('d-none');
+            return;
+        }
+
+        // Simulate sending data to the server
+        console.log('Updating settings with:', {
+            name: adminName,
+            email: adminEmail,
+            password: adminPassword,
+            profilePic: profilePicInput.files[0] ? profilePicInput.files[0].name : 'No file selected'
+        });
+
+        alert('Settings updated successfully!');
+        settingsPanel.classList.remove('active'); // Hide the settings panel after submission
+        submitButton.disabled = false;
+        loadingSpinner.classList.add('d-none');
+    }, 2000); // Simulate 2-second delay
+});
+
+// Toggle Password Visibility
+function togglePasswordVisibility(fieldId) {
+    const passwordField = document.getElementById(fieldId);
+    const toggleIcon = passwordField.nextElementSibling.querySelector('i');
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+</script>
+<!-- Admin settings End -->
+
+<script>
+// Initialize Charts
+let loggedUsersChart, plantDiseasesChart;
+
+function initializeCharts() {
+    const loggedUsersCtx = document.getElementById('loggedUsersChart').getContext('2d');
+    loggedUsersChart = new Chart(loggedUsersCtx, {
+        type: 'line',
+        data: {
+            labels: reportData.loggedUsers.labels,
+            datasets: [{
+                label: 'Logged-In Users',
+                data: reportData.loggedUsers.data,
+                borderColor: '#3498db',
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    const plantDiseasesCtx = document.getElementById('plantDiseasesChart').getContext('2d');
+    plantDiseasesChart = new Chart(plantDiseasesCtx, {
+        type: 'bar',
+        data: {
+            labels: reportData.plantDiseases.labels,
+            datasets: [{
+                label: 'Plant Diseases',
+                data: reportData.plantDiseases.data,
+                backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Generate Report
+function generateReport() {
+    const reportType = document.getElementById('reportType').value;
+    const dateRange = document.getElementById('dateRange').value;
+
+    // Update charts based on selected report type
+    if (reportType === 'loggedUsers') {
+        loggedUsersChart.data.labels = reportData.loggedUsers.labels;
+        loggedUsersChart.data.datasets[0].data = reportData.loggedUsers.data;
+        loggedUsersChart.update();
+    } else if (reportType === 'plantDiseases') {
+        plantDiseasesChart.data.labels = reportData.plantDiseases.labels;
+        plantDiseasesChart.data.datasets[0].data = reportData.plantDiseases.data;
+        plantDiseasesChart.update();
+    }
+
+    alert(`Report generated for ${reportType} on ${dateRange}`);
+}
+
+// Dummy Data for Reports
+const reportData = {
+    loggedUsers: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        data: [50, 70, 60, 90, 80, 100]
+    },
+    plantDiseases: {
+        labels: ['Apple Scab', 'Tomato Blight', 'Powdery Mildew', 'Leaf Spot'],
+        data: [30, 50, 40, 60]
+    },
+    userFeedback: [
+        { name: 'John Doe', email: 'john.doe@example.com', feedback: 'Great system! Very helpful for diagnosing plant diseases.' },
+        { name: 'Jane Smith', email: 'jane.smith@example.com', feedback: 'The system is easy to use, but I encountered some bugs.' },
+        { name: 'Alice Johnson', email: 'alice.johnson@example.com', feedback: 'Excellent tool for farmers. Highly recommended!' }
+    ]
+};
+
+// Export to PDF using jsPDF
+function exportToPDF() {
+    const { jsPDF } = window.jspdf; // Initialize jsPDF
+    const doc = new jsPDF();
+
+    // Add System Report Title
+    doc.setFontSize(18);
+    doc.text('System Report', 10, 10);
+
+    // Add Logged-In Users Data
+    doc.setFontSize(12);
+    doc.text('Logged-In Users Data:', 10, 20);
+    doc.text(JSON.stringify(reportData.loggedUsers, null, 2), 10, 30);
+
+    // Add Plant Diseases Data
+    doc.text('Plant Diseases Data:', 10, 50);
+    doc.text(JSON.stringify(reportData.plantDiseases, null, 2), 10, 60);
+
+    // Add User Feedback Table
+    doc.text('User Feedback:', 10, 80);
+    let yPos = 90;
+    doc.setFontSize(10);
+    doc.text('User Name', 10, yPos);
+    doc.text('Email', 60, yPos);
+    doc.text('Feedback', 110, yPos);
+    yPos += 10;
+
+    reportData.userFeedback.forEach((row) => {
+        doc.text(row.name, 10, yPos);
+        doc.text(row.email, 60, yPos);
+        doc.text(row.feedback, 110, yPos);
+        yPos += 10;
+    });
+
+    // Save the PDF
+    doc.save('system-report.pdf');
+}
+
+// Export to Excel using SheetJS
+function exportToExcel() {
+    // Create worksheets for each report
+    const loggedUsersWs = XLSX.utils.json_to_sheet(
+        reportData.loggedUsers.labels.map((label, index) => ({
+            Month: label,
+            Users: reportData.loggedUsers.data[index]
+        }))
+    );
+
+    const plantDiseasesWs = XLSX.utils.json_to_sheet(
+        reportData.plantDiseases.labels.map((label, index) => ({
+            Disease: label,
+            Cases: reportData.plantDiseases.data[index]
+        }))
+    );
+
+    const userFeedbackWs = XLSX.utils.json_to_sheet(reportData.userFeedback);
+
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, loggedUsersWs, 'Logged Users');
+    XLSX.utils.book_append_sheet(wb, plantDiseasesWs, 'Plant Diseases');
+    XLSX.utils.book_append_sheet(wb, userFeedbackWs, 'User Feedback');
+
+    // Save the workbook as an Excel file
+    XLSX.writeFile(wb, 'system-report.xlsx');
+}
+// Toggle System Reports Panel
+const systemReportsLink = document.getElementById('system-reports-link');
+const systemReportsPanel = document.getElementById('system-reports-panel');
+
+systemReportsLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    systemReportsPanel.classList.toggle('active');
+});
+
+// Initialize charts on page load
+document.addEventListener('DOMContentLoaded', initializeCharts);
+</script>
+
+<script>
+    // Logout Functionality
+    document.querySelector('.sidebar a[href="#"]:last-child').addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent the default link behavior
+    
+        // Clear the admin's session or token (simulated here)
+        localStorage.removeItem('adminToken'); // Example: Remove token from localStorage
+        sessionStorage.removeItem('adminSession'); // Example: Remove session data
+    
+        // Redirect to the login page
+        window.location.href = '\login_signUp.html'; // Replace with your login page URL
+    });
+    </script>
+     
+    
 </body>
 </html>
