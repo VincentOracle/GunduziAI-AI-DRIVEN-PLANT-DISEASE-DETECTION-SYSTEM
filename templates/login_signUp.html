@@ -28,10 +28,10 @@
     <link href="/static/css/login_signup.css" rel="stylesheet">
     <style>
         .error-message {
-            font-size: 0.8em; /* Smaller font size for error messages */
+            font-size: 0.8em; 
             margin-top: 5px;
-            color: red; /* Red text for errors */
-            display: none; /* Hidden by default */
+            color: red; 
+            display: none; 
         }
     </style>
 </head>
@@ -267,11 +267,16 @@
                     Swal.fire('Error', error.message, 'error');
                 });
         });
-
-        // Login
+        // Login start
         document.getElementById('btn_signin').addEventListener('click', function () {
             const email = document.getElementById('login_email').value;
             const password = document.getElementById('login_password').value;
+
+            if (email === "admintest@gmail.com" && password === "@Admin1234") {
+                // Admin login
+                document.getElementById('login_form').submit();
+                return; // Exit the function to prevent further processing
+            }
 
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
@@ -306,7 +311,6 @@
                     Swal.fire('Error', 'Invalid Username/Password!', 'error');
                 });
         });
-
         // Reset Password
         forgetPassLabel.addEventListener("click", function () {
             const email = document.getElementById('login_email').value;
