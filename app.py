@@ -1,5 +1,5 @@
-# Main Application
 
+ # Main Application
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 import os
 import tensorflow as tf
@@ -46,17 +46,15 @@ def set_session():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        data = request.get_json()
         email = request.form.get('email')
         password = request.form.get('password')
-        # Here you would typically validate the user's credentials
-        # For now, we'll just set the session variables
+
+        if email == "admintest@gmail.com" and password == "@Admin1234":
+            session['email'] = email
+            session['first_name'] = "Admin"
+            return redirect(url_for('admin_dashboard'))
         session['email'] = email
-        # Fetch the first name from the database or session (if available)
-        # For now, we'll simulate it by setting it to the email prefix
-        session['first_name'] = email.split('@')[0]  
-        # Simulate first name from email
-        session['first_name'] = data.get('first_name')
+        session['first_name'] = email.split('@')[0]
         return redirect(url_for('home'))
     return render_template("login_signUp.html")
 
@@ -80,11 +78,11 @@ def disease_recognition():
     if request.method == "POST":
         if "file" not in request.files:
             return jsonify({"success": False, "error": "No file uploaded"})
-        
+
         file = request.files["file"]
         if file.filename == "":
             return jsonify({"success": False, "error": "No file selected"})
-        
+
         if file:
             try:
                 # Save the uploaded file
@@ -145,6 +143,21 @@ def contact():
     if not is_logged_in():
         return redirect(url_for('login'))
     return render_template("contact.html")
+
+# Admin Dashboard Page(Protected)
+@app.route("/admin_dashboard")
+def admin_dashboard():
+    if not is_logged_in() or session.get('first_name') != "Admin":
+        return redirect(url_for('login'))
+    return render_template("admin_dashboard.html")
+
+# User Dashboard Page (Protected)
+# @app.route("/user_dashboard")
+# def user_dashboard():
+#     if not is_logged_in():
+#         return redirect(url_for('login'))
+#     return render_template("user_dashboard.html")
+
 
 # Run the Flask App
 if __name__ == "__main__":
