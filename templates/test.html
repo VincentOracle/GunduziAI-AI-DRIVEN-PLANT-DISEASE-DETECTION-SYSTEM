@@ -1,286 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GunduziAI - Expert Review</title>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- Custom CSS -->
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .review_container {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #28a745;
-            outline: none;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .upload-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .upload-section input[type="file"] {
-            display: none;
-        }
-
-        .upload-section label {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .upload-section label:hover {
-            background-color: #218838;
-        }
-
-        .preview-image {
-            margin-top: 20px;
-            max-width: 100%;
-            border-radius: 10px;
-        }
-
-        .btn-submit {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-submit:hover {
-            background-color: #218838;
-        }
-
-        .btn-submit i {
-            margin-right: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .review_container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
-                font-size: 14px;
-            }
-
-            .btn-submit {
-                font-size: 16px;
-            }
-        }
-    </style>
+    <!-- Head content remains the same -->
 </head>
 <body>
-    <div class="review_container">
-        <h1>Expert Review & Disease Update</h1>
-
-        <!-- Image Upload Section -->
-        <div class="upload-section">
-            <label for="image-upload">
-                <i class="fas fa-upload"></i> Upload Image
-            </label>
-            <input type="file" id="image-upload" accept="image/*">
-            <img id="preview-image" class="preview-image" src="#" alt="Preview" style="display: none;">
-        </div>
-
-        <!-- Disease Selection -->
-        <div class="form-group">
-            <label for="disease-name">Select Disease</label>
-            <select id="disease-name" required>
-                <option value="" disabled selected>Select a disease</option>
-                <option value="Apple___Apple_scab">Apple Scab</option>
-                <option value="Apple___Black_rot">Apple Black Rot</option>
-                <option value="Apple___Cedar_rust">Apple Cedar Rust</option>
-                <option value="Apple___healthy">Apple Healthy</option>
-                <option value="Blueberry___healthy">Blueberry Healthy</option>
-                <option value="Cherry_(including_sour)___Powdery_mildew">Cherry Powdery Mildew</option>
-                <option value="Cherry_(including_sour)___healthy">Cherry Healthy</option>
-                <option value="Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot">Corn Cercospora Leaf Spot</option>
-                <option value="Corn_(maize)___Common_rust_">Corn Common Rust</option>
-                <option value="Corn_(maize)___Northern_Leaf_Blight">Corn Northern Leaf Blight</option>
-                <option value="Corn_(maize)___healthy">Corn Healthy</option>
-                <option value="Grape___Black_rot">Grape Black Rot</option>
-                <option value="Grape___Esca_(Black_Measles)">Grape Esca (Black Measles)</option>
-                <option value="Grape___Leaf_blight_(Isariopsis_Leaf_Spot)">Grape Leaf Blight</option>
-                <option value="Grape___healthy">Grape Healthy</option>
-                <option value="Orange___Haunglongbing_(Citrus_greening)">Orange Haunglongbing (Citrus Greening)</option>
-                <option value="Peach___Bacterial_spot">Peach Bacterial Spot</option>
-                <option value="Peach___healthy">Peach Healthy</option>
-                <option value="Pepper,_bell___Bacterial_spot">Pepper Bacterial Spot</option>
-                <option value="Pepper,_bell___healthy">Pepper Healthy</option>
-                <option value="Potato___Early_blight">Potato Early Blight</option>
-                <option value="Potato___Late_blight">Potato Late Blight</option>
-                <option value="Potato___healthy">Potato Healthy</option>
-                <option value="Raspberry___healthy">Raspberry Healthy</option>
-                <option value="Soybean___healthy">Soybean Healthy</option>
-                <option value="Squash___Powdery_mildew">Squash Powdery Mildew</option>
-                <option value="Strawberry___Leaf_scorch">Strawberry Leaf Scorch</option>
-                <option value="Strawberry___healthy">Strawberry Healthy</option>
-                <option value="Tomato___Bacterial_spot">Tomato Bacterial Spot</option>
-                <option value="Tomato___Early_blight">Tomato Early Blight</option>
-                <option value="Tomato___Late_blight">Tomato Late Blight</option>
-                <option value="Tomato___Leaf_Mold">Tomato Leaf Mold</option>
-                <option value="Tomato___Septoria_leaf_spot">Tomato Septoria Leaf Spot</option>
-                <option value="Tomato___Spider_mites Two-spotted_spider_mite">Tomato Spider Mites</option>
-                <option value="Tomato___Target_Spot">Tomato Target Spot</option>
-                <option value="Tomato___Tomato_Yellow_Leaf_Curl_Virus">Tomato Yellow Leaf Curl Virus</option>
-                <option value="Tomato___Tomato_mosaic_virus">Tomato Mosaic Virus</option>
-                <option value="Tomato___healthy">Tomato Healthy</option>
-            </select>
-        </div>
-
-        <!-- Symptoms Section -->
-        <div class="form-group">
-            <label for="symptoms">Symptoms</label>
-            <textarea id="symptoms" placeholder="List the symptoms of the disease..." required></textarea>
-        </div>
-
-        <!-- Treatment Recommendations -->
-        <div class="form-group">
-            <label for="treatment">Treatment Recommendations</label>
-            <textarea id="treatment" placeholder="Provide treatment recommendations..." required></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="button" id="submit-button" class="btn-submit">
-            <i class="fas fa-paper-plane"></i> Submit Diagnosis
-        </button>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="/static/img/admin_profile.jpg" alt="Admin Profile">
+        <h4>Admin Panel</h4>
+        <a href="#" id="manage-users-link"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+        <a href="#" id="update-database-link"><i class="fas fa-database"></i> <span>Update Database</span></a>
+        <a href="#" id="system-reports-link"><i class="fas fa-chart-line"></i> <span>System Reports</span></a>
+        <a href="#" id="settings-link"><i class="fas fa-cogs"></i> <span>Settings</span></a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
     </div>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- JavaScript for Image Preview and Form Handling -->
-    <script>
-        // Image Preview Functionality
-        const imageUpload = document.getElementById('image-upload');
-        const previewImage = document.getElementById('preview-image');
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Content remains the same -->
+    </div>
 
-        imageUpload.addEventListener('change', function (e) {
+    <!-- Admin Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <h2 class="mb-4">Admin Settings</h2>
+        <form id="settingsForm">
+            <!-- Name -->
+            <div class="form-group">
+                <label for="adminName">Name</label>
+                <input type="text" id="adminName" name="adminName" class="form-control" placeholder="Enter your name" required>
+            </div>
+
+            <!-- Profile Picture -->
+            <div class="form-group">
+                <label for="profilePic">Profile Picture</label>
+                <input type="file" id="profilePic" name="profilePic" class="form-control" accept="image/*">
+                <img id="profilePicPreview" src="#" alt="Profile Picture Preview" class="profile-pic-preview" style="display: none;">
+            </div>
+
+            <!-- Login Email -->
+            <div class="form-group">
+                <label for="adminEmail">Login Email</label>
+                <input type="email" id="adminEmail" name="adminEmail" class="form-control" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group password-field">
+                <label for="adminPassword">Password</label>
+                <div class="input-group">
+                    <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="Enter new password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('adminPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group password-field">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Passwords must match.</small>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" id="submitButton">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <div class="spinner-border text-primary d-none" id="loadingSpinner" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript for Profile Picture Update -->
+    <script>
+        // Handle Profile Picture Preview
+        const profilePicInput = document.getElementById('profilePic');
+        const profilePicPreview = document.getElementById('profilePicPreview');
+        const sidebarProfilePic = document.querySelector('.sidebar img'); // Sidebar profile picture
+
+        profilePicInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function (event) {
-                    previewImage.src = event.target.result;
-                    previewImage.style.display = 'block';
+                reader.onload = function (e) {
+                    // Update the preview image
+                    profilePicPreview.src = e.target.result;
+                    profilePicPreview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Form Submission Handling
-        const submitButton = document.getElementById('submit-button');
-        submitButton.addEventListener('click', function () {
-            // Get form data
-            const image = imageUpload.files[0];
-            const diseaseName = document.getElementById('disease-name').value;
-            const symptoms = document.getElementById('symptoms').value;
-            const treatment = document.getElementById('treatment').value;
+        // Handle Settings Form Submission
+        document.getElementById('settingsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-            // Validate form inputs
-            if (!image || !diseaseName || !symptoms || !treatment) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please fill out all fields before submitting!',
-                });
-                return;
-            }
+            // Show loading spinner
+            const submitButton = document.getElementById('submitButton');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            submitButton.disabled = true;
+            loadingSpinner.classList.remove('d-none');
 
-            // Simulate sending expert review to the database
+            // Simulate API call delay
             setTimeout(() => {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
+                // Get form values
+                const adminName = document.getElementById('adminName').value;
+                const adminEmail = document.getElementById('adminEmail').value;
+                const adminPassword = document.getElementById('adminPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // Validate passwords match
+                if (adminPassword !== confirmPassword) {
+                    alert('Passwords do not match. Please try again.');
+                    submitButton.disabled = false;
+                    loadingSpinner.classList.add('d-none');
+                    return;
+                }
+
+                // Update the sidebar profile picture if a new image is selected
+                if (profilePicInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        sidebarProfilePic.src = e.target.result; // Update the sidebar image
+                    };
+                    reader.readAsDataURL(profilePicInput.files[0]);
+                }
+
+                // Simulate sending data to the server
+                console.log('Updating settings with:', {
+                    name: adminName,
+                    email: adminEmail,
+                    password: adminPassword,
+                    profilePic: profilePicInput.files[0] ? profilePicInput.files[0].name : 'No file selected'
                 });
-                Toast.fire({
-                    icon: "success",
-                    title: "Your disease review has been sent to the database successfully!"
-                }).then(() => {
-                    // Reset the form
-                    imageUpload.value = ''; // Clear file input
-                    document.getElementById('disease-name').value = '';
-                    document.getElementById('symptoms').value = '';
-                    document.getElementById('treatment').value = '';
-                    previewImage.style.display = 'none'; // Hide the preview image
-                });
-            }, 1000); // Simulate a 1-second delay
+
+                alert('Settings updated successfully!');
+                settingsPanel.classList.remove('active'); // Hide the settings panel after submission
+                submitButton.disabled = false;
+                loadingSpinner.classList.add('d-none');
+            }, 2000); // Simulate 2-second delay
         });
     </script>
 </body>
