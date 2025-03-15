@@ -1,156 +1,334 @@
+<!-- LOGIN SIGNUP -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Head content remains the same -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="GunduziAi" />
+    <meta name="description" content="GunduziAi" />
+    <meta name="author" content="Vincent Were" />
+    <title>GunduziAi SignUp/SignIn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="css/login_signup.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- The Stylesheet -->
+    <link href="/static/css/login_signup.css" rel="stylesheet">
+    <style>
+        .error-message {
+            font-size: 0.8em; 
+            margin-top: 5px;
+            color: red; 
+            display: none; 
+        }
+    </style>
 </head>
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="/static/img/admin_profile.jpg" alt="Admin Profile">
-        <h4>Admin Panel</h4>
-        <a href="#" id="manage-users-link"><i class="fas fa-users"></i> <span>Manage Users</span></a>
-        <a href="#" id="update-database-link"><i class="fas fa-database"></i> <span>Update Database</span></a>
-        <a href="#" id="system-reports-link"><i class="fas fa-chart-line"></i> <span>System Reports</span></a>
-        <a href="#" id="settings-link"><i class="fas fa-cogs"></i> <span>Settings</span></a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+<body class="login_signup">
+    <div class="containers" id="containers">
+        <div class="form-containers sign-up-container">
+            <form class="login_signup_form" name="sign_up_form" id="sign_up_form" method="post" action="{{ url_for('login') }}" enctype="multipart/form-data">
+                <h1 id="h1">Create Account</h1>
+                <span id="span">Enter your details to register</span>
+                <div class="input-container">
+                    <i class="fa fa-user icon"></i>
+                    <input type="text" id="first_name" name="first_name" placeholder="First Name" required />
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-user icon"></i>
+                    <input type="text" id="last_name" name="last_name" placeholder="Last Name" required />
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-briefcase icon"></i>
+                    <select id="user_role" name="user_role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="farmer">Farmer/Grower</option>
+                        <option value="agronomist">Agronomist/Expert</option>
+                        <option value="researcher">Researcher/Scientist</option>
+                    </select>
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-phone icon"></i>
+                    <input type="tel" id="phone_number" name="phone_number" placeholder="Phone Number" required />
+                </div>
+                <label id="phone_error" class="error-message"></label>
+                <div class="input-container">
+                    <i class="fa fa-envelope icon"></i>
+                    <input type="email" id="email_input" name="email" placeholder="Email" required />
+                </div>
+                <label id="email_error" class="error-message"></label>
+                <div class="input-container">
+                    <i class="fa fa-lock icon"></i>
+                    <input type="password" id="password_input" name="password" placeholder="Password" required />
+                    <i class="fa fa-eye" id="togglePassword" style="right: -70px; left: auto;"></i>
+                </div>
+                <label id="password_error" class="error-message"></label>
+                <div class="input-container">
+                    <i class="fa fa-lock icon"></i>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
+                    <i class="fa fa-eye" id="toggleConfirmPassword" style="right: -70px; left: auto;"></i>
+                    <label id="confirm_password_error" class="error-message"></label>
+                </div>
+                <button type="button" id="btn_signup" name="sign_up" class="btn_signin_success">SignUp</button>
+            </form>
+        </div>
+        <div class="form-containers sign-in-container">
+            <form name="login_form" id="login_form" method="post" class="login_signup_form" action="#" enctype="multipart/form-data">
+                <h1 id="h1">Sign In</h1>
+                <span id="span">Enter your credentials to login</span>
+                <div class="input-container">
+                    <i class="fa fa-envelope icon"></i>
+                    <input type="email" id="login_email" name="email" placeholder="Email" required />
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-lock icon"></i>
+                    <input type="password" id="login_password" name="password" placeholder="Password" required />
+                    <i class="fa fa-eye" id="toggleLoginPassword" style="right: -70px; left: auto;"></i>
+                </div>
+                <h6><span id="pass_warning"></span></h6>
+                <label for="forgot_password" id="forgetPassLabel"><a class="forgot_password" href="#">Forgot Your Password?</a></label>
+                <button type="button" id="btn_signin" name="btn_signin_success" class="btn_signIn">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panels overlay-left">
+                    <h1 style="color: aliceblue;" id="h1">Welcome Back!</h1>
+                    <p id="paragraph">To keep connected with us please login with your personal info.</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panels overlay-right">
+                    <h1 style="color: aliceblue;" id="h1">Hello! Welcome to GunduziAi🌿</h1>
+                    <p id="paragraph">Enter your details and start your journey with us.</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Content remains the same -->
-    </div>
+    <script type="text/javascript">
+        const signUpButton = document.getElementById("signUp");
+        const signInButton = document.getElementById("signIn");
+        const container = document.getElementById("containers");
+        signUpButton.addEventListener("click", () => {
+            container.classList.add("right-panel-active");
+        });
+        signInButton.addEventListener("click", () => {
+            container.classList.remove("right-panel-active");
+        });
+    </script>
 
-    <!-- Admin Settings Panel -->
-    <div class="settings-panel" id="settings-panel">
-        <h2 class="mb-4">Admin Settings</h2>
-        <form id="settingsForm">
-            <!-- Name -->
-            <div class="form-group">
-                <label for="adminName">Name</label>
-                <input type="text" id="adminName" name="adminName" class="form-control" placeholder="Enter your name" required>
-            </div>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            <!-- Profile Picture -->
-            <div class="form-group">
-                <label for="profilePic">Profile Picture</label>
-                <input type="file" id="profilePic" name="profilePic" class="form-control" accept="image/*">
-                <img id="profilePicPreview" src="#" alt="Profile Picture Preview" class="profile-pic-preview" style="display: none;">
-            </div>
+    <!-- Script to handle Firebase authentication, SweetAlert integration, and session storage -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
 
-            <!-- Login Email -->
-            <div class="form-group">
-                <label for="adminEmail">Login Email</label>
-                <input type="email" id="adminEmail" name="adminEmail" class="form-control" placeholder="Enter your email" required>
-            </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhLVUakKUeEoOF2JCoijLViWaEPsYdE6g",
+            authDomain: "gunduziai.firebaseapp.com",
+            projectId: "gunduziai",
+            storageBucket: "gunduziai.firebasestorage.app",
+            messagingSenderId: "340515946915",
+            appId: "1:340515946915:web:1601c25ebe2c57283fda16",
+            measurementId: "G-SXT2J5XX1H"
+        };
 
-            <!-- Password -->
-            <div class="form-group password-field">
-                <label for="adminPassword">Password</label>
-                <div class="input-group">
-                    <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="Enter new password" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('adminPassword')">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                    </div>
-                </div>
-                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
-            </div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-            <!-- Confirm Password -->
-            <div class="form-group password-field">
-                <label for="confirmPassword">Confirm Password</label>
-                <div class="input-group">
-                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                    </div>
-                </div>
-                <small class="form-text text-muted">Passwords must match.</small>
-            </div>
+        // Forgot password functionality
+        const forgetPassLabel = document.getElementById("forgetPassLabel");
 
-            <!-- Submit Button -->
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" id="submitButton">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <div class="spinner-border text-primary d-none" id="loadingSpinner" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- JavaScript for Profile Picture Update -->
-    <script>
-        // Handle Profile Picture Preview
-        const profilePicInput = document.getElementById('profilePic');
-        const profilePicPreview = document.getElementById('profilePicPreview');
-        const sidebarProfilePic = document.querySelector('.sidebar img'); // Sidebar profile picture
-
-        profilePicInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    // Update the preview image
-                    profilePicPreview.src = e.target.result;
-                    profilePicPreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
+        // Password Visibility Toggle
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password_input');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
         });
 
-        // Handle Settings Form Submission
-        document.getElementById('settingsForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const confirmPasswordInput = document.querySelector('#confirm_password');
+        toggleConfirmPassword.addEventListener('click', function () {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
 
-            // Show loading spinner
-            const submitButton = document.getElementById('submitButton');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            submitButton.disabled = true;
-            loadingSpinner.classList.remove('d-none');
+        const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
+        const loginPasswordInput = document.querySelector('#login_password');
+        toggleLoginPassword.addEventListener('click', function () {
+            const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPasswordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
 
-            // Simulate API call delay
-            setTimeout(() => {
-                // Get form values
-                const adminName = document.getElementById('adminName').value;
-                const adminEmail = document.getElementById('adminEmail').value;
-                const adminPassword = document.getElementById('adminPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
+        // Phone Number Validation Regex
+        const phoneRegex = /^(?:\+254|0)[17]\d{8}$/;
 
-                // Validate passwords match
-                if (adminPassword !== confirmPassword) {
-                    alert('Passwords do not match. Please try again.');
-                    submitButton.disabled = false;
-                    loadingSpinner.classList.add('d-none');
-                    return;
-                }
+        // Email Validation Regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                // Update the sidebar profile picture if a new image is selected
-                if (profilePicInput.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        sidebarProfilePic.src = e.target.result; // Update the sidebar image
-                    };
-                    reader.readAsDataURL(profilePicInput.files[0]);
-                }
+        // Password Validation Regex
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-                // Simulate sending data to the server
-                console.log('Updating settings with:', {
-                    name: adminName,
-                    email: adminEmail,
-                    password: adminPassword,
-                    profilePic: profilePicInput.files[0] ? profilePicInput.files[0].name : 'No file selected'
+        // Registration
+        document.getElementById('btn_signup').addEventListener('click', function () {
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const userRole = document.getElementById('user_role').value;
+            const phoneNumber = document.getElementById('phone_number').value;
+            const email = document.getElementById('email_input').value;
+            const password = document.getElementById('password_input').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            // Reset error messages
+            document.getElementById('phone_error').style.display = 'none';
+            document.getElementById('email_error').style.display = 'none';
+            document.getElementById('password_error').style.display = 'none';
+            document.getElementById('confirm_password_error').style.display = 'none';
+
+            // Validate phone number
+            if (!phoneRegex.test(phoneNumber)) {
+                document.getElementById('phone_error').textContent = 'Please enter a valid phone number (e.g., +254712345678 or 0712345678).';
+                document.getElementById('phone_error').style.display = 'block';
+                return;
+            }
+
+            // Validate email
+            if (!emailRegex.test(email)) {
+                document.getElementById('email_error').textContent = 'Please enter a valid email address.';
+                document.getElementById('email_error').style.display = 'block';
+                return;
+            }
+
+            // Validate password strength
+            if (!passwordRegex.test(password)) {
+                document.getElementById('password_error').textContent = 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.';
+                document.getElementById('password_error').style.display = 'block';
+                return;
+            }
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                document.getElementById('confirm_password_error').textContent = 'Passwords do not match!';
+                document.getElementById('confirm_password_error').style.display = 'block';
+                return;
+            }
+
+            // Proceed with Firebase registration
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Store the user's first name in the session
+                    fetch('/set_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ first_name: firstName, email: email }),
+                    }).then(() => {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Registration successful! Back to login"
+                        }).then(() => {
+                            container.classList.remove("right-panel-active");
+                        });
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Error', error.message, 'error');
                 });
+        });
+        // Login start
+        document.getElementById('btn_signin').addEventListener('click', function () {
+            const email = document.getElementById('login_email').value;
+            const password = document.getElementById('login_password').value;
 
-                alert('Settings updated successfully!');
-                settingsPanel.classList.remove('active'); // Hide the settings panel after submission
-                submitButton.disabled = false;
-                loadingSpinner.classList.add('d-none');
-            }, 2000); // Simulate 2-second delay
+            if (email === "admintest@gmail.com" && password === "@Admin1234") {
+                // Admin login
+                document.getElementById('login_form').submit();
+                return; // Exit the function to prevent further processing
+            }
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Store the user's first name in the session
+                    fetch('/set_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ first_name: userCredential.user.email.split('@')[0], email: email }),
+                    }).then(() => {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Login successful!"
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Error', 'Invalid Username/Password!', 'error');
+                });
+        });
+        // Reset Password
+        forgetPassLabel.addEventListener("click", function () {
+            const email = document.getElementById('login_email').value;
+
+            if (!email) {
+                Swal.fire('Error', 'Please enter your email address.', 'error');
+                return;
+            }
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    Swal.fire('Success', 'A password reset link has been sent to your email.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error', error.message, 'error');
+                });
         });
     </script>
 </body>
