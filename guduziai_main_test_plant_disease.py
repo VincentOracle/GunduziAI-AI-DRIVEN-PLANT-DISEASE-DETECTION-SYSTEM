@@ -11,11 +11,7 @@ Original file is located at
 
 import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
-# from keras.preprocessing.image import ImageDataGenerator
-# from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D,Flatten
-# from tensorflow.keras.models import Sequential
-# from tensorflow.keras.utils import custom_object_scope
+import matplotlib.pyplot as plt # type: ignore
 print("Libraries imported successfully!")
 
 """### Loading Model"""
@@ -29,9 +25,9 @@ model.summary()
 
 """### Visualizaing Single Image of Test set"""
 
-!pip install opencv-python
+!pip install opencv-python # type: ignore
 
-import cv2
+import cv2 # type: ignore
 image_path = "/content/PotatoEarlyBlight1.JPG"
 #Reading Image
 img = cv2.imread(image_path)

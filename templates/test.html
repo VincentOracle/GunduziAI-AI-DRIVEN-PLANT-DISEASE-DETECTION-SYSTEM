@@ -1,286 +1,334 @@
+<!-- LOGIN SIGNUP -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GunduziAI - Expert Review</title>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- Custom CSS -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="GunduziAi" />
+    <meta name="description" content="GunduziAi" />
+    <meta name="author" content="Vincent Were" />
+    <title>GunduziAi SignUp/SignIn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="css/login_signup.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- The Stylesheet -->
+    <link href="/static/css/login_signup.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .review_container {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #28a745;
-            outline: none;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .upload-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .upload-section input[type="file"] {
-            display: none;
-        }
-
-        .upload-section label {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .upload-section label:hover {
-            background-color: #218838;
-        }
-
-        .preview-image {
-            margin-top: 20px;
-            max-width: 100%;
-            border-radius: 10px;
-        }
-
-        .btn-submit {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-submit:hover {
-            background-color: #218838;
-        }
-
-        .btn-submit i {
-            margin-right: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .review_container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
-                font-size: 14px;
-            }
-
-            .btn-submit {
-                font-size: 16px;
-            }
+        .error-message {
+            font-size: 0.8em; 
+            margin-top: 5px;
+            color: red; 
+            display: none; 
         }
     </style>
 </head>
-<body>
-    <div class="review_container">
-        <h1>Expert Review & Disease Update</h1>
-
-        <!-- Image Upload Section -->
-        <div class="upload-section">
-            <label for="image-upload">
-                <i class="fas fa-upload"></i> Upload Image
-            </label>
-            <input type="file" id="image-upload" accept="image/*">
-            <img id="preview-image" class="preview-image" src="#" alt="Preview" style="display: none;">
+<body class="login_signup">
+    <div class="containers" id="containers">
+        <div class="form-containers sign-up-container">
+            <form class="login_signup_form" name="sign_up_form" id="sign_up_form" method="post" action="{{ url_for('login') }}" enctype="multipart/form-data">
+                <h1 id="h1">Create Account</h1>
+                <span id="span">Enter your details to register</span>
+                <div class="input-container">
+                    <i class="fa fa-user icon"></i>
+                    <input type="text" id="first_name" name="first_name" placeholder="First Name" required />
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-user icon"></i>
+                    <input type="text" id="last_name" name="last_name" placeholder="Last Name" required />
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-briefcase icon"></i>
+                    <select id="user_role" name="user_role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="farmer">Farmer/Grower</option>
+                        <option value="agronomist">Agronomist/Expert</option>
+                        <option value="researcher">Researcher/Scientist</option>
+                    </select>
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-phone icon"></i>
+                    <input type="tel" id="phone_number" name="phone_number" placeholder="Phone Number" required />
+                </div>
+                <label id="phone_error" class="error-message"></label>
+                <div class="input-container">
+                    <i class="fa fa-envelope icon"></i>
+                    <input type="email" id="email_input" name="email" placeholder="Email" required />
+                </div>
+                <label id="email_error" class="error-message"></label>
+                <div class="input-container">
+                    <i class="fa fa-lock icon"></i>
+                    <input type="password" id="password_input" name="password" placeholder="Password" required />
+                    <i class="fa fa-eye" id="togglePassword" style="right: -70px; left: auto;"></i>
+                </div>
+                <label id="password_error" class="error-message"></label>
+                <div class="input-container">
+                    <i class="fa fa-lock icon"></i>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
+                    <i class="fa fa-eye" id="toggleConfirmPassword" style="right: -70px; left: auto;"></i>
+                    <label id="confirm_password_error" class="error-message"></label>
+                </div>
+                <button type="button" id="btn_signup" name="sign_up" class="btn_signin_success">SignUp</button>
+            </form>
         </div>
-
-        <!-- Disease Selection -->
-        <div class="form-group">
-            <label for="disease-name">Select Disease</label>
-            <select id="disease-name" required>
-                <option value="" disabled selected>Select a disease</option>
-                <option value="Apple___Apple_scab">Apple Scab</option>
-                <option value="Apple___Black_rot">Apple Black Rot</option>
-                <option value="Apple___Cedar_rust">Apple Cedar Rust</option>
-                <option value="Apple___healthy">Apple Healthy</option>
-                <option value="Blueberry___healthy">Blueberry Healthy</option>
-                <option value="Cherry_(including_sour)___Powdery_mildew">Cherry Powdery Mildew</option>
-                <option value="Cherry_(including_sour)___healthy">Cherry Healthy</option>
-                <option value="Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot">Corn Cercospora Leaf Spot</option>
-                <option value="Corn_(maize)___Common_rust_">Corn Common Rust</option>
-                <option value="Corn_(maize)___Northern_Leaf_Blight">Corn Northern Leaf Blight</option>
-                <option value="Corn_(maize)___healthy">Corn Healthy</option>
-                <option value="Grape___Black_rot">Grape Black Rot</option>
-                <option value="Grape___Esca_(Black_Measles)">Grape Esca (Black Measles)</option>
-                <option value="Grape___Leaf_blight_(Isariopsis_Leaf_Spot)">Grape Leaf Blight</option>
-                <option value="Grape___healthy">Grape Healthy</option>
-                <option value="Orange___Haunglongbing_(Citrus_greening)">Orange Haunglongbing (Citrus Greening)</option>
-                <option value="Peach___Bacterial_spot">Peach Bacterial Spot</option>
-                <option value="Peach___healthy">Peach Healthy</option>
-                <option value="Pepper,_bell___Bacterial_spot">Pepper Bacterial Spot</option>
-                <option value="Pepper,_bell___healthy">Pepper Healthy</option>
-                <option value="Potato___Early_blight">Potato Early Blight</option>
-                <option value="Potato___Late_blight">Potato Late Blight</option>
-                <option value="Potato___healthy">Potato Healthy</option>
-                <option value="Raspberry___healthy">Raspberry Healthy</option>
-                <option value="Soybean___healthy">Soybean Healthy</option>
-                <option value="Squash___Powdery_mildew">Squash Powdery Mildew</option>
-                <option value="Strawberry___Leaf_scorch">Strawberry Leaf Scorch</option>
-                <option value="Strawberry___healthy">Strawberry Healthy</option>
-                <option value="Tomato___Bacterial_spot">Tomato Bacterial Spot</option>
-                <option value="Tomato___Early_blight">Tomato Early Blight</option>
-                <option value="Tomato___Late_blight">Tomato Late Blight</option>
-                <option value="Tomato___Leaf_Mold">Tomato Leaf Mold</option>
-                <option value="Tomato___Septoria_leaf_spot">Tomato Septoria Leaf Spot</option>
-                <option value="Tomato___Spider_mites Two-spotted_spider_mite">Tomato Spider Mites</option>
-                <option value="Tomato___Target_Spot">Tomato Target Spot</option>
-                <option value="Tomato___Tomato_Yellow_Leaf_Curl_Virus">Tomato Yellow Leaf Curl Virus</option>
-                <option value="Tomato___Tomato_mosaic_virus">Tomato Mosaic Virus</option>
-                <option value="Tomato___healthy">Tomato Healthy</option>
-            </select>
+        <div class="form-containers sign-in-container">
+            <form name="login_form" id="login_form" method="post" class="login_signup_form" action="#" enctype="multipart/form-data">
+                <h1 id="h1">Sign In</h1>
+                <span id="span">Enter your credentials to login</span>
+                <div class="input-container">
+                    <i class="fa fa-envelope icon"></i>
+                    <input type="email" id="login_email" name="email" placeholder="Email" required />
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-lock icon"></i>
+                    <input type="password" id="login_password" name="password" placeholder="Password" required />
+                    <i class="fa fa-eye" id="toggleLoginPassword" style="right: -70px; left: auto;"></i>
+                </div>
+                <h6><span id="pass_warning"></span></h6>
+                <label for="forgot_password" id="forgetPassLabel"><a class="forgot_password" href="#">Forgot Your Password?</a></label>
+                <button type="button" id="btn_signin" name="btn_signin_success" class="btn_signIn">Sign In</button>
+            </form>
         </div>
-
-        <!-- Symptoms Section -->
-        <div class="form-group">
-            <label for="symptoms">Symptoms</label>
-            <textarea id="symptoms" placeholder="List the symptoms of the disease..." required></textarea>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panels overlay-left">
+                    <h1 style="color: aliceblue;" id="h1">Welcome Back!</h1>
+                    <p id="paragraph">To keep connected with us please login with your personal info.</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panels overlay-right">
+                    <h1 style="color: aliceblue;" id="h1">Hello! Welcome to GunduziAi🌿</h1>
+                    <p id="paragraph">Enter your details and start your journey with us.</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
         </div>
-
-        <!-- Treatment Recommendations -->
-        <div class="form-group">
-            <label for="treatment">Treatment Recommendations</label>
-            <textarea id="treatment" placeholder="Provide treatment recommendations..." required></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="button" id="submit-button" class="btn-submit">
-            <i class="fas fa-paper-plane"></i> Submit Diagnosis
-        </button>
     </div>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- JavaScript for Image Preview and Form Handling -->
-    <script>
-        // Image Preview Functionality
-        const imageUpload = document.getElementById('image-upload');
-        const previewImage = document.getElementById('preview-image');
+    <script type="text/javascript">
+        const signUpButton = document.getElementById("signUp");
+        const signInButton = document.getElementById("signIn");
+        const container = document.getElementById("containers");
+        signUpButton.addEventListener("click", () => {
+            container.classList.add("right-panel-active");
+        });
+        signInButton.addEventListener("click", () => {
+            container.classList.remove("right-panel-active");
+        });
+    </script>
 
-        imageUpload.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    previewImage.src = event.target.result;
-                    previewImage.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script to handle Firebase authentication, SweetAlert integration, and session storage -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhLVUakKUeEoOF2JCoijLViWaEPsYdE6g",
+            authDomain: "gunduziai.firebaseapp.com",
+            projectId: "gunduziai",
+            storageBucket: "gunduziai.firebasestorage.app",
+            messagingSenderId: "340515946915",
+            appId: "1:340515946915:web:1601c25ebe2c57283fda16",
+            measurementId: "G-SXT2J5XX1H"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Forgot password functionality
+        const forgetPassLabel = document.getElementById("forgetPassLabel");
+
+        // Password Visibility Toggle
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password_input');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
         });
 
-        // Form Submission Handling
-        const submitButton = document.getElementById('submit-button');
-        submitButton.addEventListener('click', function () {
-            // Get form data
-            const image = imageUpload.files[0];
-            const diseaseName = document.getElementById('disease-name').value;
-            const symptoms = document.getElementById('symptoms').value;
-            const treatment = document.getElementById('treatment').value;
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const confirmPasswordInput = document.querySelector('#confirm_password');
+        toggleConfirmPassword.addEventListener('click', function () {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
 
-            // Validate form inputs
-            if (!image || !diseaseName || !symptoms || !treatment) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please fill out all fields before submitting!',
-                });
+        const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
+        const loginPasswordInput = document.querySelector('#login_password');
+        toggleLoginPassword.addEventListener('click', function () {
+            const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPasswordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Phone Number Validation Regex
+        const phoneRegex = /^(?:\+254|0)[17]\d{8}$/;
+
+        // Email Validation Regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Password Validation Regex
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        // Registration
+        document.getElementById('btn_signup').addEventListener('click', function () {
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const userRole = document.getElementById('user_role').value;
+            const phoneNumber = document.getElementById('phone_number').value;
+            const email = document.getElementById('email_input').value;
+            const password = document.getElementById('password_input').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            // Reset error messages
+            document.getElementById('phone_error').style.display = 'none';
+            document.getElementById('email_error').style.display = 'none';
+            document.getElementById('password_error').style.display = 'none';
+            document.getElementById('confirm_password_error').style.display = 'none';
+
+            // Validate phone number
+            if (!phoneRegex.test(phoneNumber)) {
+                document.getElementById('phone_error').textContent = 'Please enter a valid phone number (e.g., +254712345678 or 0712345678).';
+                document.getElementById('phone_error').style.display = 'block';
                 return;
             }
 
-            // Simulate sending expert review to the database
-            setTimeout(() => {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
+            // Validate email
+            if (!emailRegex.test(email)) {
+                document.getElementById('email_error').textContent = 'Please enter a valid email address.';
+                document.getElementById('email_error').style.display = 'block';
+                return;
+            }
+
+            // Validate password strength
+            if (!passwordRegex.test(password)) {
+                document.getElementById('password_error').textContent = 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.';
+                document.getElementById('password_error').style.display = 'block';
+                return;
+            }
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                document.getElementById('confirm_password_error').textContent = 'Passwords do not match!';
+                document.getElementById('confirm_password_error').style.display = 'block';
+                return;
+            }
+
+            // Proceed with Firebase registration
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Store the user's first name in the session
+                    fetch('/set_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ first_name: firstName, email: email }),
+                    }).then(() => {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Registration successful! Back to login"
+                        }).then(() => {
+                            container.classList.remove("right-panel-active");
+                        });
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Error', error.message, 'error');
                 });
-                Toast.fire({
-                    icon: "success",
-                    title: "Your disease review has been sent to the database successfully!"
-                }).then(() => {
-                    // Reset the form
-                    imageUpload.value = ''; // Clear file input
-                    document.getElementById('disease-name').value = '';
-                    document.getElementById('symptoms').value = '';
-                    document.getElementById('treatment').value = '';
-                    previewImage.style.display = 'none'; // Hide the preview image
+        });
+        // Login start
+        document.getElementById('btn_signin').addEventListener('click', function () {
+            const email = document.getElementById('login_email').value;
+            const password = document.getElementById('login_password').value;
+
+            if (email === "admintest@gmail.com" && password === "@Admin1234") {
+                // Admin login
+                document.getElementById('login_form').submit();
+                return; // Exit the function to prevent further processing
+            }
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Store the user's first name in the session
+                    fetch('/set_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ first_name: userCredential.user.email.split('@')[0], email: email }),
+                    }).then(() => {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Login successful!"
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Error', 'Invalid Username/Password!', 'error');
                 });
-            }, 1000); // Simulate a 1-second delay
+        });
+        // Reset Password
+        forgetPassLabel.addEventListener("click", function () {
+            const email = document.getElementById('login_email').value;
+
+            if (!email) {
+                Swal.fire('Error', 'Please enter your email address.', 'error');
+                return;
+            }
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    Swal.fire('Success', 'A password reset link has been sent to your email.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error', error.message, 'error');
+                });
         });
     </script>
 </body>
