@@ -1,4 +1,3 @@
-
 #  # Main Application
 
 from flask import Flask, render_template, request, redirect, send_from_directory, url_for, jsonify, session, flash
@@ -67,10 +66,13 @@ class Plant_Images(db.Model):
 class Diseases(db.Model):
     __tablename__ = 'diseases'
     Disease_ID = db.Column(db.Integer, primary_key=True)
-    Disease_Name = db.Column(db.String(100), unique=True, nullable=False)
-    Symptoms = db.Column(db.String(200), nullable=False)
+    Image_URL = db.Column(db.String(2000), nullable=False)
+    Disease_Name = db.Column(db.String(2000), unique=True, nullable=False)
+    Symptoms = db.Column(db.String(2000), nullable=False)
     Severity_Level = db.Column(db.String(50), nullable=False)
-    Similar_Diseases = db.Column(db.String(200), nullable=False)
+    Similar_Diseases = db.Column(db.String(2000), nullable=False)
+    Treatment_Recommendations = db.Column(db.String(2000), nullable=True)
+
 
 class Diagnosis_Results(db.Model):
     __tablename__ = 'diagnosis_results'
@@ -156,6 +158,49 @@ def logout():
     session.pop('first_name', None)
     return redirect(url_for('home'))
 
+@app.route("/upload_disease_data", methods=["POST"])
+def upload_disease_data():
+    if request.method == "POST":
+        try:
+            image_file = request.files["image-upload"]
+            disease_name = request.form.get("disease-name")
+            symptoms = request.form.get("symptoms")
+            severity_level = request.form.get("severity-level")
+            similar_diseases = request.form.get("similar-diseases")
+            treatment_recommendations = request.form.get("treatment")
+
+            if not image_file or image_file.filename == "":
+                return jsonify({"success": False, "error": "No image uploaded"})
+
+            if not disease_name or not symptoms or not severity_level or not treatment_recommendations:
+                return jsonify({"success": False, "error": "Missing required fields"})
+
+            # Save the uploaded image
+            image_filename = image_file.filename
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            image_file.save(image_path)
+
+            # Create a new Diseases object
+            new_disease = Diseases(
+                Image_URL=image_filename,
+                Disease_Name=disease_name,
+                Symptoms=symptoms,
+                Severity_Level=severity_level,
+                Similar_Diseases=similar_diseases,
+                Treatment_Recommendations=treatment_recommendations
+            )
+
+            db.session.add(new_disease)
+            db.session.commit()
+
+            return jsonify({"success": True, "message": "Disease data uploaded successfully"})
+
+        except Exception as e:
+            print(f"Error uploading disease data: {e}")
+            return jsonify({"success": False, "error": str(e)})
+
+    return jsonify({"success": False, "error": "Invalid request"})
+
 @app.route("/disease_recognition", methods=["GET", "POST"])
 def disease_recognition():
     print("Current Session:", session)
@@ -172,25 +217,22 @@ def disease_recognition():
 
         if file:
             try:
+                # Save the uploaded file
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
                 file.save(filepath)
 
+                # Get the current user
                 user_email = session.get('email')
-                # print(f"Querying for user with email: {user_email}")
                 user = Users.query.filter_by(Email=user_email).first()
                 if user is None:
-                    # print(f"Error: User not found for email: {user_email}")
                     return jsonify({"success": False, "error": "User not found"})
 
-                user_id = user.User_ID
-  
-        
                 # Save the uploaded image to the Plant_Images table
                 new_image = Plant_Images(
-                    User_ID=user.User_ID,  # Link to the user who uploaded the image
-                    Upload_Date=date.today(),  # Current date
-                    Image_URL=file.filename,  # Name of the uploaded file
-                    Quality_Status="Good"  # Default quality status (can be updated later)
+                    User_ID=user.User_ID,
+                    Upload_Date=date.today(),
+                    Image_URL=file.filename,
+                    Quality_Status="Good"
                 )
                 db.session.add(new_image)
                 db.session.commit()
@@ -219,18 +261,88 @@ def disease_recognition():
                     'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
                     'Tomato___healthy'
                 ]
-                predicted_label = labels[np.argmax(prediction)] 
+                predicted_label = labels[np.argmax(prediction)]
 
+                # Save the diagnosis result to the Diagnosis_Results table
+                disease = Diseases.query.filter_by(Disease_Name=predicted_label).first()
+                if not disease:
+                    return jsonify({"success": False, "error": "Disease not found in database"})
+
+                new_diagnosis = Diagnosis_Results(
+                    Image_ID=new_image.Image_ID,
+                    Disease_ID=disease.Disease_ID,
+                    Predicted_Disease=predicted_label,
+                    Percentage_Confidence=float(confidence),
+                    Diagnosis_Method="AI Prediction",
+                    Diagnosis_Date=date.today()
+                )
+                db.session.add(new_diagnosis)
+                db.session.commit()
+
+                # Return the prediction result and diagnosis ID for feedback
                 return jsonify({
                     "success": True,
                     "prediction": predicted_label,
-                    "confidence": float(confidence),  # Convert to float for JSON serialization
-                    "image_url": file.filename
+                    "confidence": float(confidence),
+                    "image_url": file.filename,
+                    "diagnosis_id": new_diagnosis.Result_ID  # Pass the diagnosis ID for feedback
                 })
+
             except Exception as e:
                 return jsonify({"success": False, "error": str(e)})
 
     return render_template("disease_recognition.html")
+
+
+@app.route("/submit_feedback", methods=["POST"])
+@login_required
+def submit_feedback():
+    if request.method == "POST":
+        try:
+            # Get form data
+            accuracy = request.form.get('accuracy')
+            rating = request.form.get('rating')
+            comments = request.form.get('comments')
+            diagnosis_id = request.form.get('diagnosis_id')
+
+            # Get the current user ID
+            user_email = session.get('email')
+            user = Users.query.filter_by(Email=user_email).first()
+            if not user:
+                flash("User not found", "error")
+                return redirect(url_for('disease_recognition'))
+
+            user_id = user.User_ID
+
+            # Validate diagnosis ID
+            diagnosis = Diagnosis_Results.query.get(diagnosis_id)
+            if not diagnosis:
+                flash("Invalid diagnosis ID", "error")
+                return redirect(url_for('disease_recognition'))
+
+            # Create a new feedback entry
+            new_feedback = Feedback(
+                User_ID=user_id,
+                Diagnosis_ID=diagnosis_id,
+                Feedback_Date=date.today(),
+                Prediction_Accuracy=int(accuracy),
+                System_Rating=int(rating),
+                Feedback_Text=comments
+            )
+
+            # Add and commit to the database
+            db.session.add(new_feedback)
+            db.session.commit()
+
+            flash("Feedback submitted successfully", "success")
+            return redirect(url_for('disease_recognition'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", "error")
+            return redirect(url_for('disease_recognition'))
+
+    return redirect(url_for('disease_recognition'))
 
 # Expert Consultation Page (Protected)
 @app.route("/expert")

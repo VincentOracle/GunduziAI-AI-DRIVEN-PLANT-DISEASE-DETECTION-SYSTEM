@@ -286,13 +286,13 @@
     <p class="feedback-description">
         Help us improve! Provide feedback on the AI prediction accuracy, rate the system, and share your comments.
     </p>
-    <form id="feedback-form">
+    <form id="feedback-form" action="/submit_feedback" method="POST">
         <!-- AI Prediction Accuracy -->
         <div class="form-group">
             <label for="accuracy">AI Prediction Accuracy (%)</label>
             <input type="number" id="accuracy" name="accuracy" min="0" max="100" placeholder="Enter a percentage (0-100)" required>
         </div>
-
+    
         <!-- Rating System (1-5 Stars) -->
         <div class="form-group">
             <label for="rating">Rate the System (1-5 Stars)</label>
@@ -305,15 +305,17 @@
             </div>
             <input type="hidden" id="rating" name="rating" required>
         </div>
-
+    
         <!-- Feedback Comments -->
         <div class="form-group">
             <label for="comments">Comments</label>
             <textarea id="comments" name="comments" rows="4" placeholder="Share your feedback or report incorrect diagnoses..." required></textarea>
         </div>
-
+    
+        <!-- Hidden input for Diagnosis_ID -->
+        <input type="hidden" id="diagnosis_id" name="diagnosis_id" value="{{ diagnosis_id }}">
+    
         <!-- Submit Button -->
-        <!-- <button type="submit" class="btn-submit">Send Feedback</button> -->
         <button type="submit" class="btn-submit">
             <i class="fas fa-paper-plane"></i> Send Feedback
         </button>
@@ -463,374 +465,360 @@
         }, 1000); // 1-second delay
     });
    </script>
+
 <script>
-const plant_disease_info = {
-    'Apple___Apple_scab': {
-        'Symptoms': [
-            'Olive-green or black velvety spots on leaves',
-            'Yellowing and premature leaf drop',
-            'Scabby, cracked fruit surface',
-            'Lesions on young twigs',
-            'Reduced fruit yield'
-        ],
-        'Similar_Diseases': ['Cedar Apple Rust', 'Sooty Blotch'],
-        'Severity': 'High'
-    },
-    'Apple___Black_rot': {
-        'Symptoms': [
-            'Circular brown lesions on leaves',
-            'Sunken black spots on fruit',
-            'Fruit shriveling and mummification',
-            'Bark cankers on branches',
-            'Wilting of shoots'
-        ],
-        'Similar_Diseases': ['Bitter Rot', 'Frogeye Leaf Spot'],
-        'Severity': 'Moderate'
-    },
-    'Apple___Cedar_rust': {
-        'Symptoms': [
-            'Orange gelatinous spots on apple leaves',
-            'Yellowing and premature defoliation',
-            'Twig infections leading to branch dieback',
-            'Gall formation on juniper trees (alternate host)',
-            'Fruit deformation and blemishes'
-        ],
-        'Similar_Diseases': ['Quince Rust', 'Hawthorn Rust'],
-        'Severity': 'Moderate'
-    },
-    'Apple___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Blueberry___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Cherry_(including_sour)___Powdery_mildew': {
-        'Symptoms': [
-            'White powdery fungal growth on leaves and twigs',
-            'Curled and distorted leaves',
-            'Premature leaf drop',
-            'Stunted fruit development',
-            'Reduced photosynthesis efficiency'
-        ],
-        'Similar_Diseases': ['Rust', 'Leaf Spot'],
-        'Severity': 'Moderate'
-    },
-    'Cherry_(including_sour)___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
-        'Symptoms': [
-            'Narrow, rectangular grayish-brown lesions on leaves',
-            'Yellow halo around spots',
-            'Leaf necrosis and premature death',
-            'Reduced grain filling',
-            'High humidity accelerates disease progression'
-        ],
-        'Similar_Diseases': ['Common Rust', 'Northern Leaf Blight'],
-        'Severity': 'High'
-    },
-    'Corn_(maize)___Common_rust_': {
-        'Symptoms': [
-            'Reddish-brown pustules on leaves',
-            'Pustules release powdery rust spores',
-            'Leaves may yellow and die prematurely',
-            'Weakened plant leading to reduced yields',
-            'Occurs more in cool, wet conditions'
-        ],
-        'Similar_Diseases': ['Gray Leaf Spot', 'Southern Rust'],
-        'Severity': 'Moderate'
-    },
-    'Corn_(maize)___Northern_Leaf_Blight': {
-        'Symptoms': [
-            'Long, cigar-shaped gray-green lesions on leaves',
-            'Lesions turn tan and develop spores',
-            'Premature leaf wilting and death',
-            'Reduced ear development and yield loss',
-            'More severe in warm, humid environments'
-        ],
-        'Similar_Diseases': ['Gray Leaf Spot', 'Southern Corn Leaf Blight'],
-        'Severity': 'High'
-    },
-    'Corn_(maize)___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Grape___Black_rot': {
-        'Symptoms': [
-            'Small, circular brown spots on leaves with black edges',
-            'Dark sunken lesions on fruit that later shrivel into hard black mummies',
-            'Infected stems develop dark streaks',
-            'Premature leaf drop and reduced fruit yield',
-            'Sticky spores visible on infected areas in humid conditions'
-        ],
-        'Similar_Diseases': ['Grape Downy Mildew', 'Grape Powdery Mildew'],
-        'Severity': 'High'
-    },
-    'Grape___Esca_(Black_Measles)': {
-        'Symptoms': [
-            'Dark streaks appear on woody stems',
-            'Irregular brown spots on leaves with yellow halos',
-            'Grapes show sunken brown lesions and dry out',
-            'Sudden vine collapse in severe cases',
-            'Black fungal spores present on pruning wounds'
-        ],
-        'Similar_Diseases': ['Botryosphaeria Canker', 'Eutypa Dieback'],
-        'Severity': 'High'
-    },
-    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': {
-        'Symptoms': [
-            'Irregular dark brown leaf spots with yellow halos',
-            'Severe infection leads to leaf curling and premature drop',
-            'Leaves develop a brittle texture',
-            'Spots merge, forming large necrotic areas',
-            'Reduced fruit quality due to leaf loss'
-        ],
-        'Similar_Diseases': ['Downy Mildew', 'Anthracnose'],
-        'Severity': 'Moderate'
-    },
-    'Grape___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Orange___Haunglongbing_(Citrus_greening)': {
-        'Symptoms': [
-            'Yellowing leaves with asymmetrical blotches',
-            'Small, lopsided, bitter-tasting fruits',
-            'Premature fruit drop',
-            'Twig dieback and tree decline',
-            'Slow tree growth with sparse canopy'
-        ],
-        'Similar_Diseases': ['Citrus Tristeza Virus', 'Citrus Canker'],
-        'Severity': 'High'
-    },
-    'Peach___Bacterial_spot': {
-        'Symptoms': [
-            'Small, water-soaked lesions on leaves and fruit',
-            'Lesions turn dark brown with irregular edges',
-            'Premature leaf drop leads to defoliation',
-            'Fruits develop black, sunken pits',
-            'Weak growth due to leaf loss'
-        ],
-        'Similar_Diseases': ['Peach Scab', 'Coryneum Blight'],
-        'Severity': 'Moderate'
-    },
-    'Peach___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Pepper,_bell___Bacterial_spot': {
-        'Symptoms': [
-            'Small, dark, water-soaked spots on leaves',
-            'Leaf spots grow and merge, causing defoliation',
-            'Sunken, black lesions on fruit',
-            'Fruit cracking and distortion',
-            'Reduced yield and weak plants'
-        ],
-        'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
-        'Severity': 'Moderate'
-    },
-    'Pepper,_bell___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Potato___Early_blight': {
-        'Symptoms': [
-            'Small, dark brown spots with concentric rings on older leaves',
-            'Yellowing of surrounding leaf tissue, forming a "target-like" pattern',
-            'Lesions expand, causing premature defoliation',
-            'Dark sunken spots on tubers with dry, leathery texture',
-            'Weakened plants leading to reduced tuber production'
-        ],
-        'Similar_Diseases': ['Late Blight', 'Bacterial Wilt'],
-        'Severity': 'High'
-    },
-    'Potato___Late_blight': {
-        'Symptoms': [
-            'Large, dark water-soaked lesions on leaves',
-            'White fungal growth under humid conditions',
-            'Rapid leaf wilting and death',
-            'Dark brown lesions on tubers',
-            'Foul smell in infected potatoes'
-        ],
-        'Similar_Diseases': ['Early Blight', 'Blackleg'],
-        'Severity': 'High'
-    },
-    'Potato___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Raspberry___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Soybean___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Squash___Powdery_mildew': {
-        'Symptoms': [
-            'White powdery spots on leaves and stems',
-            'Yellowing and curling of leaves',
-            'Premature leaf drop',
-            'Stunted plant growth',
-            'Reduced fruit yield'
-        ],
-        'Similar_Diseases': ['Downy Mildew', 'Leaf Spot'],
-        'Severity': 'Moderate'
-    },
-    'Strawberry___Leaf_scorch': {
-        'Symptoms': [
-            'Reddish-purple spots on leaves',
-            'Leaves dry out and curl at the edges',
-            'Premature defoliation',
-            'Reduced fruit size and yield',
-            'Weakened plants'
-        ],
-        'Similar_Diseases': ['Leaf Spot', 'Powdery Mildew'],
-        'Severity': 'Moderate'
-    },
-    'Strawberry___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    },
-    'Tomato___Bacterial_spot': {
-        'Symptoms': [
-            'Small, dark, water-soaked spots on leaves',
-            'Leaf spots grow and merge, causing defoliation',
-            'Sunken, black lesions on fruit',
-            'Fruit cracking and distortion',
-            'Reduced yield and weak plants'
-        ],
-        'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
-        'Severity': 'Moderate'
-    },
-    'Tomato___Early_blight': {
-        'Symptoms': [
-            'Dark, concentric rings on older leaves',
-            'Yellowing and wilting of leaves',
-            'Stem lesions with dark, sunken spots',
-            'Fruit rot and premature drop',
-            'Reduced plant vigor'
-        ],
-        'Similar_Diseases': ['Late Blight', 'Septoria Leaf Spot'],
-        'Severity': 'High'
-    },
-    'Tomato___Late_blight': {
-        'Symptoms': [
-            'Dark, water-soaked lesions on leaves',
-            'White mold-like growth under leaves',
-            'Rapid spread during humid conditions',
-            'Brown sunken spots on fruits',
-            'Defoliation and plant collapse'
-        ],
-        'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
-        'Severity': 'High'
-    },
-    'Tomato___Leaf_Mold': {
-        'Symptoms': [
-            'Yellow spots on upper leaf surfaces',
-            'Grayish-white mold on lower leaf surfaces',
-            'Leaf curling and premature drop',
-            'Reduced fruit yield',
-            'Weakened plants'
-        ],
-        'Similar_Diseases': ['Powdery Mildew', 'Early Blight'],
-        'Severity': 'Moderate'
-    },
-    'Tomato___Septoria_leaf_spot': {
-        'Symptoms': [
-            'Small, circular spots with gray centers and dark edges',
-            'Yellowing and wilting of leaves',
-            'Premature leaf drop',
-            'Reduced fruit yield',
-            'Weakened plants'
-        ],
-        'Similar_Diseases': ['Early Blight', 'Leaf Mold'],
-        'Severity': 'Moderate'
-    },
-    'Tomato___Spider_mites Two-spotted_spider_mite': {
-        'Symptoms': [
-            'Fine webbing on leaves and stems',
-            'Yellow or white speckling on leaves',
-            'Leaf curling and wilting',
-            'Reduced plant vigor',
-            'Premature leaf drop'
-        ],
-        'Similar_Diseases': ['Aphid Infestation', 'Thrips Damage'],
-        'Severity': 'Moderate'
-    },
-    'Tomato___Target_Spot': {
-        'Symptoms': [
-            'Dark, concentric rings on leaves and stems',
-            'Yellowing and wilting of leaves',
-            'Premature leaf drop',
-            'Reduced fruit yield',
-            'Weakened plants'
-        ],
-        'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
-        'Severity': 'Moderate'
-    },
-    'Tomato___Tomato_Yellow_Leaf_Curl_Virus': {
-        'Symptoms': [
-            'Upward curling of leaves',
-            'Yellowing and stunted growth',
-            'Reduced fruit production',
-            'Whitefly infestations',
-            'Brittle leaves with vein clearing'
-        ],
-        'Similar_Diseases': ['Tomato Mosaic Virus', 'Cucumber Mosaic Virus'],
-        'Severity': 'High'
-    },
-    'Tomato___Tomato_mosaic_virus': {
-        'Symptoms': [
-            'Mottled light and dark green patterns on leaves',
-            'Leaf curling and distortion',
-            'Stunted plant growth',
-            'Reduced fruit yield',
-            'Fruit discoloration and deformation'
-        ],
-        'Similar_Diseases': ['Tomato Yellow Leaf Curl Virus', 'Cucumber Mosaic Virus'],
-        'Severity': 'High'
-    },
-    'Tomato___healthy': {
-        'Symptoms': ['No disease symptoms detected'],
-        'Similar_Diseases': ['None'],
-        'Severity': 'None'
-    }
-};
+    const plant_disease_info = {
+        'Apple___Apple_scab': {
+            'Symptoms': [
+                'Olive-green or black velvety spots on leaves',
+                'Yellowing and premature leaf drop',
+                'Scabby, cracked fruit surface',
+                'Lesions on young twigs',
+                'Reduced fruit yield'
+            ],
+            'Similar_Diseases': ['Cedar Apple Rust', 'Sooty Blotch'],
+            'Severity': 'High'
+        },
+        'Apple___Black_rot': {
+            'Symptoms': [
+                'Circular brown lesions on leaves',
+                'Sunken black spots on fruit',
+                'Fruit shriveling and mummification',
+                'Bark cankers on branches',
+                'Wilting of shoots'
+            ],
+            'Similar_Diseases': ['Bitter Rot', 'Frogeye Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Apple___Cedar_rust': {
+            'Symptoms': [
+                'Orange gelatinous spots on apple leaves',
+                'Yellowing and premature defoliation',
+                'Twig infections leading to branch dieback',
+                'Gall formation on juniper trees (alternate host)',
+                'Fruit deformation and blemishes'
+            ],
+            'Similar_Diseases': ['Quince Rust', 'Hawthorn Rust'],
+            'Severity': 'Moderate'
+        },
+        'Apple___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Blueberry___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Cherry_(including_sour)___Powdery_mildew': {
+            'Symptoms': [
+                'White powdery fungal growth on leaves and twigs',
+                'Curled and distorted leaves',
+                'Premature leaf drop',
+                'Stunted fruit development',
+                'Reduced photosynthesis efficiency'
+            ],
+            'Similar_Diseases': ['Rust', 'Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Cherry_(including_sour)___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
+            'Symptoms': [
+                'Narrow, rectangular grayish-brown lesions on leaves',
+                'Yellow halo around spots',
+                'Leaf necrosis and premature death',
+                'Reduced grain filling',
+                'High humidity accelerates disease progression'
+            ],
+            'Similar_Diseases': ['Common Rust', 'Northern Leaf Blight'],
+            'Severity': 'High'
+        },
+        'Corn_(maize)___Common_rust_': {
+            'Symptoms': [
+                'Reddish-brown pustules on leaves',
+                'Pustules release powdery rust spores',
+                'Leaves may yellow and die prematurely',
+                'Weakened plant leading to reduced yields',
+                'Occurs more in cool, wet conditions'
+            ],
+            'Similar_Diseases': ['Gray Leaf Spot', 'Southern Rust'],
+            'Severity': 'Moderate'
+        },
+        'Corn_(maize)___Northern_Leaf_Blight': {
+            'Symptoms': [
+                'Long, cigar-shaped gray-green lesions on leaves',
+                'Lesions turn tan and develop spores',
+                'Premature leaf wilting and death',
+                'Reduced ear development and yield loss',
+                'More severe in warm, humid environments'
+            ],
+            'Similar_Diseases': ['Gray Leaf Spot', 'Southern Corn Leaf Blight'],
+            'Severity': 'High'
+        },
+        'Corn_(maize)___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Grape___Black_rot': {
+            'Symptoms': [
+                'Small, circular brown spots on leaves with black edges',
+                'Dark sunken lesions on fruit that later shrivel into hard black mummies',
+                'Infected stems develop dark streaks',
+                'Premature leaf drop and reduced fruit yield',
+                'Sticky spores visible on infected areas in humid conditions'
+            ],
+            'Similar_Diseases': ['Grape Downy Mildew', 'Grape Powdery Mildew'],
+            'Severity': 'High'
+        },
+        'Grape___Esca_(Black_Measles)': {
+            'Symptoms': [
+                'Dark streaks appear on woody stems',
+                'Irregular brown spots on leaves with yellow halos',
+                'Grapes show sunken brown lesions and dry out',
+                'Sudden vine collapse in severe cases',
+                'Black fungal spores present on pruning wounds'
+            ],
+            'Similar_Diseases': ['Botryosphaeria Canker', 'Eutypa Dieback'],
+            'Severity': 'High'
+        },
+        'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': {
+            'Symptoms': [
+                'Irregular dark brown leaf spots with yellow halos',
+                'Severe infection leads to leaf curling and premature drop',
+                'Leaves develop a brittle texture',
+                'Spots merge, forming large necrotic areas',
+                'Reduced fruit quality due to leaf loss'
+            ],
+            'Similar_Diseases': ['Downy Mildew', 'Anthracnose'],
+            'Severity': 'Moderate'
+        },
+        'Grape___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Orange___Haunglongbing_(Citrus_greening)': {
+            'Symptoms': [
+                'Yellowing leaves with asymmetrical blotches',
+                'Small, lopsided, bitter-tasting fruits',
+                'Premature fruit drop',
+                'Twig dieback and tree decline',
+                'Slow tree growth with sparse canopy'
+            ],
+            'Similar_Diseases': ['Citrus Tristeza Virus', 'Citrus Canker'],
+            'Severity': 'High'
+        },
+        'Peach___Bacterial_spot': {
+            'Symptoms': [
+                'Small, water-soaked lesions on leaves and fruit',
+                'Lesions turn dark brown with irregular edges',
+                'Premature leaf drop leads to defoliation',
+                'Fruits develop black, sunken pits',
+                'Weak growth due to leaf loss'
+            ],
+            'Similar_Diseases': ['Peach Scab', 'Coryneum Blight'],
+            'Severity': 'Moderate'
+        },
+        'Peach___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Pepper,_bell___Bacterial_spot': {
+            'Symptoms': [
+                'Small, dark, water-soaked spots on leaves',
+                'Leaf spots grow and merge, causing defoliation',
+                'Sunken, black lesions on fruit',
+                'Fruit cracking and distortion',
+                'Reduced yield and weak plants'
+            ],
+            'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
+            'Severity': 'Moderate'
+        },
+        'Pepper,_bell___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Potato___Early_blight': {
+            'Symptoms': [
+                'Small, dark brown spots with concentric rings on older leaves',
+                'Yellowing of surrounding leaf tissue, forming a "target-like" pattern',
+                'Lesions expand, causing premature defoliation',
+                'Dark sunken spots on tubers with dry, leathery texture',
+                'Weakened plants leading to reduced tuber production'
+            ],
+            'Similar_Diseases': ['Late Blight', 'Bacterial Wilt'],
+            'Severity': 'High'
+        },
+        'Potato___Late_blight': {
+            'Symptoms': [
+                'Large, dark water-soaked lesions on leaves',
+                'White fungal growth under humid conditions',
+                'Rapid leaf wilting and death',
+                'Dark brown lesions on tubers',
+                'Foul smell in infected potatoes'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Blackleg'],
+            'Severity': 'High'
+        },
+        'Potato___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Raspberry___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Soybean___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Squash___Powdery_mildew': {
+            'Symptoms': [
+                'White powdery spots on leaves and stems',
+                'Yellowing and curling of leaves',
+                'Premature leaf drop',
+                'Stunted plant growth',
+                'Reduced fruit yield'
+            ],
+            'Similar_Diseases': ['Downy Mildew', 'Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Strawberry___Leaf_scorch': {
+            'Symptoms': [
+                'Reddish-purple spots on leaves',
+                'Leaves dry out and curl at the edges',
+                'Premature defoliation',
+                'Reduced fruit size and yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Leaf Spot', 'Powdery Mildew'],
+            'Severity': 'Moderate'
+        },
+        'Strawberry___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Tomato___Bacterial_spot': {
+            'Symptoms': [
+                'Small, dark, water-soaked spots on leaves',
+                'Leaf spots grow and merge, causing defoliation',
+                'Sunken, black lesions on fruit',
+                'Fruit cracking and distortion',
+                'Reduced yield and weak plants'
+            ],
+            'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Early_blight': {
+            'Symptoms': [
+                'Dark, concentric rings on older leaves',
+                'Yellowing and wilting of leaves',
+                'Stem lesions with dark, sunken spots',
+                'Fruit rot and premature drop',
+                'Reduced plant vigor'
+            ],
+            'Similar_Diseases': ['Late Blight', 'Septoria Leaf Spot'],
+            'Severity': 'High'
+        },
+        'Tomato___Late_blight': {
+            'Symptoms': [
+                'Dark, water-soaked lesions on leaves',
+                'White mold-like growth under leaves',
+                'Rapid spread during humid conditions',
+                'Brown sunken spots on fruits',
+                'Defoliation and plant collapse'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+            'Severity': 'High'
+        },
+        'Tomato___Leaf_Mold': {
+            'Symptoms': [
+                'Yellow spots on upper leaf surfaces',
+                'Grayish-white mold on lower leaf surfaces',
+                'Leaf curling and premature drop',
+                'Reduced fruit yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Powdery Mildew', 'Early Blight'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Septoria_leaf_spot': {
+            'Symptoms': [
+                'Small, circular spots with gray centers and dark edges',
+                'Yellowing and wilting of leaves',
+                'Premature leaf drop',
+                'Reduced fruit yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Leaf Mold'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Spider_mites Two-spotted_spider_mite': {
+            'Symptoms': [
+                'Fine webbing on leaves and stems',
+                'Yellow or white speckling on leaves',
+                'Leaf curling and wilting',
+                'Reduced plant vigor',
+                'Premature leaf drop'
+            ],
+            'Similar_Diseases': ['Aphid Infestation', 'Thrips Damage'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Target_Spot': {
+            'Symptoms': [
+                'Dark, concentric rings on leaves and stems',
+                'Yellowing and wilting of leaves',
+                'Premature leaf drop',
+                'Reduced fruit yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Tomato_Yellow_Leaf_Curl_Virus': {
+            'Symptoms': [
+                'Upward curling of leaves',
+                'Yellowing and stunted growth',
+                'Reduced fruit production',
+                'Whitefly infestations',
+                'Brittle leaves with vein clearing'
+            ],
+            'Similar_Diseases': ['Tomato Mosaic Virus', 'Cucumber Mosaic Virus'],
+            'Severity': 'High'
+        },
+        'Tomato___Tomato_mosaic_virus': {
+            'Symptoms': [
+                'Mottled light and dark green patterns on leaves',
+                'Leaf curling and distortion',
+                'Stunted plant growth',
+                'Reduced fruit yield',
+                'Fruit discoloration and deformation'
+            ],
+            'Similar_Diseases': ['Tomato Yellow Leaf Curl Virus', 'Cucumber Mosaic Virus'],
+            'Severity': 'High'
+        },
+        'Tomato___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        }
+    };
 </script>
 
 <!-- SweetAlert Script for Feedback Submission -->
 <script>
-    // Star Rating System
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('rating');
-
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const value = star.getAttribute('data-value');
-            ratingInput.value = value; // Set the hidden input value
-            stars.forEach(s => s.classList.remove('selected')); // Reset all stars
-            for (let i = 0; i < value; i++) {
-                stars[i].classList.add('selected'); // Highlight selected stars
-            }
-        });
-    });
-
     // Handle Feedback Form Submission
     document.getElementById('feedback-form').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -850,20 +838,65 @@ const plant_disease_info = {
             return;
         }
 
-        // Simulate sending feedback to the database
-        setTimeout(() => {
+        // Send feedback data to the backend
+        fetch('/submit_feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                accuracy: accuracy,
+                rating: rating,
+                comments: comments
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Feedback Sent!',
+                    text: 'Thank you for helping us improve our system.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Reset the form
+                    document.getElementById('feedback-form').reset();
+                    stars.forEach(star => star.classList.remove('selected')); // Reset stars
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'An error occurred. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
             Swal.fire({
-                icon: 'success',
-                title: 'Feedback Sent!',
-                text: 'Thank you for helping us improve our system.',
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred. Please try again.',
                 confirmButtonText: 'OK'
-            }).then(() => {
-                // Reset the form
-                document.getElementById('feedback-form').reset();
-                stars.forEach(star => star.classList.remove('selected')); // Reset stars
             });
-        }, 1000); // Simulate a 1-second delay
+        });
     });
+
+    // Star Rating System
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = star.getAttribute('data-value');
+            ratingInput.value = value; // Set the hidden input value
+            stars.forEach(s => s.classList.remove('selected')); // Reset all stars
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add('selected'); // Highlight selected stars
+            }
+        });
+    });
+
 </script>
 
     <!-- Footer Start -->
