@@ -38,7 +38,9 @@ model = load_model()
 
 # Helper function to check if the user is logged in
 def is_logged_in():
-    return 'email' in session and 'first_name' in session
+    logged_in = 'email' in session and 'first_name' in session
+    print(f"is_logged_in: {logged_in}, Session: {session}")
+    return logged_in
 
 # Database Models
 class Users(db.Model, UserMixin):
@@ -55,7 +57,7 @@ class Users(db.Model, UserMixin):
         return self.User_ID
 
 class Plant_Images(db.Model):
-    __tablename__ = 'plant_images'  # Explicitly set the table name
+    __tablename__ = 'plant_images'
     Image_ID = db.Column(db.Integer, primary_key=True)
     User_ID = db.Column(db.Integer, db.ForeignKey('users.User_ID'), nullable=False)
     Upload_Date = db.Column(db.Date, nullable=False)
@@ -104,11 +106,16 @@ class Feedback(db.Model):
 # Create Database Tables
 with app.app_context():
     db.create_all()
+    try:
+        db.session.execute("SELECT 1")
+        print("Database connection OK")
+    except Exception as e:
+        print("Database connection ERROR:", e)
 
 # Routes
 @app.route("/")
 def home():
-    first_name = session.get('first_name', 'Guest')  # Default to 'Guest' if not logged in
+    first_name = session.get('first_name', 'Guest')
     return render_template("index.html", first_name=first_name)
 
 @app.route("/set_session", methods=["POST"])
@@ -118,12 +125,10 @@ def set_session():
     session['email'] = data.get('email')
     return jsonify({"success": True})
 
-# About Page
 @app.route("/about")
 def about():
     return render_template("about.html")
 
-# Login Page
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -135,7 +140,6 @@ def login():
             session['first_name'] = "Admin"
             return redirect(url_for('admin_dashboard'))
 
-        # Check if user exists in the database
         user = Users.query.filter_by(Email=email, Password=password).first()
         if user:
             session['email'] = user.Email
@@ -146,18 +150,18 @@ def login():
         flash("Invalid email or password", "error")
     return render_template("login_signUp.html")
 
-# Logout
 @app.route("/logout")
 def logout():
     session.pop('email', None)
     session.pop('first_name', None)
     return redirect(url_for('home'))
 
-# Disease Recognition Page (Protected)
 @app.route("/disease_recognition", methods=["GET", "POST"])
 def disease_recognition():
+    print("Current Session:", session)
     if not is_logged_in():
         return redirect(url_for('login'))
+
     if request.method == "POST":
         if "file" not in request.files:
             return jsonify({"success": False, "error": "No file uploaded"})
@@ -168,18 +172,38 @@ def disease_recognition():
 
         if file:
             try:
-                # Save the uploaded file
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
                 file.save(filepath)
-                # Process the image
+
+                user_email = session.get('email')
+                # print(f"Querying for user with email: {user_email}")
+                user = Users.query.filter_by(Email=user_email).first()
+                if user is None:
+                    # print(f"Error: User not found for email: {user_email}")
+                    return jsonify({"success": False, "error": "User not found"})
+
+                user_id = user.User_ID
+  
+        
+                # Save the uploaded image to the Plant_Images table
+                new_image = Plant_Images(
+                    User_ID=user.User_ID,  # Link to the user who uploaded the image
+                    Upload_Date=date.today(),  # Current date
+                    Image_URL=file.filename,  # Name of the uploaded file
+                    Quality_Status="Good"  # Default quality status (can be updated later)
+                )
+                db.session.add(new_image)
+                db.session.commit()
+
+                # Process the image for prediction
                 image = Image.open(filepath)
                 image = image.resize((128, 128))  # Resize image to match model input size
                 input_arr = tf.keras.preprocessing.image.img_to_array(image)
                 img_array = np.array([input_arr])
+
                 # Prediction
                 prediction = model.predict(img_array)
                 confidence = np.max(prediction) * 100  # Get confidence score
-                # Actual labels from the 38 classes
                 labels = [
                     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_rust', 'Apple___healthy',
                     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy',
@@ -195,7 +219,8 @@ def disease_recognition():
                     'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
                     'Tomato___healthy'
                 ]
-                predicted_label = labels[np.argmax(prediction)]
+                predicted_label = labels[np.argmax(prediction)] 
+
                 return jsonify({
                     "success": True,
                     "prediction": predicted_label,
@@ -204,6 +229,7 @@ def disease_recognition():
                 })
             except Exception as e:
                 return jsonify({"success": False, "error": str(e)})
+
     return render_template("disease_recognition.html")
 
 # Expert Consultation Page (Protected)
