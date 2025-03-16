@@ -347,3 +347,513 @@ def signup():
 # Run the Flask App
 if __name__ == "__main__":
     app.run(debug=True)
+    
+    # -BACKUP 2
+    
+    
+#  # Main Application
+
+from flask import Flask, render_template, request, redirect, send_from_directory, url_for, jsonify, session, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import os
+import tensorflow as tf
+import numpy as np
+from PIL import Image
+from datetime import date
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a real secret key
+
+# Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:were8368@localhost/gunduziai'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Define the upload folder for images
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure the upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+# Load ML Model once (cached)
+def load_model():
+    model_path = "trained_model.h5"
+    if os.path.exists(model_path):
+        return tf.keras.models.load_model(model_path)
+    return None
+
+model = load_model()
+
+# Helper function to check if the user is logged in
+def is_logged_in():
+    logged_in = 'email' in session and 'first_name' in session
+    print(f"is_logged_in: {logged_in}, Session: {session}")
+    return logged_in
+
+# Database Models
+class Users(db.Model, UserMixin):
+    __tablename__ = 'users'
+    User_ID = db.Column(db.Integer, primary_key=True)
+    First_Name = db.Column(db.String(50), nullable=False)
+    Last_Name = db.Column(db.String(50), nullable=False)
+    Role = db.Column(db.String(50), nullable=False)
+    Phone_number = db.Column(db.Integer, nullable=False)
+    Email = db.Column(db.String(100), unique=True, nullable=False)
+    Password = db.Column(db.String(100), nullable=False)
+
+    def get_id(self):
+        return self.User_ID
+
+class Plant_Images(db.Model):
+    __tablename__ = 'plant_images'
+    Image_ID = db.Column(db.Integer, primary_key=True)
+    User_ID = db.Column(db.Integer, db.ForeignKey('users.User_ID'), nullable=False)
+    Upload_Date = db.Column(db.Date, nullable=False)
+    Image_URL = db.Column(db.String(200), nullable=False)
+    Quality_Status = db.Column(db.String(50), nullable=False)
+
+class Diseases(db.Model):
+    __tablename__ = 'diseases'
+    Disease_ID = db.Column(db.Integer, primary_key=True)
+    Disease_Name = db.Column(db.String(100), unique=True, nullable=False)
+    Symptoms = db.Column(db.String(200), nullable=False)
+    Severity_Level = db.Column(db.String(50), nullable=False)
+    Similar_Diseases = db.Column(db.String(200), nullable=False)
+
+class Diagnosis_Results(db.Model):
+    __tablename__ = 'diagnosis_results'
+    Result_ID = db.Column(db.Integer, primary_key=True)
+    Image_ID = db.Column(db.Integer, db.ForeignKey('plant_images.Image_ID'), nullable=False)
+    Disease_ID = db.Column(db.Integer, db.ForeignKey('diseases.Disease_ID'), nullable=False)
+    Predicted_Disease = db.Column(db.String(100), nullable=False)
+    Percentage_Confidence = db.Column(db.Float, nullable=False)
+    Diagnosis_Method = db.Column(db.String(50), nullable=False)
+    Diagnosis_Date = db.Column(db.Date, nullable=False)
+
+class Treatment_Recommendations(db.Model):
+    __tablename__ = 'treatment_recommendations'
+    Treatment_ID = db.Column(db.Integer, primary_key=True)
+    Disease_ID = db.Column(db.Integer, db.ForeignKey('diseases.Disease_ID'), nullable=False)
+    Created_Date = db.Column(db.Date, nullable=False)
+    Disease_Name = db.Column(db.String(100), nullable=False)
+    Preventive_Measures = db.Column(db.String(200), nullable=False)
+    Chemical_Treatments = db.Column(db.String(200), nullable=False)
+    Organic_Solutions = db.Column(db.String(200), nullable=False)
+    Best_Farming_Practices = db.Column(db.String(200), nullable=False)
+
+class Feedback(db.Model):
+    __tablename__ = 'feedback'
+    Feedback_ID = db.Column(db.Integer, primary_key=True)
+    User_ID = db.Column(db.Integer, db.ForeignKey('users.User_ID'), nullable=False)
+    Diagnosis_ID = db.Column(db.Integer, db.ForeignKey('diagnosis_results.Result_ID'), nullable=False)
+    Feedback_Date = db.Column(db.Date, nullable=False)
+    Prediction_Accuracy = db.Column(db.Integer, nullable=False)
+    System_Rating = db.Column(db.Integer, nullable=False)
+    Feedback_Text = db.Column(db.String(200), nullable=False)
+
+# Create Database Tables
+with app.app_context():
+    db.create_all()
+    try:
+        db.session.execute("SELECT 1")
+        print("Database connection OK")
+    except Exception as e:
+        print("Database connection ERROR:", e)
+
+# Routes
+@app.route("/")
+def home():
+    first_name = session.get('first_name', 'Guest')
+    return render_template("index.html", first_name=first_name)
+
+@app.route("/set_session", methods=["POST"])
+def set_session():
+    data = request.get_json()
+    session['first_name'] = data.get('first_name')
+    session['email'] = data.get('email')
+    return jsonify({"success": True})
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if email == "admintest@gmail.com" and password == "@Admin1234":
+            session['email'] = email
+            session['first_name'] = "Admin"
+            return redirect(url_for('admin_dashboard'))
+
+        user = Users.query.filter_by(Email=email, Password=password).first()
+        if user:
+            session['email'] = user.Email
+            session['first_name'] = user.First_Name
+            if user.Role == "Admin":
+                return redirect(url_for('admin_dashboard'))
+            return redirect(url_for('home'))
+        flash("Invalid email or password", "error")
+    return render_template("login_signUp.html")
+
+@app.route("/logout")
+def logout():
+    session.pop('email', None)
+    session.pop('first_name', None)
+    return redirect(url_for('home'))
+
+@app.route("/disease_recognition", methods=["GET", "POST"])
+def disease_recognition():
+    print("Current Session:", session)
+    if not is_logged_in():
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        if "file" not in request.files:
+            return jsonify({"success": False, "error": "No file uploaded"})
+
+        file = request.files["file"]
+        if file.filename == "":
+            return jsonify({"success": False, "error": "No file selected"})
+
+        if file:
+            try:
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+                file.save(filepath)
+
+                user_email = session.get('email')
+                # print(f"Querying for user with email: {user_email}")
+                user = Users.query.filter_by(Email=user_email).first()
+                if user is None:
+                    # print(f"Error: User not found for email: {user_email}")
+                    return jsonify({"success": False, "error": "User not found"})
+
+                user_id = user.User_ID
+  
+        
+                # Save the uploaded image to the Plant_Images table
+                new_image = Plant_Images(
+                    User_ID=user.User_ID,  # Link to the user who uploaded the image
+                    Upload_Date=date.today(),  # Current date
+                    Image_URL=file.filename,  # Name of the uploaded file
+                    Quality_Status="Good"  # Default quality status (can be updated later)
+                )
+                db.session.add(new_image)
+                db.session.commit()
+
+                # Process the image for prediction
+                image = Image.open(filepath)
+                image = image.resize((128, 128))  # Resize image to match model input size
+                input_arr = tf.keras.preprocessing.image.img_to_array(image)
+                img_array = np.array([input_arr])
+
+                # Prediction
+                prediction = model.predict(img_array)
+                confidence = np.max(prediction) * 100  # Get confidence score
+                labels = [
+                    'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_rust', 'Apple___healthy',
+                    'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy',
+                    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn_(maize)___Common_rust_',
+                    'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy', 'Grape___Black_rot',
+                    'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Grape___healthy',
+                    'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot', 'Peach___healthy',
+                    'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy', 'Potato___Early_blight',
+                    'Potato___Late_blight', 'Potato___healthy', 'Raspberry___healthy', 'Soybean___healthy',
+                    'Squash___Powdery_mildew', 'Strawberry___Leaf_scorch', 'Strawberry___healthy',
+                    'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight',
+                    'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite',
+                    'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
+                    'Tomato___healthy'
+                ]
+                predicted_label = labels[np.argmax(prediction)] 
+
+                return jsonify({
+                    "success": True,
+                    "prediction": predicted_label,
+                    "confidence": float(confidence),  # Convert to float for JSON serialization
+                    "image_url": file.filename
+                })
+            except Exception as e:
+                return jsonify({"success": False, "error": str(e)})
+
+    return render_template("disease_recognition.html")
+
+# Expert Consultation Page (Protected)
+@app.route("/expert")
+def expert():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    return render_template("expert.html")
+
+# Contact Page
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+# Serve static files (images, CSS, JS)
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
+# User Dashboard Page (Protected)
+@app.route("/user_dashboard")
+def user_dashboard():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    return render_template("user_dashboard.html")
+
+# Admin Dashboard Page (Protected)
+@app.route("/admin_dashboard")
+def admin_dashboard():
+    if not is_logged_in() or session.get('first_name') != "Admin":
+        return redirect(url_for('login'))
+    return render_template("admin_dashboard.html")
+
+# Sign-up Route
+@app.route("/signup", methods=["POST"])
+def signup():
+    if request.method == "POST":
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        user_role = request.form.get('user_role')
+        phone_number = int(request.form.get('phone_number'))
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check if email already exists
+        existing_user = Users.query.filter_by(Email=email).first()
+        if existing_user:
+            return jsonify({"success": False, "error": "Email already exists"})
+
+        # Create new user
+        new_user = Users(
+            First_Name=first_name,
+            Last_Name=last_name,
+            Role=user_role,
+            Phone_number=phone_number,
+            Email=email,
+            Password=password
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "Invalid request"})
+
+# Run the Flask App
+if __name__ == "__main__":
+    app.run(debug=True)
+    
+    
+    
+# SOME LOGIC
+
+# @app.route("/disease_recognition", methods=["GET", "POST"])
+# def disease_recognition():
+#     print("Current Session:", session)
+#     if not is_logged_in():
+#         return redirect(url_for('login'))
+
+#     if request.method == "POST":
+#         if "file" not in request.files:
+#             return jsonify({"success": False, "error": "No file uploaded"})
+
+#         file = request.files["file"]
+#         if file.filename == "":
+#             return jsonify({"success": False, "error": "No file selected"})
+
+#         if file:
+#             try:
+#                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+#                 file.save(filepath)
+
+#                 user_email = session.get('email')
+#                 # print(f"Querying for user with email: {user_email}")
+#                 user = Users.query.filter_by(Email=user_email).first()
+#                 if user is None:
+#                     # print(f"Error: User not found for email: {user_email}")
+#                     return jsonify({"success": False, "error": "User not found"})
+
+#                 user_id = user.User_ID
+
+#                 # Save the uploaded image to the Plant_Images table
+#                 new_image = Plant_Images(
+#                     User_ID=user.User_ID,  # Link to the user who uploaded the image
+#                     Upload_Date=date.today(),  # Current date
+#                     Image_URL=file.filename,  # Name of the uploaded file
+#                     Quality_Status="Good"  # Default quality status (can be updated later)
+#                 )
+#                 db.session.add(new_image)
+#                 db.session.commit()
+
+#                 # Process the image for prediction
+#                 image = Image.open(filepath)
+#                 image = image.resize((128, 128))  # Resize image to match model input size
+#                 input_arr = tf.keras.preprocessing.image.img_to_array(image)
+#                 img_array = np.array([input_arr])
+
+#                 # Prediction
+#                 prediction = model.predict(img_array)
+#                 confidence = np.max(prediction) * 100  # Get confidence score
+#                 labels = [
+#                     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_rust', 'Apple___healthy',
+#                     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew',
+#                     'Cherry_(including_sour)___healthy',
+#                     'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn_(maize)___Common_rust_',
+#                     'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy', 'Grape___Black_rot',
+#                     'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Grape___healthy',
+#                     'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot', 'Peach___healthy',
+#                     'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy', 'Potato___Early_blight',
+#                     'Potato___Late_blight', 'Potato___healthy', 'Raspberry___healthy', 'Soybean___healthy',
+#                     'Squash___Powdery_mildew', 'Strawberry___Leaf_scorch', 'Strawberry___healthy',
+#                     'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight',
+#                     'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot',
+#                     'Tomato___Spider_mites Two-spotted_spider_mite',
+#                     'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
+#                     'Tomato___healthy'
+#                 ]
+#                 predicted_label = labels[np.argmax(prediction)]
+
+#                 return jsonify({
+#                     "success": True,
+#                     "prediction": predicted_label,
+#                     "confidence": float(confidence),  # Convert to float for JSON serialization
+#                     "image_url": file.filename
+#                 })
+#             except Exception as e:
+#                 return jsonify({"success": False, "error": str(e)})
+
+#     return render_template("disease_recognition.html")
+
+# New Route for Feedback Submission
+# @app.route("/submit_feedback", methods=["POST"])
+# def submit_feedback():
+#     if request.method == "POST":
+#         try:
+#             accuracy = int(request.form.get('accuracy'))
+#             rating = int(request.form.get('rating'))
+#             comments = request.form.get('comments')
+
+#             user_email = session.get('email')
+#             user = Users.query.filter_by(Email=user_email).first()
+#             if not user:
+#                 return jsonify({"success": False, "error": "User not found"})
+
+#             # Get the latest diagnosis result for the user
+#             latest_diagnosis = Diagnosis_Results.query.join(Plant_Images).filter(
+#                 Plant_Images.User_ID == user.User_ID
+#             ).order_by(Diagnosis_Results.Diagnosis_Date.desc()).first()
+
+#             if not latest_diagnosis:
+#                 return jsonify({"success": False, "error": "No diagnosis found for user"})
+
+#             new_feedback = Feedback(
+#                 User_ID=user.User_ID,
+#                 Diagnosis_ID=latest_diagnosis.Result_ID,
+#                 Feedback_Date=date.today(),
+#                 Prediction_Accuracy=accuracy,
+#                 System_Rating=rating,
+#                 Feedback_Text=comments
+#             )
+
+#             db.session.add(new_feedback)
+#             db.session.commit()
+
+#             return jsonify({"success": True})
+#         except Exception as e:
+#             print(f"Error submitting feedback: {e}")
+#             return jsonify({"success": False, "error": str(e)})
+#     return jsonify({"success": False, "error": "Invalid request"})
+
+# @app.route("/submit_feedback", methods=["POST"])
+# def submit_feedback():
+#     if not is_logged_in():
+#         return jsonify({"success": False, "error": "User not logged in"})
+
+#     if request.method == "POST":
+#         try:
+#             # Get form data
+#             prediction_accuracy = int(request.form.get("accuracy"))
+#             system_rating = int(request.form.get("rating"))
+#             feedback_text = request.form.get("comments")
+
+#             # Get the current user
+#             user = Users.query.filter_by(Email=session['email']).first()
+#             if not user:
+#                 return jsonify({"success": False, "error": "User not found"})
+
+#             # Get the latest diagnosis result for the user
+#             latest_diagnosis = Diagnosis_Results.query.filter_by(User_ID=user.User_ID).order_by(Diagnosis_Results.Result_ID.desc()).first()
+#             if not latest_diagnosis:
+#                 return jsonify({"success": False, "error": "No diagnosis found for the user"})
+
+#             # Save feedback to the Feedback table
+#             new_feedback = Feedback(
+#                 User_ID=user.User_ID,
+#                 Diagnosis_ID=latest_diagnosis.Result_ID,
+#                 Feedback_Date=date.today(),
+#                 Prediction_Accuracy=prediction_accuracy,
+#                 System_Rating=system_rating,
+#                 Feedback_Text=feedback_text
+#             )
+#             db.session.add(new_feedback)
+#             db.session.commit()
+
+#             return jsonify({"success": True})
+#         except Exception as e:
+#             return jsonify({"success": False, "error": str(e)})
+
+#     return jsonify({"success": False, "error": "Invalid request method"})
+
+
+
+# @app.route("/submit_feedback", methods=["POST"])
+# @login_required
+# def submit_feedback():
+#     if request.method == "POST":
+#         try:
+#             # Get form data
+#             accuracy = request.form.get('accuracy')
+#             rating = request.form.get('rating')
+#             comments = request.form.get('comments')
+#             diagnosis_id = request.form.get('diagnosis_id')
+
+#             # Get the current user ID
+#             user_email = session.get('email')
+#             user = Users.query.filter_by(Email=user_email).first()
+#             if not user:
+#                 flash("User not found", "error")
+#                 return redirect(url_for('disease_recognition'))
+
+#             user_id = user.User_ID
+
+#             # Create a new feedback entry
+#             new_feedback = Feedback(
+#                 User_ID=user_id,
+#                 Diagnosis_ID=diagnosis_id,
+#                 Feedback_Date=date.today(),
+#                 Prediction_Accuracy=int(accuracy),
+#                 System_Rating=int(rating),
+#                 Feedback_Text=comments
+#             )
+
+#             # Add and commit to the database
+#             db.session.add(new_feedback)
+#             db.session.commit()
+
+#             flash("Feedback submitted successfully", "success")
+#             return redirect(url_for('disease_recognition'))
+
+#         except Exception as e:
+#             db.session.rollback()
+#             flash(f"An error occurred: {str(e)}", "error")
+#             return redirect(url_for('disease_recognition'))
+
+#     return redirect(url_for('disease_recognition'))

@@ -122,7 +122,7 @@ print(f"Prediction Confidence Score: {confidence_score:.2f}%")
 # Dictionary containing disease details and treatments
 plant_disease_info = {
     # Apple___Apple_scab disease
-    'Potato___Early_blight': {
+    'Apple___Apple_scab disease': {
         'Symptoms': [
             'Olive-green or black velvety spots on leaves',
             'Yellowing and premature leaf drop',
