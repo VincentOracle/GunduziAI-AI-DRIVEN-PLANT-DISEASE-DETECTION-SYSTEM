@@ -24,141 +24,26 @@
      <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
  
      <!-- Customized Bootstrap Stylesheet -->
-     <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
      <link href="static/css/bootstrap.min.css" rel="stylesheet">
  
      <!-- Template Stylesheet -->
      <link href="static/css/style.css" rel="stylesheet">
      <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
 
-    <style>
-        .navbar {
-            background-color: #4CAF50;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-        .navbar a:hover {
-            background-color: #45a049;
-        }
-        .content {
-            padding: 20px;
-            text-align: center;
-        }
-        .upload-section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 20px auto;
-            animation: fadeIn 1s ease-in-out;
-        }
-        .upload-section h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
-        .upload-section input[type="file"] {
-            display: none;
-        }
-        .upload-section label {
-            display: inline-block;
-            background: #FF5722; /* Orange color for Choose Image button */
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .upload-section label:hover {
-            background: #E64A19; /* Darker orange on hover */
-        }
-        .upload-section button {
-            background: #4CAF50; /* Green color for Predict button */
-            color: white;
-            border: none;
-            height: 45px;
-            width: 160px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            margin-left: 20px;
-            transition: background-color 0.3s;
-        }
-        .upload-section button:hover {
-            background: #45a049; /* Darker green on hover */
-        }
-        .result {
-            margin-top: 20px;
-            animation: slideIn 0.5s ease-in-out;
-        }
-        .result h2 {
-            font-size: 1.5em;
-            color: #4CAF50;
-        }
-        .result img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .treatment-recommendations {
-            margin-top: 30px;
-            text-align: left;
-            animation: fadeIn 1s ease-in-out;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        .treatment-recommendations div {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .treatment-recommendations div:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-        .treatment-recommendations h3 {
-            font-size: 1.2em;
-            color: #4CAF50;
-            margin-bottom: 10px;
-        }
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #4CAF50;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-    </style>
 </head>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/67c7dcc622b33b192041fe65/1ilibcqbb';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 <body>
       <!-- Topbar Start -->
       <div class="container-fluid px-5 d-none d-lg-block">
@@ -187,170 +72,832 @@
         </div>
     </div>
     <!-- Topbar End -->
-    
-    <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
-        <a href="/" class="navbar-brand d-flex align-items-center">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav mx-auto py-0">
-                <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-                <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}text-warning{% endif %}">About Us</a>
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
+    <a href="/" class="navbar-brand d-flex align-items-center">
+        <!-- Add your logo or brand name here -->
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav mx-auto py-0">
+            <!-- Public Links -->
+            <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+            <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
+
+            <!-- Protected Links (Only accessible when logged in) -->
+            {% if session.email %}
                 <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
                 <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
+                <!-- <a href="/user_dashboard" class="nav-item nav-link {% if request.path == '/user_dashboard' %}active{% endif %}">Dashboard</a> -->
                 <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
-            </div>
-            <div class="d-flex">
-                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
-                <a href="/signup" class="btn btn-warning {% if request.path == '/signup' %}active{% endif %}">Sign Up</a>
-            </div>
+            {% else %}
+                <!-- Placeholder links for non-logged-in users (redirect to login) -->
+                <a href="/login" class="nav-item nav-link">Disease Recognition</a>
+                <a href="/login" class="nav-item nav-link">Expert Consultation</a>
+                <a href="/login" class="nav-item nav-link">Dashboard</a>
+                <a href="/login" class="nav-item nav-link">Contact</a>
+            {% endif %}
         </div>
-    </nav>
-    
-    <!-- Navbar End -->
-    
+        <div class="d-flex">
+            {% if session.email %}
+                <!-- Greeting and Logout Button (Visible when logged in) -->
+                <span style=" top: 10px; right: 65px; color: rgb(27, 25, 25); font-weight: bold;font-size: 20px;" class="navbar-text me-3" id="greeting">Hello, {{ session.first_name }}!</span><span style="top: 15px; right: 65px; font-weight: bold;font-size: 25px; padding-right:17px; margin-left:-13px;">👋</span>
+                <a href="/logout" class="btn btn-outline-light me-2">Logout</a>
+            {% else %}
+                <!-- Login and Sign Up Buttons (Visible when not logged in) -->
+                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
+                <a href="/login" class="btn btn-warning {% if request.path == '/login' %}active{% endif %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+<!-- Greeting Script -->
+<script>
+    function displayGreeting() {
+        const first_name = "{{ session.first_name }}";  // Use the first_name from the session
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting = 'Hello';
+
+        if (hour < 12) {
+            greeting += ', Good morning';
+        } else if (hour < 18) {
+            greeting += ', Good afternoon';
+        } else {
+            greeting += ', Good evening';
+        }
+        greeting += ` ${first_name}!`;
+        document.getElementById('greeting').innerText = greeting;
+    }
+
+    // Call the function when the page loads
+    window.onload = displayGreeting;
+</script>
+<!-- Navbar End -->
     
     <!-- DISEASE DETECTION START-->
-    <div class="content">
-        <div class="upload-section">
-            <h1>Are you worried of the Disease?</h1>
-            <form id="upload-form" action="/disease_recognition" method="POST" enctype="multipart/form-data">
-                <label for="file-upload">Choose Image</label>
-                <input id="file-upload" type="file" name="file" accept="image/*" required>
-                <button type="submit">Predict</button>
-            </form>
-
-            <!-- Preview Section -->
-            <div id="preview-section" style="display: none; margin-top: 20px;">
-                <h3>Selected Image</h3>
-                <p><strong>Image Name:</strong> <span id="preview-image-name"></span></p>
-                <img id="preview-image" src="" alt="Selected Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
+        <div class="content">
+            <div class="upload-section">
+                <h1>Are you worried of the Plant Disease?</h1>
+                <form id="upload-form" action="/disease_recognition" method="POST" enctype="multipart/form-data">
+                    <!-- Drag-and-Drop Zone -->
+                    <div id="drag-drop-zone" class="drag-drop-zone">
+                        <p>Drag & Drop plant image here or <span class="browse-link" onclick="document.getElementById('file-upload').click()">browse</span></p>
+                        <input id="file-upload" type="file" name="file" accept="image/*" required>
+                    </div>
+                    <button type="submit">Predict</button>
+                </form>
+                <!-- Preview Section -->
+                <div id="preview-section" style="display: none; margin-top: 20px;">
+                    <h3>Selected Image</h3>
+                    <p><strong>Image Name:</strong> <span id="preview-image-name"></span></p>
+                    <img id="preview-image" src="" alt="Selected Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
+                </div>
             </div>
         </div>
 
-        <!-- Result Section (Initially Hidden) -->
-        <div id="result-section" style="display: none;">
-            <div class="result">
-                <h2>Prediction Result</h2>
-                <p><strong>Predicted Disease:</strong> <span id="prediction"></span></p>
-                <p><strong>Percentage Confidence:</strong> <span id="confidence"></span>%</p>
-                <p><strong>Image Name:</strong> <span id="image-name"></span></p>
-                <img id="uploaded-image" src="" alt="Uploaded Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
-            </div>
+<script>
+    // Handle drag-and-drop functionality
+    const dragDropZone = document.getElementById('drag-drop-zone');
+    const fileInput = document.getElementById('file-upload');
 
-            <h3>Treatment Recommendations</h3>
-            <div class="treatment-recommendations">
-               
-                <div>
-                    <h3>Preventive Measures</h3>
-                    <p>Use disease-resistant plant varieties, practice crop rotation, and maintain proper spacing between plants.</p>
-                </div>
-                <div>
-                    <h3>Chemical Treatments</h3>
-                    <p>Apply fungicides or pesticides as recommended by agricultural experts.</p>
-                </div>
-                <div>
-                    <h3>Organic Solutions</h3>
-                    <p>Use neem oil, garlic spray, or other organic remedies to control the disease.</p>
-                </div>
-                <div>
-                    <h3>Best Farming Practices</h3>
-                    <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
-                </div>
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dragDropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Highlight drop zone when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dragDropZone.addEventListener(eventName, () => dragDropZone.classList.add('highlight'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dragDropZone.addEventListener(eventName, () => dragDropZone.classList.remove('highlight'), false);
+    });
+
+    // Handle dropped files
+    dragDropZone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files; // Assign files to the file input
+            handleFileUpload(files[0]); // Handle the file upload
+        }
+    }
+
+    // Handle file input change
+    fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            handleFileUpload(file);
+        }
+    });
+
+    // Function to handle file upload and preview
+    function handleFileUpload(file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            // Reset the result section
+            document.getElementById('result-section').style.display = 'none';
+            document.getElementById('prediction').textContent = '';
+            document.getElementById('confidence').textContent = '';
+            document.getElementById('image-name').textContent = '';
+            document.getElementById('uploaded-image').src = '';
+
+            // Display the selected image and its name
+            document.getElementById('preview-image').src = event.target.result;
+            document.getElementById('preview-image-name').textContent = file.name;
+            document.getElementById('preview-section').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+
+   <!-- Result Section (Initially Hidden) -->
+<div id="result-section" style="display: none;">
+    <div class="result">
+        <h2>Prediction Result</h2>
+        <p><strong>Predicted Disease:</strong> <span id="prediction"></span></p>
+        <p><strong>Percentage Confidence:</strong> <span id="confidence"></span>%</p>
+        <p><strong>Image Name:</strong> <span id="image-name"></span></p>
+        <img id="uploaded-image" src="" alt="Uploaded Image" class="uploaded-image">
+    </div>
+
+    <!-- Disease Info -->
+    <div id="disease-info" class="disease-info">
+        <h3 class="disease-info-title">Disease Information</h3>
+        <div class="disease-info-content">
+            <div class="disease-info-item">
+                <span class="disease-info-label">Disease Name:</span>
+                <span id="disease-name" class="disease-info-value"></span>
+            </div>
+            <div class="disease-info-item">
+                <span class="disease-info-label">Symptoms:</span>
+                <ol id="symptoms-list" class="symptoms-list"></ol>
+            </div>
+            <div class="disease-info-item">
+                <span class="disease-info-label">Severity Level:</span>
+                <span id="severity-level" class="severity-level">
+                    <i class="severity-icon"></i>
+                    <span class="severity-text"></span>
+                </span>
+            </div>
+            <div class="disease-info-item">
+                <span class="disease-info-label">Similar Diseases:</span>
+                <span id="similar-diseases" class="disease-info-value"></span>
             </div>
         </div>
     </div>
 
-    <script>
-        // Handle file input change to display the selected image and its name
-        document.getElementById('file-upload').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    // Reset the result section
-                    document.getElementById('result-section').style.display = 'none';
-                    document.getElementById('prediction').textContent = '';
-                    document.getElementById('confidence').textContent = '';
-                    document.getElementById('image-name').textContent = '';
-                    document.getElementById('uploaded-image').src = '';
+    <!-- Treatment Recommendations -->
+    <div class="recommendation_title">
+        <h3 class="disease-info-title">Treatment Recommendations</h3>
+    </div>
+    <div class="treatment-recommendations">
+        <div class="recommendation-item">
+            <h3>Preventive Measures</h3>
+            <p>Use disease-resistant plant varieties, practice crop rotation, and maintain proper spacing between plants.</p>
+        </div>
+        <div class="recommendation-item">
+            <h3>Chemical Treatments</h3>
+            <p>Apply fungicides or pesticides as recommended by agricultural experts.</p>
+        </div>
+        <div class="recommendation-item">
+            <h3>Organic Solutions</h3>
+            <p>Use neem oil, garlic spray, or other organic remedies to control the disease.</p>
+        </div>
+        <div class="recommendation-item">
+            <h3>Best Farming Practices</h3>
+            <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
+        </div>
+    </div>
+    
+<!-- Feedback Section -->
+<div class="feedback-section">
+    <h3 class="feedback-title">Feedback & Learning</h3>
+    <p class="feedback-description">
+        Help us improve! Provide feedback on the AI prediction accuracy, rate the system, and share your comments.
+    </p>
+    <form id="feedback-form" action="/submit_feedback" method="POST">
+        <!-- AI Prediction Accuracy -->
+        <div class="form-group">
+            <label for="accuracy">AI Prediction Accuracy (%)</label>
+            <input type="number" id="accuracy" name="accuracy" min="0" max="100" placeholder="Enter a percentage (0-100)" required>
+        </div>
+    
+        <!-- Rating System (1-5 Stars) -->
+        <div class="form-group">
+            <label for="rating">Rate the System (1-5 Stars)</label>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <input type="hidden" id="rating" name="rating" required>
+        </div>
+    
+        <!-- Feedback Comments -->
+        <div class="form-group">
+            <label for="comments">Comments</label>
+            <textarea id="comments" name="comments" rows="4" placeholder="Share your feedback or report incorrect diagnoses..." required></textarea>
+        </div>
+    
+        <!-- Hidden input for Diagnosis_ID -->
+        <input type="hidden" id="diagnosis_id" name="diagnosis_id" value="{{ diagnosis_id }}">
+    
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-paper-plane"></i> Send Feedback
+        </button>
+    </form>
+</div>
+</div>
 
-                    // Display the selected image and its name
-                    document.getElementById('preview-image').src = event.target.result;
-                    document.getElementById('preview-image-name').textContent = file.name;
-                    document.getElementById('preview-section').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
+<script>
+    // Function to format disease name (e.g., Apple___Cedar_apple_rust → Apple Cedar Rust)
+    function formatDiseaseName(diseaseClass) {
+        return diseaseClass
+            .replace(/___/g, ' ') // Replace triple underscores with a space
+            .replace(/_/g, ' ')   // Replace single underscores with a space
+            .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
+    }
+    // Function to display disease information
+    function displayDiseaseInfo(diseaseClass) {
+        const diseaseInfo = plant_disease_info[diseaseClass];
+
+        if (!diseaseInfo) {
+            console.error('Disease information not found for:', diseaseClass);
+            return;
+        }
+
+        // Format disease name
+        const diseaseName = formatDiseaseName(diseaseClass);
+
+        // Update the UI
+        document.getElementById('disease-name').textContent = diseaseName;
+
+        // Populate symptoms list
+        const symptomsList = document.getElementById('symptoms-list');
+        symptomsList.innerHTML = ''; // Clear previous content
+        diseaseInfo.Symptoms.forEach((symptom) => {
+            const li = document.createElement('li');
+            li.textContent = symptom;
+            symptomsList.appendChild(li);
         });
 
-        // Handle form submission
-        document.getElementById('upload-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+        // Update severity level with icon
+        const severityLevel = document.getElementById('severity-level');
+        const severityIcon = severityLevel.querySelector('.severity-icon');
+        const severityText = severityLevel.querySelector('.severity-text');
+        const severity = diseaseInfo.Severity || 'Moderate';
 
-            // Show spinner
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner';
-            document.querySelector('.upload-section').appendChild(spinner);
+        severityText.textContent = severity;
+        severityIcon.className = 'severity-icon'; // Reset class
+        if (severity.toLowerCase() === 'high') {
+            severityIcon.classList.add('high');
+            severityIcon.innerHTML = '⚠️'; // Warning icon for high severity
+        } else if (severity.toLowerCase() === 'moderate') {
+            severityIcon.classList.add('moderate');
+            severityIcon.innerHTML = '🔸'; // Orange diamond icon for moderate severity
+        } else {
+            severityIcon.classList.add('none');
+            severityIcon.innerHTML = '✅'; // Checkmark icon for no severity
+        }
 
-            // Simulate a 2-3 second delay for analysis
-            setTimeout(() => {
-                fetch('/disease_recognition', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Remove spinner
-                    spinner.remove();
+        // Display similar diseases
+        document.getElementById('similar-diseases').textContent = diseaseInfo.Similar_Diseases.join(', ');
+    }
 
-                    if (data.success) {
-                        // Hide the preview section
-                        document.getElementById('preview-section').style.display = 'none';
+    // Handle file input change to display the selected image and its name
+    document.getElementById('file-upload').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                // Reset the result section
+                document.getElementById('result-section').style.display = 'none';
+                document.getElementById('prediction').textContent = '';
+                document.getElementById('confidence').textContent = '';
+                document.getElementById('image-name').textContent = '';
+                document.getElementById('uploaded-image').src = '';
 
-                        // Show SweetAlert notification
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Analyzed Successfuly!',
-                            text: `Image "${data.image_url}" has been uploaded quality checked and analyzed.`,
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            // Update the result section dynamically
-                            document.getElementById('prediction').textContent = data.prediction;
-                            document.getElementById('confidence').textContent = data.confidence.toFixed(2);
-                            document.getElementById('image-name').textContent = data.image_url;
-                            document.getElementById('uploaded-image').src = `/static/uploads/${data.image_url}`;
+                // Display the selected image and its name
+                document.getElementById('preview-image').src = event.target.result;
+                document.getElementById('preview-image-name').textContent = file.name;
+                document.getElementById('preview-section').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-                            // Show the result section
-                            document.getElementById('result-section').style.display = 'block';
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Upload Failed',
-                            text: data.error || 'There was an issue uploading your image. Please try again.',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
-                .catch(error => {
-                    spinner.remove();
+    // Handle form submission
+    document.getElementById('upload-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        // Show spinner
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner';
+        document.querySelector('.upload-section').appendChild(spinner);
+
+        // Simulate a 1.5-second delay for analysis
+        setTimeout(() => {
+            fetch('/disease_recognition', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove spinner
+                spinner.remove();
+
+                if (data.success) {
+                    // Hide the preview section
+                    document.getElementById('preview-section').style.display = 'none';
+
+                    // Show SweetAlert notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Analyzed Successfully!',
+                        text: `Image "${data.image_url}" has been uploaded, quality checked, and analyzed.`,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Update the result section dynamically
+                        document.getElementById('prediction').textContent = data.prediction;
+                        document.getElementById('confidence').textContent = data.confidence.toFixed(2);
+                        document.getElementById('image-name').textContent = data.image_url;
+                        document.getElementById('uploaded-image').src = `/static/uploads/${data.image_url}`;
+
+                        // Display disease information
+                        displayDiseaseInfo(data.prediction);
+
+                        // Show the result section
+                        document.getElementById('result-section').style.display = 'block';
+                    });
+                } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred. Please try again.',
+                        title: 'Upload Failed',
+                        text: data.error || 'There was an issue uploading your image. Please try again.',
                         confirmButtonText: 'OK'
                     });
+                }
+            })
+            .catch(error => {
+                spinner.remove();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonText: 'OK'
                 });
-            }, 1500); // 1 and half-second delay
+            });
+        }, 1000); // 1-second delay
+    });
+   </script>
+
+<script>
+    const plant_disease_info = {
+        'Apple___Apple_scab': {
+            'Symptoms': [
+                'Olive-green or black velvety spots on leaves',
+                'Yellowing and premature leaf drop',
+                'Scabby, cracked fruit surface',
+                'Lesions on young twigs',
+                'Reduced fruit yield'
+            ],
+            'Similar_Diseases': ['Cedar Apple Rust', 'Sooty Blotch'],
+            'Severity': 'High'
+        },
+        'Apple___Black_rot': {
+            'Symptoms': [
+                'Circular brown lesions on leaves',
+                'Sunken black spots on fruit',
+                'Fruit shriveling and mummification',
+                'Bark cankers on branches',
+                'Wilting of shoots'
+            ],
+            'Similar_Diseases': ['Bitter Rot', 'Frogeye Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Apple___Cedar_rust': {
+            'Symptoms': [
+                'Orange gelatinous spots on apple leaves',
+                'Yellowing and premature defoliation',
+                'Twig infections leading to branch dieback',
+                'Gall formation on juniper trees (alternate host)',
+                'Fruit deformation and blemishes'
+            ],
+            'Similar_Diseases': ['Quince Rust', 'Hawthorn Rust'],
+            'Severity': 'Moderate'
+        },
+        'Apple___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Blueberry___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Cherry_(including_sour)___Powdery_mildew': {
+            'Symptoms': [
+                'White powdery fungal growth on leaves and twigs',
+                'Curled and distorted leaves',
+                'Premature leaf drop',
+                'Stunted fruit development',
+                'Reduced photosynthesis efficiency'
+            ],
+            'Similar_Diseases': ['Rust', 'Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Cherry_(including_sour)___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
+            'Symptoms': [
+                'Narrow, rectangular grayish-brown lesions on leaves',
+                'Yellow halo around spots',
+                'Leaf necrosis and premature death',
+                'Reduced grain filling',
+                'High humidity accelerates disease progression'
+            ],
+            'Similar_Diseases': ['Common Rust', 'Northern Leaf Blight'],
+            'Severity': 'High'
+        },
+        'Corn_(maize)___Common_rust_': {
+            'Symptoms': [
+                'Reddish-brown pustules on leaves',
+                'Pustules release powdery rust spores',
+                'Leaves may yellow and die prematurely',
+                'Weakened plant leading to reduced yields',
+                'Occurs more in cool, wet conditions'
+            ],
+            'Similar_Diseases': ['Gray Leaf Spot', 'Southern Rust'],
+            'Severity': 'Moderate'
+        },
+        'Corn_(maize)___Northern_Leaf_Blight': {
+            'Symptoms': [
+                'Long, cigar-shaped gray-green lesions on leaves',
+                'Lesions turn tan and develop spores',
+                'Premature leaf wilting and death',
+                'Reduced ear development and yield loss',
+                'More severe in warm, humid environments'
+            ],
+            'Similar_Diseases': ['Gray Leaf Spot', 'Southern Corn Leaf Blight'],
+            'Severity': 'High'
+        },
+        'Corn_(maize)___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Grape___Black_rot': {
+            'Symptoms': [
+                'Small, circular brown spots on leaves with black edges',
+                'Dark sunken lesions on fruit that later shrivel into hard black mummies',
+                'Infected stems develop dark streaks',
+                'Premature leaf drop and reduced fruit yield',
+                'Sticky spores visible on infected areas in humid conditions'
+            ],
+            'Similar_Diseases': ['Grape Downy Mildew', 'Grape Powdery Mildew'],
+            'Severity': 'High'
+        },
+        'Grape___Esca_(Black_Measles)': {
+            'Symptoms': [
+                'Dark streaks appear on woody stems',
+                'Irregular brown spots on leaves with yellow halos',
+                'Grapes show sunken brown lesions and dry out',
+                'Sudden vine collapse in severe cases',
+                'Black fungal spores present on pruning wounds'
+            ],
+            'Similar_Diseases': ['Botryosphaeria Canker', 'Eutypa Dieback'],
+            'Severity': 'High'
+        },
+        'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': {
+            'Symptoms': [
+                'Irregular dark brown leaf spots with yellow halos',
+                'Severe infection leads to leaf curling and premature drop',
+                'Leaves develop a brittle texture',
+                'Spots merge, forming large necrotic areas',
+                'Reduced fruit quality due to leaf loss'
+            ],
+            'Similar_Diseases': ['Downy Mildew', 'Anthracnose'],
+            'Severity': 'Moderate'
+        },
+        'Grape___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Orange___Haunglongbing_(Citrus_greening)': {
+            'Symptoms': [
+                'Yellowing leaves with asymmetrical blotches',
+                'Small, lopsided, bitter-tasting fruits',
+                'Premature fruit drop',
+                'Twig dieback and tree decline',
+                'Slow tree growth with sparse canopy'
+            ],
+            'Similar_Diseases': ['Citrus Tristeza Virus', 'Citrus Canker'],
+            'Severity': 'High'
+        },
+        'Peach___Bacterial_spot': {
+            'Symptoms': [
+                'Small, water-soaked lesions on leaves and fruit',
+                'Lesions turn dark brown with irregular edges',
+                'Premature leaf drop leads to defoliation',
+                'Fruits develop black, sunken pits',
+                'Weak growth due to leaf loss'
+            ],
+            'Similar_Diseases': ['Peach Scab', 'Coryneum Blight'],
+            'Severity': 'Moderate'
+        },
+        'Peach___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Pepper,_bell___Bacterial_spot': {
+            'Symptoms': [
+                'Small, dark, water-soaked spots on leaves',
+                'Leaf spots grow and merge, causing defoliation',
+                'Sunken, black lesions on fruit',
+                'Fruit cracking and distortion',
+                'Reduced yield and weak plants'
+            ],
+            'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
+            'Severity': 'Moderate'
+        },
+        'Pepper,_bell___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Potato___Early_blight': {
+            'Symptoms': [
+                'Small, dark brown spots with concentric rings on older leaves',
+                'Yellowing of surrounding leaf tissue, forming a "target-like" pattern',
+                'Lesions expand, causing premature defoliation',
+                'Dark sunken spots on tubers with dry, leathery texture',
+                'Weakened plants leading to reduced tuber production'
+            ],
+            'Similar_Diseases': ['Late Blight', 'Bacterial Wilt'],
+            'Severity': 'High'
+        },
+        'Potato___Late_blight': {
+            'Symptoms': [
+                'Large, dark water-soaked lesions on leaves',
+                'White fungal growth under humid conditions',
+                'Rapid leaf wilting and death',
+                'Dark brown lesions on tubers',
+                'Foul smell in infected potatoes'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Blackleg'],
+            'Severity': 'High'
+        },
+        'Potato___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Raspberry___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Soybean___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Squash___Powdery_mildew': {
+            'Symptoms': [
+                'White powdery spots on leaves and stems',
+                'Yellowing and curling of leaves',
+                'Premature leaf drop',
+                'Stunted plant growth',
+                'Reduced fruit yield'
+            ],
+            'Similar_Diseases': ['Downy Mildew', 'Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Strawberry___Leaf_scorch': {
+            'Symptoms': [
+                'Reddish-purple spots on leaves',
+                'Leaves dry out and curl at the edges',
+                'Premature defoliation',
+                'Reduced fruit size and yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Leaf Spot', 'Powdery Mildew'],
+            'Severity': 'Moderate'
+        },
+        'Strawberry___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        },
+        'Tomato___Bacterial_spot': {
+            'Symptoms': [
+                'Small, dark, water-soaked spots on leaves',
+                'Leaf spots grow and merge, causing defoliation',
+                'Sunken, black lesions on fruit',
+                'Fruit cracking and distortion',
+                'Reduced yield and weak plants'
+            ],
+            'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Early_blight': {
+            'Symptoms': [
+                'Dark, concentric rings on older leaves',
+                'Yellowing and wilting of leaves',
+                'Stem lesions with dark, sunken spots',
+                'Fruit rot and premature drop',
+                'Reduced plant vigor'
+            ],
+            'Similar_Diseases': ['Late Blight', 'Septoria Leaf Spot'],
+            'Severity': 'High'
+        },
+        'Tomato___Late_blight': {
+            'Symptoms': [
+                'Dark, water-soaked lesions on leaves',
+                'White mold-like growth under leaves',
+                'Rapid spread during humid conditions',
+                'Brown sunken spots on fruits',
+                'Defoliation and plant collapse'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+            'Severity': 'High'
+        },
+        'Tomato___Leaf_Mold': {
+            'Symptoms': [
+                'Yellow spots on upper leaf surfaces',
+                'Grayish-white mold on lower leaf surfaces',
+                'Leaf curling and premature drop',
+                'Reduced fruit yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Powdery Mildew', 'Early Blight'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Septoria_leaf_spot': {
+            'Symptoms': [
+                'Small, circular spots with gray centers and dark edges',
+                'Yellowing and wilting of leaves',
+                'Premature leaf drop',
+                'Reduced fruit yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Leaf Mold'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Spider_mites Two-spotted_spider_mite': {
+            'Symptoms': [
+                'Fine webbing on leaves and stems',
+                'Yellow or white speckling on leaves',
+                'Leaf curling and wilting',
+                'Reduced plant vigor',
+                'Premature leaf drop'
+            ],
+            'Similar_Diseases': ['Aphid Infestation', 'Thrips Damage'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Target_Spot': {
+            'Symptoms': [
+                'Dark, concentric rings on leaves and stems',
+                'Yellowing and wilting of leaves',
+                'Premature leaf drop',
+                'Reduced fruit yield',
+                'Weakened plants'
+            ],
+            'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+            'Severity': 'Moderate'
+        },
+        'Tomato___Tomato_Yellow_Leaf_Curl_Virus': {
+            'Symptoms': [
+                'Upward curling of leaves',
+                'Yellowing and stunted growth',
+                'Reduced fruit production',
+                'Whitefly infestations',
+                'Brittle leaves with vein clearing'
+            ],
+            'Similar_Diseases': ['Tomato Mosaic Virus', 'Cucumber Mosaic Virus'],
+            'Severity': 'High'
+        },
+        'Tomato___Tomato_mosaic_virus': {
+            'Symptoms': [
+                'Mottled light and dark green patterns on leaves',
+                'Leaf curling and distortion',
+                'Stunted plant growth',
+                'Reduced fruit yield',
+                'Fruit discoloration and deformation'
+            ],
+            'Similar_Diseases': ['Tomato Yellow Leaf Curl Virus', 'Cucumber Mosaic Virus'],
+            'Severity': 'High'
+        },
+        'Tomato___healthy': {
+            'Symptoms': ['No disease symptoms detected'],
+            'Similar_Diseases': ['None'],
+            'Severity': 'None'
+        }
+    };
+</script>
+
+<!-- SweetAlert Script for Feedback Submission -->
+<script>
+    // Handle Feedback Form Submission
+    document.getElementById('feedback-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Get form data
+        const accuracy = document.getElementById('accuracy').value;
+        const rating = document.getElementById('rating').value;
+        const comments = document.getElementById('comments').value;
+
+        // Validate form inputs
+        if (!accuracy || !rating || !comments) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill out all fields before submitting!',
+            });
+            return;
+        }
+
+        // Send feedback data to the backend
+        fetch('/submit_feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                accuracy: accuracy,
+                rating: rating,
+                comments: comments
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Feedback Sent!',
+                    text: 'Thank you for helping us improve our system.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Reset the form
+                    document.getElementById('feedback-form').reset();
+                    stars.forEach(star => star.classList.remove('selected')); // Reset stars
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'An error occurred. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred. Please try again.',
+                confirmButtonText: 'OK'
+            });
         });
-    </script>
-        <!-- DISEASE DETECTION END-->
-    
+    });
+
+    // Star Rating System
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = star.getAttribute('data-value');
+            ratingInput.value = value; // Set the hidden input value
+            stars.forEach(s => s.classList.remove('selected')); // Reset all stars
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add('selected'); // Highlight selected stars
+            }
+        });
+    });
+
+</script>
 
     <!-- Footer Start -->
     <div class="container-fluid bg-footer bg-primary text-white mt-5">
@@ -382,23 +929,21 @@
                         <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
                             <h4 class="text-white mb-4">Quick Links</h4>
                             <div class="d-flex flex-column justify-content-start">
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Our Services</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Meet The Team</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Latest Blog</a>
-                                <a class="text-white" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
+                                <a class="text-white mb-2" href="/"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
+                                <a class="text-white mb-2" href="/about"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
+                                <a class="text-white mb-2" href="/disease_recognition"><i class="bi bi-arrow-right text-white me-2"></i>Disease recognition</a>
+                                <a class="text-white mb-2" href="/expert"><i class="bi bi-arrow-right text-white me-2"></i>Our Experts</a>
+                                <a class="text-white" href="/contact"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
                             <h4 class="text-white mb-4">Popular Links</h4>
                             <div class="d-flex flex-column justify-content-start">
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Our Services</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Meet The Team</a>
-                                <a class="text-white mb-2" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Latest Blog</a>
-                                <a class="text-white" href="#"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
+                                <a class="text-white mb-2" href="/"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
+                                <a class="text-white mb-2" href="/disease_recognition"><i class="bi bi-arrow-right text-white me-2"></i>Disease recognition</a>
+                                <a class="text-white mb-2" href="/about"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
+                                <a class="text-white mb-2" href="/expert"><i class="bi bi-arrow-right text-white me-2"></i>Our Experts </a>
+                                <a class="text-white" href="/contact"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
                             </div>
                         </div>
                     </div>
@@ -425,7 +970,6 @@
         </div>
     </div>
     <!-- Footer End -->
-
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-secondary py-3 fs-4 back-to-top"><i class="bi bi-arrow-up"></i></a>

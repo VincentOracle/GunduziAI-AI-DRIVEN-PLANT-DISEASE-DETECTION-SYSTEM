@@ -240,7 +240,7 @@ plant_disease_info = {
         ]
     },
 
-
+# Grape___Black_rot disease
     'Grape___Black_rot': {
         'Symptoms': [
             'Small, circular brown spots on leaves with black edges',
@@ -738,6 +738,235 @@ plant_disease_info = {
             'Regularly scout fields for early symptoms',
             'Implement crop rotation strategies',
             'Improve soil drainage to prevent prolonged moisture'
+        ]
+    },
+    'Tomato___Bacterial_spot': {
+        'Symptoms': [
+            'Small, water-soaked spots on leaves, stems, and fruits',
+            'Spots become raised with a yellow halo',
+            'Severe infections lead to leaf drop and fruit damage',
+            'Bacterial ooze may be visible in humid conditions',
+            'Fruit spots are raised and scab-like'
+        ],
+        'Similar Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+        'Preventive Measures': [
+            'Use disease-free seeds and transplants',
+            'Rotate crops to avoid pathogen buildup',
+            'Avoid overhead irrigation',
+            'Space plants for good air circulation',
+            'Sanitize tools and equipment'
+        ],
+        'Chemical Treatments': [
+            'Apply copper-based bactericides',
+            'Use streptomycin sulfate in severe cases'
+        ],
+        'Organic Solutions': [
+            'Use neem oil to reduce bacterial spread',
+            'Apply compost tea for plant health',
+            'Use baking soda spray for mild infections'
+        ],
+        'Best Farming Practices': [
+            'Monitor plants regularly for early symptoms',
+            'Remove and destroy infected plant material',
+            'Maintain proper soil pH and fertility'
+        ]
+    },
+    'Tomato___Early_blight': {
+        'Symptoms': [
+            'Dark brown spots with concentric rings on leaves',
+            'Yellowing of surrounding leaf tissue',
+            'Lesions on stems and fruits',
+            'Defoliation in severe cases',
+            'Older leaves are affected first'
+        ],
+        'Similar Diseases': ['Late Blight', 'Septoria Leaf Spot'],
+        'Preventive Measures': [
+            'Rotate crops to avoid pathogen buildup',
+            'Remove and destroy infected plant debris',
+            'Space plants for good air circulation',
+            'Mulch to prevent soil splash',
+            'Use resistant tomato varieties'
+        ],
+        'Chemical Treatments': [
+            'Apply chlorothalonil-based fungicides',
+            'Use mancozeb or copper-based fungicides'
+        ],
+        'Organic Solutions': [
+            'Use Bordeaux mixture (copper sulfate + lime)',
+            'Apply compost tea for plant health',
+            'Use neem oil as a preventive measure'
+        ],
+        'Best Farming Practices': [
+            'Monitor plants regularly for early symptoms',
+            'Avoid overhead irrigation',
+            'Maintain proper soil fertility'
+        ]
+    },
+    'Tomato___Leaf_Mold': {
+        'Symptoms': [
+            'Pale yellow spots on upper leaf surfaces',
+            'Grayish-purple mold on lower leaf surfaces',
+            'Leaf drop in severe cases',
+            'More prevalent in humid conditions',
+            'Primarily affects older leaves'
+        ],
+        'Similar Diseases': ['Septoria Leaf Spot', 'Late Blight'],
+        'Preventive Measures': [
+            'Provide good air circulation',
+            'Avoid overhead irrigation',
+            'Remove and destroy infected plant debris',
+            'Space plants for adequate airflow',
+            'Use resistant tomato varieties'
+        ],
+        'Chemical Treatments': [
+            'Apply chlorothalonil-based fungicides',
+            'Use mancozeb or copper-based fungicides'
+        ],
+        'Organic Solutions': [
+            'Use Bordeaux mixture (copper sulfate + lime)',
+            'Apply neem oil as a preventive measure',
+            'Use potassium bicarbonate spray'
+        ],
+        'Best Farming Practices': [
+            'Monitor plants regularly for early symptoms',
+            'Maintain proper soil fertility',
+            'Use mulching to prevent soil splash'
+        ]
+    },
+    'Tomato___Septoria_leaf_spot': {
+        'Symptoms': [
+            'Small, circular spots with gray centers and dark borders on leaves',
+            'Yellowing of surrounding leaf tissue',
+            'Defoliation in severe cases',
+            'Lesions on stems and petioles',
+            'Older leaves are affected first'
+        ],
+        'Similar Diseases': ['Early Blight', 'Leaf Mold'],
+        'Preventive Measures': [
+            'Rotate crops to avoid pathogen buildup',
+            'Remove and destroy infected plant debris',
+            'Space plants for good air circulation',
+            'Mulch to prevent soil splash',
+            'Use resistant tomato varieties'
+        ],
+        'Chemical Treatments': [
+            'Apply chlorothalonil-based fungicides',
+            'Use mancozeb or copper-based fungicides'
+        ],
+        'Organic Solutions': [
+            'Use Bordeaux mixture (copper sulfate + lime)',
+            'Apply compost tea for plant health',
+            'Use neem oil as a preventive measure'
+        ],
+        'Best Farming Practices': [
+            'Monitor plants regularly for early symptoms',
+            'Avoid overhead irrigation',
+            'Maintain proper soil fertility'
+        ]
+    },
+    'Tomato___Spider_mites Two-spotted_spider_mite': {
+        'Symptoms': [
+            'Tiny yellow or white speckles on leaves',
+            'Fine webbing on leaves and stems',
+            'Leaf discoloration and bronzing',
+            'Leaf drop in severe infestations',
+            'Reduced plant vigor and yield'
+        ],
+        'Similar Diseases': ['Nutrient deficiencies', 'Viral infections'],
+        'Preventive Measures': [
+            'Introduce natural predators like ladybugs',
+            'Maintain good plant hygiene',
+            'Use strong water sprays to dislodge mites',
+            'Monitor plants regularly for early signs',
+            'Avoid over-fertilization'
+        ],
+        'Chemical Treatments': [
+            'Use miticides specifically labeled for spider mites',
+            'Apply insecticidal soaps',
+            'Use horticultural oils'
+        ],
+        'Organic Solutions': [
+            'Use neem oil as a spray',
+            'Apply insecticidal soaps',
+            'Use garlic or chili pepper sprays'
+        ],
+        'Best Farming Practices': [
+            'Ensure adequate plant spacing',
+            'Maintain proper soil moisture',
+            'Remove weeds that can harbor mites'
+        ]
+    },
+    'Tomato___Target_Spot': {
+        'Symptoms': [
+            'Small, circular spots with concentric rings on leaves',
+            'Spots may have a yellow halo',
+            'Lesions on stems and fruits',
+            'Defoliation in severe cases',
+            'More prevalent in warm, humid conditions'
+        ],
+        'Similar Diseases': ['Early Blight', 'Septoria Leaf Spot'],
+        'Preventive Measures': [
+            'Rotate crops to avoid pathogen buildup',
+            'Remove and destroy infected plant debris',
+            'Space plants for good air circulation',
+            'Mulch to prevent soil splash',
+            'Use resistant tomato varieties'
+        ],
+        'Chemical Treatments': [
+            'Apply chlorothalonil-based fungicides',
+            'Use mancozeb or copper-based fungicides'
+        ],
+        'Organic Solutions': [
+            'Use Bordeaux mixture (copper sulfate + lime)',
+            'Apply compost tea for plant health',
+            'Use neem oil as a preventive measure'
+        ],
+        'Best Farming Practices': [
+            'Monitor plants regularly for early symptoms',
+            'Avoid overhead irrigation',
+            'Maintain proper soil fertility'
+        ]
+    },
+    'Tomato___Tomato_mosaic_virus': {
+        'Symptoms': [
+            'Mosaic pattern of light and dark green on leaves',
+            'Leaf distortion and curling',
+            'Stunted growth',
+            'Reduced fruit production',
+            'Internal browning of fruits'
+        ],
+        'Similar Diseases': ['Tomato Yellow Leaf Curl Virus', 'Cucumber Mosaic Virus'],
+        'Preventive Measures': [
+            'Use disease-free seeds and transplants',
+            'Control aphids that transmit the virus',
+            'Remove and destroy infected plants',
+            'Sanitize tools and equipment',
+            'Rotate crops'
+        ],
+        'Chemical Treatments': ['No direct chemical treatment available'],
+        'Organic Solutions': ['No direct organic treatment available'],
+        'Best Farming Practices': [
+            'Monitor plants for early symptoms',
+            'Practice good sanitation',
+            'Use resistant tomato varieties'
+        ]
+    },
+    'Tomato___healthy': {
+        'Symptoms': ['No disease symptoms detected'],
+        'Similar Diseases': ['None'],
+        'Preventive Measures': [
+            'Plant high-quality, disease-resistant seeds',
+            'Monitor fields for pest and disease outbreaks',
+            'Practice proper crop rotation techniques',
+            'Ensure adequate soil fertility',
+            'Maintain proper irrigation schedules'
+        ],
+        'Chemical Treatments': ['Not required'],
+        'Organic Solutions': ['Not required'],
+        'Best Farming Practices': [
+            'Use mulching to retain soil moisture',
+            'Encourage beneficial insects for natural pest control',
+            'Ensure proper field spacing to prevent disease spread'
         ]
     }
 }

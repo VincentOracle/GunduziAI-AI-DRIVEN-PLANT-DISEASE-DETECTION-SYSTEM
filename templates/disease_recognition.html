@@ -157,6 +157,8 @@
                 </div>
             </div>
         </div>
+<script>
+</script>
 
 <script>
     // Handle drag-and-drop functionality
@@ -279,8 +281,7 @@
             <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
         </div>
     </div>
-    
-<!-- Feedback Section -->
+ <!-- Feedback Section -->
 <div class="feedback-section">
     <h3 class="feedback-title">Feedback & Learning</h3>
     <p class="feedback-description">
@@ -292,7 +293,7 @@
             <label for="accuracy">AI Prediction Accuracy (%)</label>
             <input type="number" id="accuracy" name="accuracy" min="0" max="100" placeholder="Enter a percentage (0-100)" required>
         </div>
-    
+
         <!-- Rating System (1-5 Stars) -->
         <div class="form-group">
             <label for="rating">Rate the System (1-5 Stars)</label>
@@ -305,24 +306,24 @@
             </div>
             <input type="hidden" id="rating" name="rating" required>
         </div>
-    
+
         <!-- Feedback Comments -->
         <div class="form-group">
             <label for="comments">Comments</label>
             <textarea id="comments" name="comments" rows="4" placeholder="Share your feedback or report incorrect diagnoses..." required></textarea>
         </div>
-    
+        
         <!-- Hidden input for Diagnosis_ID -->
-        <input type="hidden" id="diagnosis_id" name="diagnosis_id" value="{{ diagnosis_id }}">
-    
+        <input type="hidden" id="diagnosis_id" name="diagnosis_id" value="">
+
         <!-- Submit Button -->
         <button type="submit" class="btn-submit">
             <i class="fas fa-paper-plane"></i> Send Feedback
         </button>
     </form>
 </div>
-</div>
 
+</div>
 <script>
     // Function to format disease name (e.g., Apple___Cedar_apple_rust → Apple Cedar Rust)
     function formatDiseaseName(diseaseClass) {
@@ -331,6 +332,7 @@
             .replace(/_/g, ' ')   // Replace single underscores with a space
             .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
     }
+
     // Function to display disease information
     function displayDiseaseInfo(diseaseClass) {
         const diseaseInfo = plant_disease_info[diseaseClass];
@@ -464,8 +466,92 @@
             });
         }, 1000); // 1-second delay
     });
-   </script>
+ 
+    // Handle Feedback Form Submission
+    document.getElementById('feedback-form').addEventListener('submit', function (e) {
+        e.preventDefault();
 
+        // Get form data
+        const accuracy = document.getElementById('accuracy').value;
+        const rating = document.getElementById('rating').value;
+        const comments = document.getElementById('comments').value;
+        const diagnosis_id = document.getElementById('diagnosis_id').value;
+
+        // Validate form inputs
+        if (!accuracy || !rating || !comments) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill out all fields before submitting!',
+            });
+            return;
+        }
+
+        // Debugging: Print data before sending
+        console.log("Sending feedback data:", { accuracy, rating, comments, diagnosis_id });
+
+        // Send feedback data to the backend
+        fetch('/submit_feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                accuracy: accuracy,
+                rating: rating,
+                comments: comments,
+                diagnosis_id: diagnosis_id // Use the diagnosis_id variable
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Feedback Sent!',
+                    text: data.message || 'Thank you for helping us improve our system.',
+                    confirmButtonText: 'OK',
+                }).then(() => {
+                    // Reset the form
+                    document.getElementById('feedback-form').reset();
+                    stars.forEach(star => star.classList.remove('selected'));
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'An error occurred. Please try again.',
+                    confirmButtonText: 'OK',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred. Please try again.',
+                confirmButtonText: 'OK',
+            });
+        });
+    });
+
+    // Star Rating System
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = star.getAttribute('data-value');
+            ratingInput.value = value;
+            stars.forEach(s => s.classList.remove('selected'));
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add('selected');
+            }
+        });
+    });
+</script>
+    
 <script>
     const plant_disease_info = {
         'Apple___Apple_scab': {
@@ -815,88 +901,6 @@
             'Severity': 'None'
         }
     };
-</script>
-
-<!-- SweetAlert Script for Feedback Submission -->
-<script>
-    // Handle Feedback Form Submission
-    document.getElementById('feedback-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        // Get form data
-        const accuracy = document.getElementById('accuracy').value;
-        const rating = document.getElementById('rating').value;
-        const comments = document.getElementById('comments').value;
-
-        // Validate form inputs
-        if (!accuracy || !rating || !comments) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please fill out all fields before submitting!',
-            });
-            return;
-        }
-
-        // Send feedback data to the backend
-        fetch('/submit_feedback', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                accuracy: accuracy,
-                rating: rating,
-                comments: comments
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Feedback Sent!',
-                    text: 'Thank you for helping us improve our system.',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    // Reset the form
-                    document.getElementById('feedback-form').reset();
-                    stars.forEach(star => star.classList.remove('selected')); // Reset stars
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'An error occurred. Please try again.',
-                    confirmButtonText: 'OK'
-                });
-            }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An error occurred. Please try again.',
-                confirmButtonText: 'OK'
-            });
-        });
-    });
-
-    // Star Rating System
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('rating');
-
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const value = star.getAttribute('data-value');
-            ratingInput.value = value; // Set the hidden input value
-            stars.forEach(s => s.classList.remove('selected')); // Reset all stars
-            for (let i = 0; i < value; i++) {
-                stars[i].classList.add('selected'); // Highlight selected stars
-            }
-        });
-    });
-
 </script>
 
     <!-- Footer Start -->
