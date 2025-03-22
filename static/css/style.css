@@ -521,6 +521,8 @@
     list-style-type: decimal;
     padding-left: 25px; /* Increased padding */
     margin: 0;
+    align-items: center;
+    
 }
 
 .symptoms-list li {

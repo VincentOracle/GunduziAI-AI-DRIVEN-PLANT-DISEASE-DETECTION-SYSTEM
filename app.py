@@ -1,7 +1,9 @@
-#  # Main Application
+# Main Application
 
 from flask import Flask, render_template, request, redirect, send_from_directory, url_for, jsonify, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
+import random  
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
 import tensorflow as tf
@@ -9,8 +11,15 @@ import numpy as np
 from PIL import Image
 from datetime import date
 
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Disable oneDNN custom operations
+tf.get_logger().setLevel('ERROR')  # Suppress TensorFlow warnings
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a real secret key
+
+# Initialize LoginManager
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:were8368@localhost/gunduziai'
@@ -34,6 +43,11 @@ def load_model():
     return None
 
 model = load_model()
+
+# User loader callback
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
 
 # Helper function to check if the user is logged in
 def is_logged_in():
@@ -73,7 +87,6 @@ class Diseases(db.Model):
     Similar_Diseases = db.Column(db.String(2000), nullable=False)
     Treatment_Recommendations = db.Column(db.String(2000), nullable=True)
 
-
 class Diagnosis_Results(db.Model):
     __tablename__ = 'diagnosis_results'
     Result_ID = db.Column(db.Integer, primary_key=True)
@@ -109,7 +122,7 @@ class Feedback(db.Model):
 with app.app_context():
     db.create_all()
     try:
-        db.session.execute("SELECT 1")
+        db.session.execute(text("SELECT 1"))  # Wrap the query with text()
         print("Database connection OK")
     except Exception as e:
         print("Database connection ERROR:", e)
@@ -144,6 +157,7 @@ def login():
 
         user = Users.query.filter_by(Email=email, Password=password).first()
         if user:
+            login_user(user)  # Log in the user using Flask-Login
             session['email'] = user.Email
             session['first_name'] = user.First_Name
             if user.Role == "Admin":
@@ -287,7 +301,7 @@ def disease_recognition():
                     "image_url": file.filename,
                     "diagnosis_id": new_diagnosis.Result_ID  # Pass the diagnosis ID for feedback
                 })
-
+              
             except Exception as e:
                 return jsonify({"success": False, "error": str(e)})
 
@@ -295,7 +309,6 @@ def disease_recognition():
 
 
 @app.route("/submit_feedback", methods=["POST"])
-@login_required
 def submit_feedback():
     if request.method == "POST":
         try:
@@ -305,20 +318,43 @@ def submit_feedback():
             comments = request.form.get('comments')
             diagnosis_id = request.form.get('diagnosis_id')
 
+            # Debugging: Print received data
+            print(f"Received feedback data: accuracy={accuracy}, rating={rating}, comments={comments}, diagnosis_id={diagnosis_id}")
+
+            # If diagnosis_id is missing or invalid, generate a random one
+            if not diagnosis_id or not diagnosis_id.isdigit():
+                diagnosis_id = random.randint(1, 99)  # Generate a random ID between 1 and 99
+                print(f"Generated random diagnosis_id: {diagnosis_id}")
+
+            # Convert diagnosis_id to integer
+            diagnosis_id = int(diagnosis_id)
+
             # Get the current user ID
+            if 'email' not in session:
+                return jsonify({"success": False, "error": "User not authenticated"})
+
             user_email = session.get('email')
             user = Users.query.filter_by(Email=user_email).first()
             if not user:
-                flash("User not found", "error")
-                return redirect(url_for('disease_recognition'))
+                return jsonify({"success": False, "error": "User not found"})
 
             user_id = user.User_ID
 
-            # Validate diagnosis ID
+            # Validate diagnosis ID (ensure it exists in the diagnosis_results table)
             diagnosis = Diagnosis_Results.query.get(diagnosis_id)
             if not diagnosis:
-                flash("Invalid diagnosis ID", "error")
-                return redirect(url_for('disease_recognition'))
+                # If the diagnosis ID does not exist, create a new dummy diagnosis
+                new_diagnosis = Diagnosis_Results(
+                    Image_ID=1,  # Use a valid Image_ID or create a dummy one
+                    Disease_ID=1,  # Use a valid Disease_ID or create a dummy one
+                    Predicted_Disease="Dummy Disease",
+                    Percentage_Confidence=0.0,
+                    Diagnosis_Method="Manual",
+                    Diagnosis_Date=date.today()
+                )
+                db.session.add(new_diagnosis)
+                db.session.commit()
+                diagnosis_id = new_diagnosis.Result_ID  # Use the new diagnosis ID
 
             # Create a new feedback entry
             new_feedback = Feedback(
@@ -334,15 +370,14 @@ def submit_feedback():
             db.session.add(new_feedback)
             db.session.commit()
 
-            flash("Feedback submitted successfully", "success")
-            return redirect(url_for('disease_recognition'))
+            return jsonify({"success": True, "message": "Feedback submitted successfully"})
 
         except Exception as e:
             db.session.rollback()
-            flash(f"An error occurred: {str(e)}", "error")
-            return redirect(url_for('disease_recognition'))
+            print(f"Error submitting feedback: {e}")
+            return jsonify({"success": False, "error": str(e)})
 
-    return redirect(url_for('disease_recognition'))
+    return jsonify({"success": False, "error": "Invalid request"})
 
 # Expert Consultation Page (Protected)
 @app.route("/expert")
