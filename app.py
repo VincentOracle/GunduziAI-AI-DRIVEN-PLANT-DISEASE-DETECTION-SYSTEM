@@ -10,8 +10,12 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 from datetime import date
+from flask_cors import CORS
 
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Disable oneDNN custom operations
+app = Flask(__name__)
+CORS(app)
+
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # Disable oneDNN custom operations
 tf.get_logger().setLevel('ERROR')  # Suppress TensorFlow warnings
 
 app = Flask(__name__)
@@ -81,7 +85,7 @@ class Diseases(db.Model):
     __tablename__ = 'diseases'
     Disease_ID = db.Column(db.Integer, primary_key=True)
     Image_URL = db.Column(db.String(2000), nullable=False)
-    Disease_Name = db.Column(db.String(2000), unique=True, nullable=False)
+    Disease_Name = db.Column(db.String(2000), unique=False, nullable=False)
     Symptoms = db.Column(db.String(2000), nullable=False)
     Severity_Level = db.Column(db.String(50), nullable=False)
     Similar_Diseases = db.Column(db.String(2000), nullable=False)
@@ -441,6 +445,68 @@ def signup():
 
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "Invalid request"})
+
+@app.route("/admin/users", methods=["GET"])
+def get_users():
+    try:
+        # Fetch all users from the database
+        users = Users.query.all()
+        
+        # Prepare the data to be returned as JSON
+        users_data = [{
+            "User_ID": user.User_ID,
+            "Name": f"{user.First_Name} {user.Last_Name}",  # Concatenate First_Name and Last_Name
+            "Email": user.Email,
+            "Password": "********",  # Mask the password for security
+            "Role": user.Role
+        } for user in users]
+        
+        return jsonify(users_data)  # Return the data as JSON
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+
+@app.route("/admin/dashboard_counts", methods=["GET"])
+def get_dashboard_counts():
+    try:
+        # Fetch counts from the database
+        total_users = Users.query.count()
+        total_reports = Feedback.query.count()
+        active_diagnoses = Diagnosis_Results.query.count()
+
+        # Return the counts as JSON
+        return jsonify({
+            "total_users": total_users,
+            "total_reports": total_reports,
+            "active_diagnoses": active_diagnoses
+        })
+    except Exception as e:
+        print(f"Error fetching dashboard counts: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+
+@app.route("/admin/feedback", methods=["GET"])
+def get_feedback():
+    try:
+        # Fetch feedback data with user details
+        feedback_data = db.session.query(
+            Feedback, Users
+        ).join(
+            Users, Feedback.User_ID == Users.User_ID
+        ).all()
+
+        # Prepare the data to be returned as JSON
+        feedback_list = [{
+            "User_Name": f"{user.First_Name} {user.Last_Name}",  # Concatenate First_Name and Last_Name
+            "Email": user.Email,
+            "Feedback_Text": feedback.Feedback_Text
+        } for feedback, user in feedback_data]
+
+        return jsonify(feedback_list)  # Return the data as JSON
+    except Exception as e:
+        print(f"Error fetching feedback: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 # Run the Flask App
 if __name__ == "__main__":
