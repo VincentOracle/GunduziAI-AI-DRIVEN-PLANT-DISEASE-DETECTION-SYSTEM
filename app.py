@@ -221,98 +221,6 @@ def upload_disease_data():
 
     return jsonify({"success": False, "error": "Invalid request"})
 
-# @app.route("/disease_recognition", methods=["GET", "POST"])
-# def disease_recognition():
-#     print("Current Session:", session)
-#     if not is_logged_in():
-#         return redirect(url_for('login'))
-
-#     if request.method == "POST":
-#         if "file" not in request.files:
-#             return jsonify({"success": False, "error": "No file uploaded"})
-
-#         file = request.files["file"]
-#         if file.filename == "":
-#             return jsonify({"success": False, "error": "No file selected"})
-
-#         if file:
-#             try:
-#                 # Save the uploaded file
-#                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-#                 file.save(filepath)
-
-#                 # Get the current user
-#                 user_email = session.get('email')
-#                 user = Users.query.filter_by(Email=user_email).first()
-#                 if user is None:
-#                     return jsonify({"success": False, "error": "User not found"})
-
-#                 # Save the uploaded image to the Plant_Images table
-#                 new_image = Plant_Images(
-#                     User_ID=user.User_ID,
-#                     Upload_Date=date.today(),
-#                     Image_URL=file.filename,
-#                     Quality_Status="Good"
-#                 )
-#                 db.session.add(new_image)
-#                 db.session.commit()
-
-#                 # Process the image for prediction
-#                 image = Image.open(filepath)
-#                 image = image.resize((128, 128))  # Resize image to match model input size
-#                 input_arr = tf.keras.preprocessing.image.img_to_array(image)
-#                 img_array = np.array([input_arr])
-
-#                 # Prediction
-#                 prediction = model.predict(img_array)
-#                 confidence = np.max(prediction) * 100  # Get confidence score
-#                 labels = [
-#                     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_rust', 'Apple___healthy',
-#                     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy',
-#                     'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn___Common_rust',
-#                     'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy', 'Grape___Black_rot',
-#                     'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Grape___healthy',
-#                     'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot', 'Peach___healthy',
-#                     'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy', 'Potato___Early_blight',
-#                     'Potato___Late_blight', 'Potato___healthy', 'Raspberry___healthy', 'Soybean___healthy',
-#                     'Squash___Powdery_mildew', 'Strawberry___Leaf_scorch', 'Strawberry___healthy',
-#                     'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight',
-#                     'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite',
-#                     'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
-#                     'Tomato___healthy'
-#                 ]
-#                 predicted_label = labels[np.argmax(prediction)]
-
-#                 # Save the diagnosis result to the Diagnosis_Results table
-#                 disease = Diseases.query.filter_by(Disease_Name=predicted_label).first()
-#                 if not disease:
-#                     return jsonify({"success": False, "error": "Disease not found in database"})
-
-#                 new_diagnosis = Diagnosis_Results(
-#                     Image_ID=new_image.Image_ID,
-#                     Disease_ID=disease.Disease_ID,
-#                     Predicted_Disease=predicted_label,
-#                     Percentage_Confidence=float(confidence),
-#                     Diagnosis_Method="AI Prediction",
-#                     Diagnosis_Date=date.today()
-#                 )
-#                 db.session.add(new_diagnosis)
-#                 db.session.commit()
-
-#                 # Return the prediction result and diagnosis ID for feedback
-#                 return jsonify({
-#                     "success": True,
-#                     "prediction": predicted_label,
-#                     "confidence": float(confidence),
-#                     "image_url": file.filename,
-#                     "diagnosis_id": new_diagnosis.Result_ID  # Pass the diagnosis ID for feedback
-#                 })
-              
-#             except Exception as e:
-#                 return jsonify({"success": False, "error": str(e)})
-
-#     return render_template("disease_recognition.html")
-
 @app.route("/disease_recognition", methods=["GET", "POST"])
 def disease_recognition():
     print("Current Session:", session)
@@ -527,6 +435,7 @@ def signup():
         new_user = Users(
             First_Name=first_name,
             Last_Name=last_name,
+            # SignUpdate=date.today(),
             Role=user_role,
             Phone_number=phone_number,
             Email=email,
@@ -539,27 +448,7 @@ def signup():
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "Invalid request"})
 
-@app.route("/admin/users", methods=["GET"])
-def get_users():
-    try:
-        # Fetch all users from the database
-        users = Users.query.all()
-        
-        # Prepare the data to be returned as JSON
-        users_data = [{
-            "User_ID": user.User_ID,
-            "Name": f"{user.First_Name} {user.Last_Name}",  # Concatenate First_Name and Last_Name
-            "Email": user.Email,
-            "Password": "********",  # Mask the password for security
-            "Role": user.Role
-        } for user in users]
-        
-        return jsonify(users_data)  # Return the data as JSON
-    except Exception as e:
-        print(f"Error fetching users: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
     
-
 @app.route("/admin/dashboard_counts", methods=["GET"])
 def get_dashboard_counts():
     try:
@@ -689,6 +578,74 @@ def get_treatment_recommendations(disease_name):
             return jsonify({"success": False, "error": "No treatment recommendations found for this disease"})
     except Exception as e:
         print(f"Error fetching treatment recommendations: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/update_user_role/<int:user_id>", methods=["POST"])
+def update_user_role(user_id):
+    if not is_logged_in() or session.get('first_name') != "Admin":
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+
+    try:
+        data = request.get_json()
+        new_role = data.get('role')
+        
+        if not new_role:
+            return jsonify({"success": False, "error": "Role is required"}), 400
+
+        user = Users.query.get(user_id)
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        user.Role = new_role
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "User role updated successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating user role: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+
+@app.route("/admin/delete_user/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    if not is_logged_in() or session.get('first_name') != "Admin":
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+
+    try:
+        user = Users.query.get(user_id)
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "User deleted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting user: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/users", methods=["GET"])
+def get_users():
+    try:
+        # Fetch all users from the database ordered by User_ID
+        users = Users.query.order_by(Users.User_ID).all()
+        
+        # Prepare complete user data
+        users_data = [{
+            "User_ID": user.User_ID,
+            "First_Name": user.First_Name,
+            "Last_Name": user.Last_Name,
+            "Email": user.Email,
+            "Password": "********",  # Mask password for security
+            "Role": user.Role,
+            "Phone_number": user.Phone_number,
+            "Full_Name": f"{user.First_Name} {user.Last_Name}"
+        } for user in users]
+        
+        return jsonify(users_data)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
     
 # Run the Flask App

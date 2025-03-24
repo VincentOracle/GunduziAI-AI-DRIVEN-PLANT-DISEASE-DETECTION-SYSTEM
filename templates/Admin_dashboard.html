@@ -18,6 +18,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <!-- Custom Styles -->
     <style>
@@ -409,8 +411,6 @@
     <!-- Main Content -->
     <div class="content">
         <h2 class="mb-4">Admin Dashboard</h2>
-
-        <!-- Cards Section -->
       <!-- Cards Section -->
 <div class="row mb-4">
     <div class="col-md-4">
@@ -463,32 +463,38 @@ function fetchAndDisplayDashboardCounts() {
 document.addEventListener('DOMContentLoaded', fetchAndDisplayDashboardCounts);
 </script>
 
-        <!-- Manage Users Panel -->
-        <div class="manage-users-panel" id="manage-users-panel">
-            <h3>Manage Users</h3>
-            <button class="btn add mb-3" onclick="addUser()">
-                <i class="fas fa-plus"></i> Add User
-            </button>
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="users-table-body">
-                    <!-- Users will be dynamically populated here -->
-                </tbody>
-            </table>
-        </div>
-      
+<!-- Add this in your head section -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- Manage Users Panel -->
+<div class="manage-users-panel" id="manage-users-panel">
+    <h3>Manage Users</h3>
+    <button class="btn add mb-3" onclick="addUser()">
+        <i class="fas fa-plus"></i> Add User
+    </button>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="users-table-body">
+            <!-- Users will be dynamically populated here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Add this at the end of your body -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-// Function to fetch and display users
+ // Function to fetch and display users
 function fetchAndDisplayUsers() {
-    fetch('/admin/users')  // Fetch users from the backend
+    fetch('/admin/users')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -496,16 +502,24 @@ function fetchAndDisplayUsers() {
             return response.json();
         })
         .then(users => {
+            console.log('Fetched users:', users); // Debugging line
             const tableBody = document.getElementById('users-table-body');
             tableBody.innerHTML = '';  // Clear existing rows
 
-            // Loop through the users and create table rows
+            if (!users || users.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="text-center">No users found</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
             users.forEach(user => {
                 const row = document.createElement('tr');
+                row.setAttribute('data-user-id', user.User_ID);
 
-                // Name column (concatenate First_Name and Last_Name)
+                // Name column
                 const nameCell = document.createElement('td');
-                nameCell.textContent = user.Name;
+                nameCell.textContent = user.Full_Name || `${user.First_Name} ${user.Last_Name}`;
                 row.appendChild(nameCell);
 
                 // Email column
@@ -515,30 +529,35 @@ function fetchAndDisplayUsers() {
 
                 // Password column (masked)
                 const passwordCell = document.createElement('td');
-                passwordCell.textContent = user.Password;
+                passwordCell.textContent = '********'; // Mask password for security
                 row.appendChild(passwordCell);
 
-                // Role column
+                // Role column with dropdown
                 const roleCell = document.createElement('td');
-                roleCell.textContent = user.Role;
+                const roleSelect = document.createElement('select');
+                roleSelect.className = 'role-select';
+                roleSelect.innerHTML = `
+                    <option value="admin" ${user.Role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="farmer" ${user.Role === 'farmer' ? 'selected' : ''}>Farmer</option>
+                    <option value="agronomist" ${user.Role === 'agronomist' ? 'selected' : ''}>Agronomist</option>
+                    <option value="researcher" ${user.Role === 'researcher' ? 'selected' : ''}>Researcher</option>
+                `;
+                roleSelect.addEventListener('change', (e) => updateUserRole(user.User_ID, e.target.value));
+                roleCell.appendChild(roleSelect);
                 row.appendChild(roleCell);
 
                 // Actions column
                 const actionsCell = document.createElement('td');
                 actionsCell.className = 'action-buttons';
 
-                // Edit button
-                const editButton = document.createElement('button');
-                editButton.className = 'edit';
-                editButton.innerHTML = '<i class="fas fa-edit"></i>';
-                editButton.onclick = () => editUser(user.User_ID);  // Add edit functionality
-                actionsCell.appendChild(editButton);
-
                 // Delete button
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete';
                 deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
-                deleteButton.onclick = () => deleteUser(user.User_ID);  // Add delete functionality
+                deleteButton.onclick = (e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    confirmDeleteUser(user.User_ID, user.Full_Name || `${user.First_Name} ${user.Last_Name}`);
+                };
                 actionsCell.appendChild(deleteButton);
 
                 row.appendChild(actionsCell);
@@ -547,13 +566,139 @@ function fetchAndDisplayUsers() {
         })
         .catch(error => {
             console.error('Error fetching users:', error);
-            alert('Failed to fetch users. Please try again.');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to fetch users. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         });
 }
 
-// Fetch and display users when the page loads
-document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
+// Update user role
+function updateUserRole(userId, newRole) {
+    Swal.fire({
+        title: 'Update User Role',
+        text: `Are you sure you want to change this user's role to ${newRole}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Update',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/update_user_role/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ role: newRole })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'User role updated successfully',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to update user role');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user role:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    fetchAndDisplayUsers(); // Refresh to show correct role
+                });
+            });
+        } else {
+            // Revert the select value if cancelled
+            fetchAndDisplayUsers(); // Refresh to get original values
+        }
+    });
+}
 
+// Confirm and delete user
+function confirmDeleteUser(userId, userName) {
+    Swal.fire({
+        title: 'Delete User',
+        html: `Are you sure you want to delete <strong>${userName}</strong>?<br><br>This action cannot be undone!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteUser(userId);
+        }
+    });
+}
+
+// Delete user function
+function deleteUser(userId) {
+    fetch(`/admin/delete_user/${userId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'User has been deleted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                fetchAndDisplayUsers(); // Refresh the table
+            });
+        } else {
+            throw new Error(data.error || 'Failed to delete user');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting user:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    fetchAndDisplayUsers();
+    
+    // Add error handling for the fetch operation
+    if (typeof fetch === 'undefined') {
+        console.error('Fetch API is not available in this browser');
+        Swal.fire({
+            title: 'Error!',
+            text: 'Your browser does not support modern features required by this page.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+});
 </script>
     
         <!-- Charts Section -->
@@ -572,6 +717,8 @@ document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
             </div>
         </div>
     </div>
+
+ 
 
 <!-- Update Database Modal -->
 <div class="modal fade" id="updateDatabaseModal" tabindex="-1" aria-labelledby="updateDatabaseModalLabel" aria-hidden="true">
