@@ -366,6 +366,13 @@
     .input-group-append {
         margin-top: 10px;
     }
+    .action-buttons {
+    margin-top: 10px;
+}
+
+.action-buttons button {
+    margin-right: 5px;
+}
 }
 
 /* Interactive Styles */
@@ -549,7 +556,6 @@ document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
 
 </script>
     
-
         <!-- Charts Section -->
         <div class="row">
             <div class="col-md-6">
@@ -567,7 +573,7 @@ document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
         </div>
     </div>
 
-    <!-- Update Database Modal -->
+<!-- Update Database Modal -->
 <div class="modal fade" id="updateDatabaseModal" tabindex="-1" aria-labelledby="updateDatabaseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -579,65 +585,15 @@ document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
                 <!-- Existing Diseases Section -->
                 <div class="existing-diseases mb-4">
                     <h4>Existing Plant Diseases</h4>
-                    <div class="disease-list">
-                        <!-- Dummy Disease Data -->
-                        <div class="disease-item card mb-3" data-id="1">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <img src="/static/img/AppleCedarRust1.JPG" alt="Disease Image" class="disease-image img-fluid">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h5 class="card-title">Apple___Apple_scab</h5>
-                                        <p class="card-text"><strong>Symptoms:</strong> Brown spots on leaves, wilting, fruit rot.</p>
-                                        <p class="card-text"><strong>Preventive Measures:</strong> Rotate crops, use resistant varieties.</p>
-                                        <p class="card-text"><strong>Chemical Treatments:</strong> Fungicides like chlorothalonil.</p>
-                                        <p class="card-text"><strong>Organic Solutions:</strong> Neem oil, copper sprays.</p>
-                                        <p class="card-text"><strong>Best Farming Practices:</strong> Proper spacing, avoid overhead watering.</p>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-primary" onclick="editDisease(1)">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(1)">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="disease-item card mb-3" data-id="2">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <img src="/static/img/TomatoEarlyBlight3.JPG" alt="Disease Image" class="disease-image img-fluid">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h5 class="card-title">Tomato___Bacterial_spot</h5>
-                                        <p class="card-text"><strong>Symptoms:</strong> Dark spots on leaves and fruit.</p>
-                                        <p class="card-text"><strong>Preventive Measures:</strong> Use disease-free seeds.</p>
-                                        <p class="card-text"><strong>Chemical Treatments:</strong> Copper-based fungicides.</p>
-                                        <p class="card-text"><strong>Organic Solutions:</strong> Baking soda spray.</p>
-                                        <p class="card-text"><strong>Best Farming Practices:</strong> Avoid overhead irrigation.</p>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-primary" onclick="editDisease(2)">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(2)">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Add more diseases here -->
+                    <div class="disease-list" id="diseaseList">
+                        <!-- Disease items will be dynamically inserted here -->
                     </div>
                 </div>
 
                 <!-- Add/Edit Disease Form -->
-                <form id="diseaseForm">
+                <form id="treatmentForm">
                     <div class="form-group">
+                        <h4>Add Plant Diseases</h4>
                         <label for="diseaseName">Disease Name</label>
                         <input type="text" id="diseaseName" name="diseaseName" required>
                     </div>
@@ -680,101 +636,133 @@ document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
 </div>
 
 <script>
-// Dummy Data for Diseases
-const diseases = [
-    {
-        id: 1,
-        name: "Apple___Apple_scab",
-        symptoms: "Brown spots on leaves, wilting, fruit rot.",
-        preventiveMeasures: "Rotate crops, use resistant varieties.",
-        chemicalTreatments: "Fungicides like chlorothalonil.",
-        organicSolutions: "Neem oil, copper sprays.",
-        bestPractices: "Proper spacing, avoid overhead watering.",
-        image: "https://via.placeholder.com/150"
-    },
-    {
-        id: 2,
-        name: "Tomato___Bacterial_spot",
-        symptoms: "Dark spots on leaves and fruit.",
-        preventiveMeasures: "Use disease-free seeds.",
-        chemicalTreatments: "Copper-based fungicides.",
-        organicSolutions: "Baking soda spray.",
-        bestPractices: "Avoid overhead irrigation.",
-        image: "https://via.placeholder.com/150"
-    },
-    // Add more diseases here
-];
 
-// Handle Edit Disease
-function editDisease(diseaseId) {
-    const disease = diseases.find(d => d.id === diseaseId);
-    if (disease) {
-        // Populate the form with disease data
-        document.getElementById('diseaseName').value = disease.name;
-        document.getElementById('symptoms').value = disease.symptoms;
-        document.getElementById('preventiveMeasures').value = disease.preventiveMeasures;
-        document.getElementById('chemicalTreatments').value = disease.chemicalTreatments;
-        document.getElementById('organicSolutions').value = disease.organicSolutions;
-        document.getElementById('bestPractices').value = disease.bestPractices;
-        document.getElementById('diseaseImagePreview').src = disease.image;
-        document.getElementById('diseaseImagePreview').style.display = 'block';
+// Fetch and display existing diseases
+function fetchDiseases() {
+    fetch('/admin/get_diseases')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const diseaseList = document.getElementById('diseaseList');
+                diseaseList.innerHTML = ''; // Clear existing content
+                data.diseases.forEach(disease => {
+                    // Construct the image path based on the disease name
+                     // Manually configure image paths for specific diseases
+                    let imageName;
+                    switch (disease.Disease_Name) {
+                        case 'Apple___Apple_scab':
+                            imageName = 'Apple_Apple_scab.JPG';
+                            break;
+                        case 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot':
+                            imageName = 'Corn_(maize)_Cercospora_leaf_spot_Gray_leaf_spot.JPG';
+                            break;
+                        case 'Tomato___Spider_mites Two-spotted_spider_mite':
+                            imageName = 'Tomato_Spider_mites_Two-spotted_spider_mite.JPG';
+                            break;
+                        default:
+                            imageName = disease.Disease_Name.replace(/ /g, '_') + '.JPG'; // Replace spaces with underscores and add .jpg
+                    }
+                    const imagePath = `/static/uploads/${imageName}`;
 
-        // Set the form to edit mode
-        document.getElementById('diseaseForm').dataset.mode = 'edit';
-        document.getElementById('diseaseForm').dataset.diseaseId = diseaseId;
-    }
+                    const diseaseItem = `
+                        <div class="disease-item card mb-3" data-id="${disease.Disease_ID}">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <img src="${imagePath}" alt="${disease.Disease_Name}" class="disease-image img-fluid" onerror="this.src='/static/uploads/download.jpg';">
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h5 class="card-title">${disease.Disease_Name}</h5>
+                                        <p class="card-text"><strong>Symptoms:</strong> ${disease.Symptoms}</p>
+                                        <p class="card-text"><strong>Preventive Measures:</strong> ${disease.Treatment_Recommendations}</p>
+                                        <p class="card-text"><strong>Severity Level:</strong> ${disease.Severity_Level}</p>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary" onclick="editDisease(${disease.Disease_ID})">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(${disease.Disease_ID})">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    diseaseList.insertAdjacentHTML('beforeend', diseaseItem);
+                });
+            } else {
+                alert('Error fetching diseases: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching diseases:', error);
+            alert('Failed to fetch diseases. Please try again.');
+        });
 }
 
-// Handle Delete Disease
+// Call fetchDiseases when the modal is shown
+document.getElementById('updateDatabaseModal').addEventListener('shown.bs.modal', fetchDiseases);
+</script>
+
+<script>
+    function editDisease(diseaseId) {
+    alert(`Edit disease with ID: ${diseaseId}`);
+    // Implement edit functionality here
+}
+
 function deleteDisease(diseaseId) {
     if (confirm('Are you sure you want to delete this disease?')) {
-        // Remove the disease from the list (dummy implementation)
-        const index = diseases.findIndex(d => d.id === diseaseId);
-        if (index !== -1) {
-            diseases.splice(index, 1);
-            alert(`Disease with ID: ${diseaseId} deleted successfully!`);
-            // Refresh the list (in a real app, this would involve re-rendering the list or fetching from the server)
-        }
+        alert(`Delete disease with ID: ${diseaseId}`);
+        // Implement delete functionality here
     }
 }
+</script>
+<script>
+    document.getElementById('treatmentForm').addEventListener('submit', function (e) {
+    e.preventDefault();  // Prevent the default form submission
 
-// Handle Form Submission
-document.getElementById('diseaseForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const mode = this.dataset.mode; // 'add' or 'edit'
-    const diseaseId = this.dataset.diseaseId;
+    // Get form data
+    const diseaseName = document.getElementById('diseaseName').value;
+    const symptoms = document.getElementById('symptoms').value;
+    const preventiveMeasures = document.getElementById('preventiveMeasures').value;
+    const chemicalTreatments = document.getElementById('chemicalTreatments').value;
+    const organicSolutions = document.getElementById('organicSolutions').value;
+    const bestPractices = document.getElementById('bestPractices').value;
 
-    const diseaseData = {
-        name: document.getElementById('diseaseName').value,
-        symptoms: document.getElementById('symptoms').value,
-        preventiveMeasures: document.getElementById('preventiveMeasures').value,
-        chemicalTreatments: document.getElementById('chemicalTreatments').value,
-        organicSolutions: document.getElementById('organicSolutions').value,
-        bestPractices: document.getElementById('bestPractices').value,
-        image: document.getElementById('diseaseImagePreview').src
+    // Prepare the data to send to the backend
+    const formData = {
+        disease_name: diseaseName,
+        symptoms: symptoms,
+        preventive_measures: preventiveMeasures,
+        chemical_treatments: chemicalTreatments,
+        organic_solutions: organicSolutions,
+        best_farming_practices: bestPractices
     };
 
-    if (mode === 'edit') {
-        // Update the disease in the list (dummy implementation)
-        const disease = diseases.find(d => d.id === parseInt(diseaseId));
-        if (disease) {
-            Object.assign(disease, diseaseData);
-            alert(`Disease with ID: ${diseaseId} updated successfully!`);
+    // Send the data to the backend
+    fetch('/admin/save_treatment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Treatment data saved successfully!');
+            fetchDiseases(); // Refresh the disease list
+            document.getElementById('treatmentForm').reset();  // Clear the form
+        } else {
+            alert('Error saving treatment data: ' + data.error);
         }
-    } else {
-        // Add a new disease (dummy implementation)
-        const newDisease = { id: diseases.length + 1, ...diseaseData };
-        diseases.push(newDisease);
-        alert('New disease added successfully!');
-    }
-
-    // Reset the form
-    this.reset();
-    document.getElementById('diseaseImagePreview').style.display = 'none';
-    this.dataset.mode = 'add';
-    this.dataset.diseaseId = '';
+    })
+    .catch(error => {
+        console.error('Error saving treatment data:', error);
+        alert('Failed to save treatment data. Please try again.');
+    });
 });
-
 </script>
 
     <!-- JavaScript for Manage Users Panel -->
@@ -1282,11 +1270,6 @@ const reportData = {
         labels: ['Apple Scab', 'Tomato Blight', 'Powdery Mildew', 'Leaf Spot'],
         data: [30, 50, 40, 60]
     },
-    userFeedback: [
-        { name: 'John Doe', email: 'john.doe@example.com', feedback: 'Great system! Very helpful for diagnosing plant diseases.' },
-        { name: 'Jane Smith', email: 'jane.smith@example.com', feedback: 'The system is easy to use, but I encountered some bugs.' },
-        { name: 'Alice Johnson', email: 'alice.johnson@example.com', feedback: 'Excellent tool for farmers. Highly recommended!' }
-    ]
 };
 
 // Export to PDF using jsPDF

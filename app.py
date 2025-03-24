@@ -8,6 +8,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import os
 import tensorflow as tf
 import numpy as np
+from sqlalchemy import func
 from PIL import Image
 from datetime import date
 from flask_cors import CORS
@@ -107,6 +108,7 @@ class Treatment_Recommendations(db.Model):
     Disease_ID = db.Column(db.Integer, db.ForeignKey('diseases.Disease_ID'), nullable=False)
     Created_Date = db.Column(db.Date, nullable=False)
     Disease_Name = db.Column(db.String(100), nullable=False)
+    Symptoms = db.Column(db.String(2000), nullable=False)
     Preventive_Measures = db.Column(db.String(200), nullable=False)
     Chemical_Treatments = db.Column(db.String(200), nullable=False)
     Organic_Solutions = db.Column(db.String(200), nullable=False)
@@ -507,6 +509,78 @@ def get_feedback():
     except Exception as e:
         print(f"Error fetching feedback: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/save_treatment", methods=["POST"])
+def save_treatment():
+    try:
+        # Get form data
+        data = request.get_json()
+        disease_name = data.get("disease_name")
+        symptoms = data.get("symptoms")
+        preventive_measures = data.get("preventive_measures")
+        chemical_treatments = data.get("chemical_treatments")
+        organic_solutions = data.get("organic_solutions")
+        best_farming_practices = data.get("best_farming_practices")
+
+        # Validate required fields
+        if not disease_name or not symptoms or not preventive_measures or not chemical_treatments or not organic_solutions or not best_farming_practices:
+            return jsonify({"success": False, "error": "All fields are required"})
+
+        # Check if the disease already exists in the diseases table
+        disease = Diseases.query.filter_by(Disease_Name=disease_name).first()
+        if not disease:
+            # If the disease doesn't exist, create a new entry in the diseases table
+            disease = Diseases(
+                Disease_Name=disease_name,
+                Image_URL="/static/uploads/download.jpg",  # Provide a default image or handle image upload separately
+                Symptoms=symptoms,
+                Severity_Level="Unknown",  # Provide a default severity level
+                Similar_Diseases="None",  # Provide a default value
+                Treatment_Recommendations="None"  # Provide a default value
+            )
+            db.session.add(disease)
+            db.session.commit()
+
+        # Create a new Treatment_Recommendations object
+        new_treatment = Treatment_Recommendations(
+            Disease_ID=disease.Disease_ID,  # Use the Disease_ID from the diseases table
+            Created_Date=date.today(),
+            Disease_Name=disease_name,
+            Symptoms=symptoms,
+            Preventive_Measures=preventive_measures,
+            Chemical_Treatments=chemical_treatments,
+            Organic_Solutions=organic_solutions,
+            Best_Farming_Practices=best_farming_practices
+        )
+
+        # Add and commit to the database
+        db.session.add(new_treatment)
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "Treatment data saved successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving treatment data: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+  
+@app.route("/admin/get_diseases", methods=["GET"])
+def get_diseases():
+    try:
+        diseases = Diseases.query.all()
+        diseases_list = [{
+            "Disease_ID": disease.Disease_ID,
+            "Disease_Name": disease.Disease_Name,
+            "Symptoms": disease.Symptoms,
+            "Severity_Level": disease.Severity_Level,
+            "Similar_Diseases": disease.Similar_Diseases,
+            "Treatment_Recommendations": disease.Treatment_Recommendations
+        } for disease in diseases]
+        return jsonify({"success": True, "diseases": diseases_list})
+    except Exception as e:
+        print(f"Error fetching diseases: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
 
 # Run the Flask App
 if __name__ == "__main__":
