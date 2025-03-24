@@ -137,28 +137,23 @@
 </script>
 <!-- Navbar End -->
     
-    <!-- DISEASE DETECTION START-->
-        <div class="content">
-            <div class="upload-section">
-                <h1>Are you worried of the Plant Disease?</h1>
-                <form id="upload-form" action="/disease_recognition" method="POST" enctype="multipart/form-data">
-                    <!-- Drag-and-Drop Zone -->
-                    <div id="drag-drop-zone" class="drag-drop-zone">
-                        <p>Drag & Drop plant image here or <span class="browse-link" onclick="document.getElementById('file-upload').click()">browse</span></p>
-                        <input id="file-upload" type="file" name="file" accept="image/*" required>
-                    </div>
-                    <button type="submit">Predict</button>
-                </form>
-                <!-- Preview Section -->
-                <div id="preview-section" style="display: none; margin-top: 20px;">
-                    <h3>Selected Image</h3>
-                    <p><strong>Image Name:</strong> <span id="preview-image-name"></span></p>
-                    <img id="preview-image" src="" alt="Selected Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
-                </div>
+<div class="content">
+    <div class="upload-section">
+        <h1>Are you worried of the Plant Disease?</h1>
+        <form id="upload-form" action="/disease_recognition" method="POST" enctype="multipart/form-data">
+            <div id="drag-drop-zone" class="drag-drop-zone">
+                <p>Drag & Drop plant image here or <span class="browse-link" onclick="document.getElementById('file-upload').click()">browse</span></p>
+                <input id="file-upload" type="file" name="file" accept="image/*" required>
             </div>
+            <button type="submit">Predict</button>
+        </form>
+        <div id="preview-section" style="display: none; margin-top: 20px;">
+            <h3>Selected Image</h3>
+            <p><strong>Image Name:</strong> <span id="preview-image-name"></span></p>
+            <img id="preview-image" src="preview image" alt="Selected Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
         </div>
-<script>
-</script>
+    </div>
+</div>
 
 <script>
     // Handle drag-and-drop functionality
@@ -223,7 +218,6 @@
     }
 </script>
 
-   <!-- Result Section (Initially Hidden) -->
 <div id="result-section" style="display: none;">
     <div class="result">
         <h2>Prediction Result</h2>
@@ -233,7 +227,6 @@
         <img id="uploaded-image" src="" alt="Uploaded Image" class="uploaded-image">
     </div>
 
-    <!-- Disease Info -->
     <div id="disease-info" class="disease-info">
         <h3 class="disease-info-title">Disease Information</h3>
         <div class="disease-info-content">
@@ -258,32 +251,12 @@
             </div>
         </div>
     </div>
-
-    <!-- Treatment Recommendations -->
     <div class="recommendation_title">
         <h3 class="disease-info-title">Treatment Recommendations</h3>
     </div>
-    <div class="treatment-recommendations">
-        <div class="recommendation-item">
-            <h3>Preventive Measures</h3>
-            <p>Use disease-resistant plant varieties, practice crop rotation, and maintain proper spacing between plants.</p>
+    <div class="treatment-recommendations" id="treatmentRecommendations">
         </div>
-        <div class="recommendation-item">
-            <h3>Chemical Treatments</h3>
-            <p>Apply fungicides or pesticides as recommended by agricultural experts.</p>
-        </div>
-        <div class="recommendation-item">
-            <h3>Organic Solutions</h3>
-            <p>Use neem oil, garlic spray, or other organic remedies to control the disease.</p>
-        </div>
-        <div class="recommendation-item">
-            <h3>Best Farming Practices</h3>
-            <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
-        </div>
-    </div>
-
-    
- <!-- Feedback Section -->
+         <!-- Feedback Section -->
 <div class="feedback-section">
     <h3 class="feedback-title">Feedback & Learning</h3>
     <p class="feedback-description">
@@ -324,6 +297,92 @@
         </button>
     </form>
 </div>
+</div>
+
+<script>
+    // Function to fetch and display treatment recommendations
+    function fetchTreatmentRecommendations(diseaseName) {
+        fetch(`/admin/get_treatment_recommendations/${diseaseName}`)
+            .then(response => response.json())
+            .then(data => {
+                const treatmentContainer = document.getElementById('treatmentRecommendations');
+                if (data.success) {
+                    const treatment = data.treatment;
+                    const treatmentHTML = `
+                        <div class="recommendation-item">
+                            <h3>Preventive Measures</h3>
+                            <p>${treatment.Preventive_Measures}</p>
+                        </div>
+                        <div class="recommendation-item">
+                            <h3>Chemical Treatments</h3>
+                            <p>${treatment.Chemical_Treatments}</p>
+                        </div>
+                        <div class="recommendation-item">
+                            <h3>Organic Solutions</h3>
+                            <p>${treatment.Organic_Solutions}</p>
+                        </div>
+                        <div class="recommendation-item">
+                            <h3>Best Farming Practices</h3>
+                            <p>${treatment.Best_Farming_Practices}</p>
+                        </div>
+                    `;
+                    treatmentContainer.innerHTML = treatmentHTML;
+                } else {
+                    treatmentContainer.innerHTML = `<p>No treatment recommendations found for this disease.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching treatment recommendations:', error);
+                document.getElementById('treatmentRecommendations').innerHTML = `<p>Failed to fetch treatment recommendations. Please try again.</p>`;
+            });
+    }
+
+    // Function to handle disease prediction and display results
+    function handleDiseasePrediction(predictedDisease, confidence) {
+        // Update the UI with the predicted disease and confidence
+        document.getElementById('prediction').innerText = predictedDisease;
+        document.getElementById('confidence').innerText = `${confidence}%`;
+        document.getElementById('result-section').style.display = 'block';
+
+        // Fetch and display treatment recommendations
+        fetchTreatmentRecommendations(predictedDisease);
+    }
+
+    // Handle form submission for disease recognition
+    document.getElementById('upload-form').addEventListener('submit', function (e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        const fileInput = document.getElementById('file-upload');
+        if (!fileInput.files[0]) {
+            alert('Please select an image file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        // Send the file to the backend for prediction
+        fetch('/disease_recognition', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Display the prediction result and fetch treatment recommendations
+                    handleDiseasePrediction(data.prediction, data.confidence);
+                } else {
+                    alert('Error predicting disease: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error predicting disease:', error);
+                alert('Failed to predict disease. Please try again.');
+            });
+    });
+</script>
+
+
 
 </div>
 <script>
@@ -508,12 +567,12 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                Swal.fire({
+            Swal.fire({
                     icon: 'success',
                     title: 'Feedback Sent!',
                     text: data.message || 'Thank you for helping us improve our system.',
                     confirmButtonText: 'OK',
-                }).then(() => {
+            }).then(() => {
                     // Reset the form
                     document.getElementById('feedback-form').reset();
                     stars.forEach(star => star.classList.remove('selected'));
@@ -626,7 +685,7 @@
             'Similar_Diseases': ['Common Rust', 'Northern Leaf Blight'],
             'Severity': 'High'
         },
-        'Corn_(maize)___Common_rust_': {
+        'Corn___Common_rust': {
             'Symptoms': [
                 'Reddish-brown pustules on leaves',
                 'Pustules release powdery rust spores',
