@@ -187,27 +187,100 @@
             <div class="row g-0">
                 <div class="col-lg-7">
                     <div class="bg-primary h-100 p-5">
-                        <form>
+                        <form id="contactForm" action="https://formspree.io/f/xeoazolr" method="POST">
                             <div class="row g-3">
                                 <div class="col-6">
-                                    <input type="text" class="form-control bg-light border-0 px-4" placeholder="Your Name" style="height: 55px;">
+                                    <input type="text" id="name" name="name" class="form-control bg-light border-0 px-4" 
+                                           placeholder="Your Name" style="height: 55px;" required
+                                           pattern="[A-Za-z ]+" title="Name should only contain letters">
+                                    <div class="invalid-feedback">Please enter a valid name (letters only)</div>
                                 </div>
                                 <div class="col-6">
-                                    <input type="email" class="form-control bg-light border-0 px-4" placeholder="Your Email" style="height: 55px;">
+                                    <input type="email" id="email" name="email" class="form-control bg-light border-0 px-4" 
+                                           placeholder="Your Email" style="height: 55px;" required
+                                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" 
+                                           title="Please enter a valid email address">
+                                    <div class="invalid-feedback">Please enter a valid email address</div>
                                 </div>
                                 <div class="col-12">
-                                    <input type="text" class="form-control bg-light border-0 px-4" placeholder="Subject" style="height: 55px;">
+                                    <input type="text" id="subject" name="subject" class="form-control bg-light border-0 px-4" 
+                                           placeholder="Subject" style="height: 55px;" required>
+                                    <div class="invalid-feedback">Please enter a subject</div>
                                 </div>
                                 <div class="col-12">
-                                    <textarea class="form-control bg-light border-0 px-4 py-3" rows="2" placeholder="Message"></textarea>
+                                    <textarea id="message" name="message" class="form-control bg-light border-0 px-4 py-3" 
+                                              rows="2" placeholder="Message" required></textarea>
+                                    <div class="invalid-feedback">Please enter your message</div>
                                 </div>
                                 <div class="col-12">
-                                    <button class="btn btn-secondary w-100 py-3" type="submit">  <i class="fas fa-paper-plane"></i> Send Message</button>
+                                    <button class="btn btn-secondary w-100 py-3" type="submit">
+                                        <i class="fas fa-paper-plane"></i> Send Message
+                                    </button>
+                                </div>
+                                <div id="formSuccess" class="alert alert-success mt-3 d-none">
+                                    Thank you! Your message has been sent successfully.
+                                </div>
+                                <div id="formError" class="alert alert-danger mt-3 d-none">
+                                    There was an error submitting your message. Please try again.
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
+                
+                <script>
+                    // Form validation and submission handling
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const form = document.getElementById('contactForm');
+                        const formSuccess = document.getElementById('formSuccess');
+                        const formError = document.getElementById('formError');
+                        
+                        form.addEventListener('submit', function(event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            
+                            form.classList.add('was-validated');
+                            
+                            if (form.checkValidity()) {
+                                event.preventDefault();
+                                
+                                fetch(form.action, {
+                                    method: 'POST',
+                                    body: new FormData(form),
+                                    headers: {
+                                        'Accept': 'application/json'
+                                    }
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        formSuccess.classList.remove('d-none');
+                                        formError.classList.add('d-none');
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                        
+                                        // Hide success message after 5 seconds
+                                        setTimeout(() => {
+                                            formSuccess.classList.add('d-none');
+                                        }, 5000);
+                                    } else {
+                                        throw new Error('Form submission failed');
+                                    }
+                                })
+                                .catch(error => {
+                                    formError.classList.remove('d-none');
+                                    formSuccess.classList.add('d-none');
+                                    
+                                    // Hide error message after 5 seconds
+                                    setTimeout(() => {
+                                        formError.classList.add('d-none');
+                                    }, 5000);
+                                });
+                            }
+                        });
+                    });
+                </script>
                 <div class="col-lg-5">
                     <div class="bg-secondary h-100 p-5">
                         <h2 class="text-white mb-4">Get In Touch</h2>
