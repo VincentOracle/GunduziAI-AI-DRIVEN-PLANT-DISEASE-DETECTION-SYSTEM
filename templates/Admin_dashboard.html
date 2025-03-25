@@ -18,6 +18,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <!-- Custom Styles -->
     <style>
@@ -409,8 +411,6 @@
     <!-- Main Content -->
     <div class="content">
         <h2 class="mb-4">Admin Dashboard</h2>
-
-        <!-- Cards Section -->
       <!-- Cards Section -->
 <div class="row mb-4">
     <div class="col-md-4">
@@ -463,32 +463,38 @@ function fetchAndDisplayDashboardCounts() {
 document.addEventListener('DOMContentLoaded', fetchAndDisplayDashboardCounts);
 </script>
 
-        <!-- Manage Users Panel -->
-        <div class="manage-users-panel" id="manage-users-panel">
-            <h3>Manage Users</h3>
-            <button class="btn add mb-3" onclick="addUser()">
-                <i class="fas fa-plus"></i> Add User
-            </button>
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="users-table-body">
-                    <!-- Users will be dynamically populated here -->
-                </tbody>
-            </table>
-        </div>
-      
+<!-- Add this in your head section -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- Manage Users Panel -->
+<div class="manage-users-panel" id="manage-users-panel">
+    <h3>Manage Users</h3>
+    <button class="btn add mb-3" onclick="addUser()">
+        <i class="fas fa-plus"></i> Add User
+    </button>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="users-table-body">
+            <!-- Users will be dynamically populated here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Add this at the end of your body -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-// Function to fetch and display users
+ // Function to fetch and display users
 function fetchAndDisplayUsers() {
-    fetch('/admin/users')  // Fetch users from the backend
+    fetch('/admin/users')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -496,16 +502,24 @@ function fetchAndDisplayUsers() {
             return response.json();
         })
         .then(users => {
+            console.log('Fetched users:', users); // Debugging line
             const tableBody = document.getElementById('users-table-body');
             tableBody.innerHTML = '';  // Clear existing rows
 
-            // Loop through the users and create table rows
+            if (!users || users.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="text-center">No users found</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
             users.forEach(user => {
                 const row = document.createElement('tr');
+                row.setAttribute('data-user-id', user.User_ID);
 
-                // Name column (concatenate First_Name and Last_Name)
+                // Name column
                 const nameCell = document.createElement('td');
-                nameCell.textContent = user.Name;
+                nameCell.textContent = user.Full_Name || `${user.First_Name} ${user.Last_Name}`;
                 row.appendChild(nameCell);
 
                 // Email column
@@ -515,30 +529,35 @@ function fetchAndDisplayUsers() {
 
                 // Password column (masked)
                 const passwordCell = document.createElement('td');
-                passwordCell.textContent = user.Password;
+                passwordCell.textContent = '********'; // Mask password for security
                 row.appendChild(passwordCell);
 
-                // Role column
+                // Role column with dropdown
                 const roleCell = document.createElement('td');
-                roleCell.textContent = user.Role;
+                const roleSelect = document.createElement('select');
+                roleSelect.className = 'role-select';
+                roleSelect.innerHTML = `
+                    <option value="admin" ${user.Role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="farmer" ${user.Role === 'farmer' ? 'selected' : ''}>Farmer</option>
+                    <option value="agronomist" ${user.Role === 'agronomist' ? 'selected' : ''}>Agronomist</option>
+                    <option value="researcher" ${user.Role === 'researcher' ? 'selected' : ''}>Researcher</option>
+                `;
+                roleSelect.addEventListener('change', (e) => updateUserRole(user.User_ID, e.target.value));
+                roleCell.appendChild(roleSelect);
                 row.appendChild(roleCell);
 
                 // Actions column
                 const actionsCell = document.createElement('td');
                 actionsCell.className = 'action-buttons';
 
-                // Edit button
-                const editButton = document.createElement('button');
-                editButton.className = 'edit';
-                editButton.innerHTML = '<i class="fas fa-edit"></i>';
-                editButton.onclick = () => editUser(user.User_ID);  // Add edit functionality
-                actionsCell.appendChild(editButton);
-
                 // Delete button
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete';
                 deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
-                deleteButton.onclick = () => deleteUser(user.User_ID);  // Add delete functionality
+                deleteButton.onclick = (e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    confirmDeleteUser(user.User_ID, user.Full_Name || `${user.First_Name} ${user.Last_Name}`);
+                };
                 actionsCell.appendChild(deleteButton);
 
                 row.appendChild(actionsCell);
@@ -547,13 +566,139 @@ function fetchAndDisplayUsers() {
         })
         .catch(error => {
             console.error('Error fetching users:', error);
-            alert('Failed to fetch users. Please try again.');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to fetch users. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         });
 }
 
-// Fetch and display users when the page loads
-document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
+// Update user role
+function updateUserRole(userId, newRole) {
+    Swal.fire({
+        title: 'Update User Role',
+        text: `Are you sure you want to change this user's role to ${newRole}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Update',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/update_user_role/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ role: newRole })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'User role updated successfully',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to update user role');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user role:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    fetchAndDisplayUsers(); // Refresh to show correct role
+                });
+            });
+        } else {
+            // Revert the select value if cancelled
+            fetchAndDisplayUsers(); // Refresh to get original values
+        }
+    });
+}
 
+// Confirm and delete user
+function confirmDeleteUser(userId, userName) {
+    Swal.fire({
+        title: 'Delete User',
+        html: `Are you sure you want to delete <strong>${userName}</strong>?<br><br>This action cannot be undone!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteUser(userId);
+        }
+    });
+}
+
+// Delete user function
+function deleteUser(userId) {
+    fetch(`/admin/delete_user/${userId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'User has been deleted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                fetchAndDisplayUsers(); // Refresh the table
+            });
+        } else {
+            throw new Error(data.error || 'Failed to delete user');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting user:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    fetchAndDisplayUsers();
+    
+    // Add error handling for the fetch operation
+    if (typeof fetch === 'undefined') {
+        console.error('Fetch API is not available in this browser');
+        Swal.fire({
+            title: 'Error!',
+            text: 'Your browser does not support modern features required by this page.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+});
 </script>
     
         <!-- Charts Section -->
@@ -751,16 +896,33 @@ function deleteDisease(diseaseId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Treatment data saved successfully!');
+                    const Toast = Swal.mixin({
+                      toast: true,
+                      position: "top-end",
+                      showConfirmButton: false,
+                      timer: 3500,
+                      timerProgressBar: true,
+                      didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                      },
+                    });
+                    Toast.fire({
+                      icon: "success",
+                      title: "Treatment data saved successfully!",
+                    })
+            // alert('Treatment data saved successfully!');
             fetchDiseases(); // Refresh the disease list
             document.getElementById('treatmentForm').reset();  // Clear the form
         } else {
-            alert('Error saving treatment data: ' + data.error);
+            // alert('Error saving treatment data: ' + data.error);
+            Swal.fire("Error", "Error saving treatment data!.", "error");
         }
     })
     .catch(error => {
         console.error('Error saving treatment data:', error);
-        alert('Failed to save treatment data. Please try again.');
+        // alert('Failed to save treatment data. Please try again.');
+        Swal.fire("Error", "Failed to save treatment data. Please try again..", "error");
     });
 });
 </script>
@@ -906,8 +1068,7 @@ function deleteDisease(diseaseId) {
             }
         }
     </script>
-   
-   <!-- System Reports Panel -->
+  <!-- System Reports Panel (updated version) -->
 <div class="system-reports-panel" id="system-reports-panel">
     <h3>System Reports</h3>
 
@@ -915,7 +1076,7 @@ function deleteDisease(diseaseId) {
     <div class="row mb-4">
         <div class="col-md-4">
             <label for="reportType">Select Report Type</label>
-            <select id="reportType" class="form-select">
+            <select id="reportType" class="form-select" onchange="updateDateRangeOptions()">
                 <option value="loggedUsers">Logged-In Users</option>
                 <option value="plantDiseases">Plant Diseases</option>
                 <option value="userFeedback">User Feedback</option>
@@ -923,104 +1084,19 @@ function deleteDisease(diseaseId) {
             </select>
         </div>
         <div class="col-md-4">
-            <label for="dateRange">Select Date Range</label>
-            <input type="date" id="dateRange" class="form-control">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" class="form-control">
         </div>
         <div class="col-md-4">
-            <button class="btn btn-primary mt-4" onclick="generateReport()">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" class="form-control">
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12 text-end">
+            <button class="btn btn-primary" onclick="generateReport()">
                 <i class="fas fa-chart-line"></i> Generate Report
             </button>
-        </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="chart-container">
-                <h3>Logged-In Users (Line Graph)</h3>
-                <canvas id="loggedUsersChart"></canvas>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="chart-container">
-                <h3>Plant Diseases (Bar Graph)</h3>
-                <canvas id="plantDiseasesChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-<!-- User Feedback Table -->
-
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="chart-container">
-            <h3>User Feedback</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>User Name</th>
-                        <th>Email</th>
-                        <th>Feedback</th>
-                    </tr>
-                </thead>
-                <tbody id="feedback-table-body">
-                    <!-- Feedback will be dynamically populated here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<script>
-
-    // Function to fetch and display feedback
-function fetchAndDisplayFeedback() {
-    fetch('/admin/feedback')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(feedback => {
-            const tableBody = document.getElementById('feedback-table-body');
-            tableBody.innerHTML = '';  // Clear existing rows
-
-            // Loop through the feedback and create table rows
-            feedback.forEach(item => {
-                const row = document.createElement('tr');
-
-                // User Name column
-                const nameCell = document.createElement('td');
-                nameCell.textContent = item.User_Name;
-                row.appendChild(nameCell);
-
-                // Email column
-                const emailCell = document.createElement('td');
-                emailCell.textContent = item.Email;
-                row.appendChild(emailCell);
-
-                // Feedback column
-                const feedbackCell = document.createElement('td');
-                feedbackCell.textContent = item.Feedback_Text;
-                row.appendChild(feedbackCell);
-
-                tableBody.appendChild(row);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching feedback:', error);
-            alert('Failed to fetch feedback. Please try again.');
-        });
-}
-
-// Fetch and display feedback when the page loads
-document.addEventListener('DOMContentLoaded', fetchAndDisplayFeedback);
-</script>
-
-    <!-- Export Buttons -->
-    <div class="row mt-4">
-        <div class="col-md-12 text-end">
             <button class="btn btn-success" onclick="exportToPDF()">
                 <i class="fas fa-file-pdf"></i> Export to PDF
             </button>
@@ -1029,316 +1105,472 @@ document.addEventListener('DOMContentLoaded', fetchAndDisplayFeedback);
             </button>
         </div>
     </div>
-</div>
 
-<!-- Admin settings start -->
-<div class="content">
-  <!-- Settings Panel -->
-  <div class="settings-panel" id="settings-panel">
-      <h2 class="mb-4">Admin Settings</h2>
-      <form id="settingsForm">
-          <!-- Name -->
-          <div class="form-group">
-              <label for="adminName">Name</label>
-              <input type="text" id="adminName" name="adminName" class="form-control" placeholder="Enter your name" required>
-          </div>
-
-          <!-- Profile Picture -->
-          <div class="form-group">
-              <label for="profilePic">Profile Picture</label>
-              <input type="file" id="profilePic" name="profilePic" class="form-control" accept="image/*">
-              <img id="profilePicPreview" src="#" alt="Profile Picture Preview" class="profile-pic-preview" style="display: none;">
-          </div>
-
-          <!-- Login Email -->
-          <div class="form-group">
-              <label for="adminEmail">Login Email</label>
-              <input type="email" id="adminEmail" name="adminEmail" class="form-control" placeholder="Enter your email" required>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group password-field">
-              <label for="adminPassword">Password</label>
-              <div class="input-group">
-                  <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="Enter new password" required>
-                  <div class="input-group-append">
-                      <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('adminPassword')">
-                          <i class="fas fa-eye"></i>
-                      </span>
-                  </div>
-              </div>
-              <small class="form-text text-muted">Password must be at least 8 characters long.</small>
-          </div>
-
-          <!-- Confirm Password -->
-          <div class="form-group password-field">
-              <label for="confirmPassword">Confirm Password</label>
-              <div class="input-group">
-                  <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" required>
-                  <div class="input-group-append">
-                      <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
-                          <i class="fas fa-eye"></i>
-                      </span>
-                  </div>
-              </div>
-              <small class="form-text text-muted">Passwords must match.</small>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="form-group">
-              <button type="submit" class="btn btn-primary" id="submitButton">
-                  <i class="fas fa-save"></i> Save Changes
-              </button>
-              <div class="spinner-border text-primary d-none" id="loadingSpinner" role="status">
-                  <span class="sr-only">Loading...</span>
-              </div>
-          </div>
-      </form>
-  </div>
+    <!-- Report Display Area -->
+    <div id="reportDisplay">
+        <!-- Charts will be rendered here -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Feedback Table (only for User Feedback report) -->
+        <div class="row mt-4" id="feedbackTableContainer" style="display: none;">
+            <div class="col-md-12">
+                <div class="chart-container">
+                    <h3>User Feedback Details</h3>
+                    <table class="table table-bordered" id="feedbackTable">
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Feedback</th>
+                                <th>Rating</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <!-- Feedback data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-// Toggle Settings Panel
-const settingsLink = document.getElementById('settings-link');
-const settingsPanel = document.getElementById('settings-panel');
+// Global chart variable
+let mainChart = null;
+let currentReportData = null;
 
-settingsLink.addEventListener('click', function (e) {
-  e.preventDefault(); // Prevent the default link behavior
-  settingsPanel.classList.toggle('active'); // Toggle the 'active' class
+// Initialize date pickers with default values
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    
+    document.getElementById('startDate').valueAsDate = oneMonthAgo;
+    document.getElementById('endDate').valueAsDate = today;
+    
+    // Generate initial report
+    generateReport();
 });
 
-// Handle Profile Picture Preview
-const profilePicInput = document.getElementById('profilePic');
-const profilePicPreview = document.getElementById('profilePicPreview');
-const sidebarProfilePic = document.querySelector('.sidebar img'); // Sidebar profile picture
-
-profilePicInput.addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-          profilePicPreview.src = e.target.result;
-          profilePicPreview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-  }
-});
-
-// Handle Settings Form Submission
-document.getElementById('settingsForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  // Show loading spinner
-  const submitButton = document.getElementById('submitButton');
-  const loadingSpinner = document.getElementById('loadingSpinner');
-  submitButton.disabled = true;
-  loadingSpinner.classList.remove('d-none');
-
-  // Simulate API call delay
-  setTimeout(() => {
-      // Get form values
-      const adminName = document.getElementById('adminName').value;
-      const adminEmail = document.getElementById('adminEmail').value;
-      const adminPassword = document.getElementById('adminPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-
-      // Validate passwords match
-      if (adminPassword !== confirmPassword) {
-          alert('Passwords do not match. Please try again.');
-          submitButton.disabled = false;
-          loadingSpinner.classList.add('d-none');
-          return;
-      }
-
-      // Update the sidebar profile picture if a new image is selected
-      if (profilePicInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-              sidebarProfilePic.src = e.target.result; // Update the sidebar image
-          };
-          reader.readAsDataURL(profilePicInput.files[0]);
-      }
-
-      // Simulate sending data to the server
-      console.log('Updating settings with:', {
-          name: adminName,
-          email: adminEmail,
-          password: adminPassword,
-          profilePic: profilePicInput.files[0] ? profilePicInput.files[0].name : 'No file selected'
-      });
-
-      alert('Settings updated successfully!');
-      settingsPanel.classList.remove('active'); // Hide the settings panel after submission
-      submitButton.disabled = false;
-      loadingSpinner.classList.add('d-none');
-  }, 2000); // Simulate 2-second delay
-});
-
-// Toggle Password Visibility
-function togglePasswordVisibility(fieldId) {
-  const passwordField = document.getElementById(fieldId);
-  const toggleIcon = passwordField.nextElementSibling.querySelector('i');
-
-  if (passwordField.type === 'password') {
-      passwordField.type = 'text';
-      toggleIcon.classList.remove('fa-eye');
-      toggleIcon.classList.add('fa-eye-slash');
-  } else {
-      passwordField.type = 'password';
-      toggleIcon.classList.remove('fa-eye-slash');
-      toggleIcon.classList.add('fa-eye');
-  }
-}
-</script>
-<!-- Admin settings End -->
-
-<script>
-// Initialize Charts
-let loggedUsersChart, plantDiseasesChart;
-
-function initializeCharts() {
-    const loggedUsersCtx = document.getElementById('loggedUsersChart').getContext('2d');
-    loggedUsersChart = new Chart(loggedUsersCtx, {
-        type: 'line',
-        data: {
-            labels: reportData.loggedUsers.labels,
-            datasets: [{
-                label: 'Logged-In Users',
-                data: reportData.loggedUsers.data,
-                borderColor: '#3498db',
-                fill: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    const plantDiseasesCtx = document.getElementById('plantDiseasesChart').getContext('2d');
-    plantDiseasesChart = new Chart(plantDiseasesCtx, {
-        type: 'bar',
-        data: {
-            labels: reportData.plantDiseases.labels,
-            datasets: [{
-                label: 'Plant Diseases',
-                data: reportData.plantDiseases.data,
-                backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c']
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+// Update date range options based on report type
+function updateDateRangeOptions() {
+    const reportType = document.getElementById('reportType').value;
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    
+    if (reportType === 'userFeedback') {
+        // For feedback, allow longer date ranges
+        startDateInput.max = endDateInput.value;
+        endDateInput.min = startDateInput.value;
+    } else {
+        // For other reports, limit to 3 months
+        const endDate = new Date(endDateInput.value);
+        const maxStartDate = new Date(endDate);
+        maxStartDate.setMonth(maxStartDate.getMonth() - 3);
+        
+        startDateInput.max = endDateInput.value;
+        startDateInput.min = formatDate(maxStartDate);
+        endDateInput.min = startDateInput.value;
+    }
 }
 
-// Generate Report
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// Generate report based on selected options
 function generateReport() {
     const reportType = document.getElementById('reportType').value;
-    const dateRange = document.getElementById('dateRange').value;
-
-    // Update charts based on selected report type
-    if (reportType === 'loggedUsers') {
-        loggedUsersChart.data.labels = reportData.loggedUsers.labels;
-        loggedUsersChart.data.datasets[0].data = reportData.loggedUsers.data;
-        loggedUsersChart.update();
-    } else if (reportType === 'plantDiseases') {
-        plantDiseasesChart.data.labels = reportData.plantDiseases.labels;
-        plantDiseasesChart.data.datasets[0].data = reportData.plantDiseases.data;
-        plantDiseasesChart.update();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    let endpoint = '';
+    switch(reportType) {
+        case 'loggedUsers':
+            endpoint = `/admin/reports/logged_users?start_date=${startDate}&end_date=${endDate}`;
+            break;
+        case 'plantDiseases':
+            endpoint = `/admin/reports/plant_diseases?start_date=${startDate}&end_date=${endDate}`;
+            break;
+        case 'userFeedback':
+            endpoint = `/admin/reports/user_feedback?start_date=${startDate}&end_date=${endDate}`;
+            break;
+        case 'diseaseTrends':
+            endpoint = `/admin/reports/disease_trends?start_date=${startDate}&end_date=${endDate}`;
+            break;
     }
-
-    alert(`Report generated for ${reportType} on ${dateRange}`);
+    
+    fetch(endpoint)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                currentReportData = data;
+                renderReport(reportType, data);
+            } else {
+                throw new Error(data.error || 'Failed to generate report');
+            }
+        })
+        .catch(error => {
+            console.error('Error generating report:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
 }
 
-// Dummy Data for Reports
-const reportData = {
-    loggedUsers: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        data: [50, 70, 60, 90, 80, 100]
-    },
-    plantDiseases: {
-        labels: ['Apple Scab', 'Tomato Blight', 'Powdery Mildew', 'Leaf Spot'],
-        data: [30, 50, 40, 60]
-    },
-};
+// Render the report based on type and data
+function renderReport(reportType, data) {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    
+    // Destroy previous chart if it exists
+    if (mainChart) {
+        mainChart.destroy();
+    }
+    
+    // Hide feedback table by default
+    document.getElementById('feedbackTableContainer').style.display = 'none';
+    
+    switch(reportType) {
+        case 'loggedUsers':
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Logged-In Users',
+                        data: data.data,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: getChartOptions('Number of Logged-In Users Over Time')
+            });
+            break;
+            
+        case 'plantDiseases':
+            mainChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Diagnosis Count',
+                        data: data.data,
+                        backgroundColor: data.labels.map(() => 
+                            `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
+                        ),
+                        borderWidth: 1
+                    }]
+                },
+                options: getChartOptions('Plant Disease Frequency')
+            });
+            break;
+            
+        case 'userFeedback':
+            // Show feedback table
+            document.getElementById('feedbackTableContainer').style.display = 'block';
+            const feedbackTableBody = document.getElementById('feedbackTableBody');
+            feedbackTableBody.innerHTML = '';
+            
+            data.feedback.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.user_name}</td>
+                    <td>${item.email}</td>
+                    <td>${item.feedback}</td>
+                    <td>${'★'.repeat(item.rating)}${'☆'.repeat(5 - item.rating)}</td>
+                    <td>${item.date}</td>
+                `;
+                feedbackTableBody.appendChild(row);
+            });
+            
+            // Show rating distribution chart
+            mainChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+                    datasets: [{
+                        data: [
+                            data.feedback.filter(f => f.rating === 1).length,
+                            data.feedback.filter(f => f.rating === 2).length,
+                            data.feedback.filter(f => f.rating === 3).length,
+                            data.feedback.filter(f => f.rating === 4).length,
+                            data.feedback.filter(f => f.rating === 5).length
+                        ],
+                        backgroundColor: [
+                            '#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#27ae60'
+                        ]
+                    }]
+                },
+                options: getChartOptions('User Rating Distribution')
+            });
+            break;
+            
+        case 'diseaseTrends':
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: data.datasets
+                },
+                options: getChartOptions('Disease Detection Trends Over Time')
+            });
+            break;
+    }
+}
 
-// Export to PDF using jsPDF
+// Common chart options
+function getChartOptions(title) {
+    return {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: title,
+                font: {
+                    size: 16
+                }
+            },
+            legend: {
+                position: 'top'
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        }
+    };
+}
+
+// Export to PDF
 function exportToPDF() {
-    const { jsPDF } = window.jspdf; // Initialize jsPDF
+    if (!currentReportData) {
+        Swal.fire('Error', 'No report data to export', 'error');
+        return;
+    }
+    
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
-    // Add System Report Title
+    const reportType = document.getElementById('reportType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    // Add title
     doc.setFontSize(18);
-    doc.text('System Report', 10, 10);
-
-    // Add Logged-In Users Data
+    doc.text(`System Report: ${getReportTitle(reportType)}`, 10, 10);
     doc.setFontSize(12);
-    doc.text('Logged-In Users Data:', 10, 20);
-    doc.text(JSON.stringify(reportData.loggedUsers, null, 2), 10, 30);
-
-    // Add Plant Diseases Data
-    doc.text('Plant Diseases Data:', 10, 50);
-    doc.text(JSON.stringify(reportData.plantDiseases, null, 2), 10, 60);
-
-    // Add User Feedback Table
-    doc.text('User Feedback:', 10, 80);
-    let yPos = 90;
-    doc.setFontSize(10);
-    doc.text('User Name', 10, yPos);
-    doc.text('Email', 60, yPos);
-    doc.text('Feedback', 110, yPos);
-    yPos += 10;
-
-    reportData.userFeedback.forEach((row) => {
-        doc.text(row.name, 10, yPos);
-        doc.text(row.email, 60, yPos);
-        doc.text(row.feedback, 110, yPos);
-        yPos += 10;
-    });
-
+    doc.text(`Date Range: ${startDate} to ${endDate}`, 10, 20);
+    
+    // Add report content based on type
+    let yPos = 30;
+    
+    switch(reportType) {
+        case 'loggedUsers':
+            doc.text('Logged-In Users Over Time:', 10, yPos);
+            yPos += 10;
+            currentReportData.labels.forEach((date, index) => {
+                doc.text(`${date}: ${currentReportData.data[index]} users`, 15, yPos);
+                yPos += 10;
+            });
+            break;
+            
+        case 'plantDiseases':
+            doc.text('Plant Disease Frequency:', 10, yPos);
+            yPos += 10;
+            currentReportData.labels.forEach((disease, index) => {
+                doc.text(`${disease}: ${currentReportData.data[index]} diagnoses`, 15, yPos);
+                yPos += 10;
+            });
+            break;
+            
+        case 'userFeedback':
+            doc.text('User Feedback Summary:', 10, yPos);
+            yPos += 10;
+            doc.text(`Total Feedback: ${currentReportData.feedback.length}`, 15, yPos);
+            yPos += 10;
+            
+            // Rating distribution
+            doc.text('Rating Distribution:', 10, yPos);
+            yPos += 10;
+            const ratings = [1, 2, 3, 4, 5];
+            ratings.forEach(rating => {
+                const count = currentReportData.feedback.filter(f => f.rating === rating).length;
+                doc.text(`${rating} stars: ${count} feedbacks`, 15, yPos);
+                yPos += 10;
+            });
+            
+            // Add feedback table if space allows
+            if (yPos < 250) {
+                doc.text('Feedback Details:', 10, yPos);
+                yPos += 10;
+                
+                // Table headers
+                doc.text('User', 15, yPos);
+                doc.text('Rating', 60, yPos);
+                doc.text('Feedback', 90, yPos);
+                yPos += 10;
+                
+                // Table rows
+                currentReportData.feedback.forEach(feedback => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    
+                    doc.text(feedback.user_name, 15, yPos);
+                    doc.text('★'.repeat(feedback.rating), 60, yPos);
+                    doc.text(feedback.feedback.substring(0, 50) + (feedback.feedback.length > 50 ? '...' : ''), 90, yPos);
+                    yPos += 10;
+                });
+            }
+            break;
+            
+        case 'diseaseTrends':
+            doc.text('Disease Detection Trends:', 10, yPos);
+            yPos += 10;
+            
+            // For each date, show disease counts
+            currentReportData.labels.forEach((date, dateIndex) => {
+                doc.text(date, 15, yPos);
+                yPos += 10;
+                
+                currentReportData.datasets.forEach(disease => {
+                    doc.text(`${disease.label}: ${disease.data[dateIndex]}`, 20, yPos);
+                    yPos += 10;
+                });
+                
+                yPos += 5; // Extra space between dates
+            });
+            break;
+    }
+    
     // Save the PDF
-    doc.save('system-report.pdf');
+    doc.save(`${getReportTitle(reportType)}_${startDate}_to_${endDate}.pdf`);
 }
 
-// Export to Excel using SheetJS
+// Export to Excel
 function exportToExcel() {
-    // Create worksheets for each report
-    const loggedUsersWs = XLSX.utils.json_to_sheet(
-        reportData.loggedUsers.labels.map((label, index) => ({
-            Month: label,
-            Users: reportData.loggedUsers.data[index]
-        }))
-    );
-
-    const plantDiseasesWs = XLSX.utils.json_to_sheet(
-        reportData.plantDiseases.labels.map((label, index) => ({
-            Disease: label,
-            Cases: reportData.plantDiseases.data[index]
-        }))
-    );
-
-    const userFeedbackWs = XLSX.utils.json_to_sheet(reportData.userFeedback);
-
-    // Create a new workbook
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, loggedUsersWs, 'Logged Users');
-    XLSX.utils.book_append_sheet(wb, plantDiseasesWs, 'Plant Diseases');
-    XLSX.utils.book_append_sheet(wb, userFeedbackWs, 'User Feedback');
-
-    // Save the workbook as an Excel file
-    XLSX.writeFile(wb, 'system-report.xlsx');
+    if (!currentReportData) {
+        Swal.fire('Error', 'No report data to export', 'error');
+        return;
+    }
+    
+    const reportType = document.getElementById('reportType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    let worksheet;
+    const workbook = XLSX.utils.book_new();
+    
+    switch(reportType) {
+        case 'loggedUsers':
+            worksheet = XLSX.utils.json_to_sheet(
+                currentReportData.labels.map((date, index) => ({
+                    Date: date,
+                    'Logged Users': currentReportData.data[index]
+                }))
+            );
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Logged Users");
+            break;
+            
+        case 'plantDiseases':
+            worksheet = XLSX.utils.json_to_sheet(
+                currentReportData.labels.map((disease, index) => ({
+                    Disease: disease,
+                    'Diagnosis Count': currentReportData.data[index]
+                }))
+            );
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Plant Diseases");
+            break;
+            
+        case 'userFeedback':
+            // Create a worksheet with feedback data
+            worksheet = XLSX.utils.json_to_sheet(
+                currentReportData.feedback.map(f => ({
+                    'User Name': f.user_name,
+                    Email: f.email,
+                    Feedback: f.feedback,
+                    Rating: f.rating,
+                    Date: f.date
+                }))
+            );
+            XLSX.utils.book_append_sheet(workbook, worksheet, "User Feedback");
+            
+            // Add a second sheet with rating summary
+            const ratingSummary = [1, 2, 3, 4, 5].map(rating => ({
+                Rating: rating,
+                Count: currentReportData.feedback.filter(f => f.rating === rating).length
+            }));
+            
+            const summarySheet = XLSX.utils.json_to_sheet(ratingSummary);
+            XLSX.utils.book_append_sheet(workbook, summarySheet, "Rating Summary");
+            break;
+            
+        case 'diseaseTrends':
+            // Create a worksheet with trend data
+            const trendData = [];
+            currentReportData.labels.forEach((date, dateIndex) => {
+                currentReportData.datasets.forEach(disease => {
+                    trendData.push({
+                        Date: date,
+                        Disease: disease.label,
+                        Count: disease.data[dateIndex]
+                    });
+                });
+            });
+            
+            worksheet = XLSX.utils.json_to_sheet(trendData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Disease Trends");
+            break;
+    }
+    
+    // Save the workbook
+    XLSX.writeFile(workbook, `${getReportTitle(reportType)}_${startDate}_to_${endDate}.xlsx`);
 }
-// Toggle System Reports Panel
+
+// Helper function to get report title
+function getReportTitle(reportType) {
+    const titles = {
+        'loggedUsers': 'Logged-In Users',
+        'plantDiseases': 'Plant Diseases',
+        'userFeedback': 'User Feedback',
+        'diseaseTrends': 'Disease Detection Trends'
+    };
+    return titles[reportType] || 'System Report';
+}
+</script>
+<script>
+    // Toggle System Reports Panel
 const systemReportsLink = document.getElementById('system-reports-link');
 const systemReportsPanel = document.getElementById('system-reports-panel');
 
@@ -1346,11 +1578,7 @@ systemReportsLink.addEventListener('click', function (e) {
     e.preventDefault();
     systemReportsPanel.classList.toggle('active');
 });
-
-// Initialize charts on page load
-document.addEventListener('DOMContentLoaded', initializeCharts);
 </script>
-
 <script>
     // Logout Functionality
     document.querySelector('.sidebar a[href="#"]:last-child').addEventListener('click', function (e) {

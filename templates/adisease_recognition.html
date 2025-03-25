@@ -3,987 +3,1528 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GunduziAI - Disease Recognition</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Admin Panel - GunduziAi</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for PDF Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- SheetJS for Excel Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="/static/css/style.css"> 
-     <!-- Favicon -->
-     <link href="img/favicon.ico" rel="icon">
-
-     <!-- Google Web Fonts -->
-     <link rel="preconnect" href="https://fonts.gstatic.com">
-     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
- 
-     <!-- Icon Font Stylesheet -->
-     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
- 
-     <!-- Libraries Stylesheet -->
-     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
- 
-     <!-- Customized Bootstrap Stylesheet -->
-     <link href="static/css/bootstrap.min.css" rel="stylesheet">
- 
-     <!-- Template Stylesheet -->
-     <link href="static/css/style.css" rel="stylesheet">
-     <link rel="icon" href="/static/img/gunduzi_logo.png" type="image/icon type">
-
-</head>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/67c7dcc622b33b192041fe65/1ilibcqbb';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-<body>
-      <!-- Topbar Start -->
-      <div class="container-fluid px-5 d-none d-lg-block">
-        <div class="row gx-5 py-3 align-items-center">
-            <div class="col-lg-3">
-                <div class="d-flex align-items-center justify-content-start">
-                    <i class="bi bi-phone-vibrate fs-1 text-primary me-2"></i>
-                    <h2 class="mb-0">+254 768653509 </h2>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="d-flex align-items-center justify-content-center">
-                    <a href="index.html" class="navbar-brand ms-lg-5">
-                        <h1 class="m-0 display-4 text-primary"><span class="text-secondary">🌿GunduziAI</span>Prediction</h1>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="d-flex align-items-center justify-content-end">
-                    <a class="btn btn-primary btn-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-primary btn-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-primary btn-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a class="btn btn-primary btn-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Topbar End -->
-<!-- Navbar Start -->
-<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-5">
-    <a href="/" class="navbar-brand d-flex align-items-center">
-        <!-- Add your logo or brand name here -->
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav mx-auto py-0">
-            <!-- Public Links -->
-            <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-            <a href="/about" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
-
-            <!-- Protected Links (Only accessible when logged in) -->
-            {% if session.email %}
-                <a href="/disease_recognition" class="nav-item nav-link {% if request.path == '/disease_recognition' %}active{% endif %}">Disease Recognition</a>
-                <a href="/expert" class="nav-item nav-link {% if request.path == '/expert' %}active{% endif %}">Expert Consultation</a>
-                <!-- <a href="/user_dashboard" class="nav-item nav-link {% if request.path == '/user_dashboard' %}active{% endif %}">Dashboard</a> -->
-                <a href="/contact" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
-            {% else %}
-                <!-- Placeholder links for non-logged-in users (redirect to login) -->
-                <a href="/login" class="nav-item nav-link">Disease Recognition</a>
-                <a href="/login" class="nav-item nav-link">Expert Consultation</a>
-                <a href="/login" class="nav-item nav-link">Dashboard</a>
-                <a href="/login" class="nav-item nav-link">Contact</a>
-            {% endif %}
-        </div>
-        <div class="d-flex">
-            {% if session.email %}
-                <!-- Greeting and Logout Button (Visible when logged in) -->
-                <span style=" top: 10px; right: 65px; color: rgb(27, 25, 25); font-weight: bold;font-size: 20px;" class="navbar-text me-3" id="greeting">Hello, {{ session.first_name }}!</span><span style="top: 15px; right: 65px; font-weight: bold;font-size: 25px; padding-right:17px; margin-left:-13px;">👋</span>
-                <a href="/logout" class="btn btn-outline-light me-2">Logout</a>
-            {% else %}
-                <!-- Login and Sign Up Buttons (Visible when not logged in) -->
-                <a href="/login" class="btn btn-outline-light me-2 {% if request.path == '/login' %}active{% endif %}">Login</a>
-                <a href="/login" class="btn btn-warning {% if request.path == '/login' %}active{% endif %}">Sign Up</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-<!-- Greeting Script -->
-<script>
-    function displayGreeting() {
-        const first_name = "{{ session.first_name }}";  // Use the first_name from the session
-        const now = new Date();
-        const hour = now.getHours();
-        let greeting = 'Hello';
-
-        if (hour < 12) {
-            greeting += ', Good morning';
-        } else if (hour < 18) {
-            greeting += ', Good afternoon';
-        } else {
-            greeting += ', Good evening';
-        }
-        greeting += ` ${first_name}!`;
-        document.getElementById('greeting').innerText = greeting;
-    }
-
-    // Call the function when the page loads
-    window.onload = displayGreeting;
-</script>
-<!-- Navbar End -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- DISEASE DETECTION START-->
-        <div class="content">
-            <div class="upload-section">
-                <h1>Are you worried of the Plant Disease?</h1>
-                <form id="upload-form" action="/disease_recognition" method="POST" enctype="multipart/form-data">
-                    <!-- Drag-and-Drop Zone -->
-                    <div id="drag-drop-zone" class="drag-drop-zone">
-                        <p>Drag & Drop plant image here or <span class="browse-link" onclick="document.getElementById('file-upload').click()">browse</span></p>
-                        <input id="file-upload" type="file" name="file" accept="image/*" required>
-                    </div>
-                    <button type="submit">Predict</button>
-                </form>
-                <!-- Preview Section -->
-                <div id="preview-section" style="display: none; margin-top: 20px;">
-                    <h3>Selected Image</h3>
-                    <p><strong>Image Name:</strong> <span id="preview-image-name"></span></p>
-                    <img id="preview-image" src="" alt="Selected Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
-                </div>
-            </div>
-        </div>
-
-<script>
-    // Handle drag-and-drop functionality
-    const dragDropZone = document.getElementById('drag-drop-zone');
-    const fileInput = document.getElementById('file-upload');
-
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dragDropZone.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // Highlight drop zone when item is dragged over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dragDropZone.addEventListener(eventName, () => dragDropZone.classList.add('highlight'), false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dragDropZone.addEventListener(eventName, () => dragDropZone.classList.remove('highlight'), false);
-    });
-
-    // Handle dropped files
-    dragDropZone.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files; // Assign files to the file input
-            handleFileUpload(files[0]); // Handle the file upload
-        }
-    }
-
-    // Handle file input change
-    fileInput.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            handleFileUpload(file);
-        }
-    });
-
-    // Function to handle file upload and preview
-    function handleFileUpload(file) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            // Reset the result section
-            document.getElementById('result-section').style.display = 'none';
-            document.getElementById('prediction').textContent = '';
-            document.getElementById('confidence').textContent = '';
-            document.getElementById('image-name').textContent = '';
-            document.getElementById('uploaded-image').src = '';
-
-            // Display the selected image and its name
-            document.getElementById('preview-image').src = event.target.result;
-            document.getElementById('preview-image-name').textContent = file.name;
-            document.getElementById('preview-section').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-</script>
-
-   <!-- Result Section (Initially Hidden) -->
-<div id="result-section" style="display: none;">
-    <div class="result">
-        <h2>Prediction Result</h2>
-        <p><strong>Predicted Disease:</strong> <span id="prediction"></span></p>
-        <p><strong>Percentage Confidence:</strong> <span id="confidence"></span>%</p>
-        <p><strong>Image Name:</strong> <span id="image-name"></span></p>
-        <img id="uploaded-image" src="" alt="Uploaded Image" class="uploaded-image">
-    </div>
-
-    <!-- Disease Info -->
-    <div id="disease-info" class="disease-info">
-        <h3 class="disease-info-title">Disease Information</h3>
-        <div class="disease-info-content">
-            <div class="disease-info-item">
-                <span class="disease-info-label">Disease Name:</span>
-                <span id="disease-name" class="disease-info-value"></span>
-            </div>
-            <div class="disease-info-item">
-                <span class="disease-info-label">Symptoms:</span>
-                <ol id="symptoms-list" class="symptoms-list"></ol>
-            </div>
-            <div class="disease-info-item">
-                <span class="disease-info-label">Severity Level:</span>
-                <span id="severity-level" class="severity-level">
-                    <i class="severity-icon"></i>
-                    <span class="severity-text"></span>
-                </span>
-            </div>
-            <div class="disease-info-item">
-                <span class="disease-info-label">Similar Diseases:</span>
-                <span id="similar-diseases" class="disease-info-value"></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Treatment Recommendations -->
-    <div class="recommendation_title">
-        <h3 class="disease-info-title">Treatment Recommendations</h3>
-    </div>
-    <div class="treatment-recommendations">
-        <div class="recommendation-item">
-            <h3>Preventive Measures</h3>
-            <p>Use disease-resistant plant varieties, practice crop rotation, and maintain proper spacing between plants.</p>
-        </div>
-        <div class="recommendation-item">
-            <h3>Chemical Treatments</h3>
-            <p>Apply fungicides or pesticides as recommended by agricultural experts.</p>
-        </div>
-        <div class="recommendation-item">
-            <h3>Organic Solutions</h3>
-            <p>Use neem oil, garlic spray, or other organic remedies to control the disease.</p>
-        </div>
-        <div class="recommendation-item">
-            <h3>Best Farming Practices</h3>
-            <p>Ensure proper irrigation, soil health, and regular monitoring of plants.</p>
-        </div>
-    </div>
-    
-<!-- Feedback Section -->
-<div class="feedback-section">
-    <h3 class="feedback-title">Feedback & Learning</h3>
-    <p class="feedback-description">
-        Help us improve! Provide feedback on the AI prediction accuracy, rate the system, and share your comments.
-    </p>
-    <form id="feedback-form" action="/submit_feedback" method="POST">
-        <!-- AI Prediction Accuracy -->
-        <div class="form-group">
-            <label for="accuracy">AI Prediction Accuracy (%)</label>
-            <input type="number" id="accuracy" name="accuracy" min="0" max="100" placeholder="Enter a percentage (0-100)" required>
-        </div>
-    
-        <!-- Rating System (1-5 Stars) -->
-        <div class="form-group">
-            <label for="rating">Rate the System (1-5 Stars)</label>
-            <div class="star-rating">
-                <span class="star" data-value="1">&#9733;</span>
-                <span class="star" data-value="2">&#9733;</span>
-                <span class="star" data-value="3">&#9733;</span>
-                <span class="star" data-value="4">&#9733;</span>
-                <span class="star" data-value="5">&#9733;</span>
-            </div>
-            <input type="hidden" id="rating" name="rating" required>
-        </div>
-    
-        <!-- Feedback Comments -->
-        <div class="form-group">
-            <label for="comments">Comments</label>
-            <textarea id="comments" name="comments" rows="4" placeholder="Share your feedback or report incorrect diagnoses..." required></textarea>
-        </div>
-    
-        <!-- Hidden input for Diagnosis_ID -->
-        <input type="hidden" id="diagnosis_id" name="diagnosis_id" value="{{ diagnosis_id }}">
-    
-        <!-- Submit Button -->
-        <button type="submit" class="btn-submit">
-            <i class="fas fa-paper-plane"></i> Send Feedback
-        </button>
-    </form>
-</div>
-</div>
-
-<script>
-    // Function to format disease name (e.g., Apple___Cedar_apple_rust → Apple Cedar Rust)
-    function formatDiseaseName(diseaseClass) {
-        return diseaseClass
-            .replace(/___/g, ' ') // Replace triple underscores with a space
-            .replace(/_/g, ' ')   // Replace single underscores with a space
-            .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
-    }
-    // Function to display disease information
-    function displayDiseaseInfo(diseaseClass) {
-        const diseaseInfo = plant_disease_info[diseaseClass];
-
-        if (!diseaseInfo) {
-            console.error('Disease information not found for:', diseaseClass);
-            return;
+    <!-- Custom Styles -->
+    <style>
+        /* Previous CSS styles remain the same */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
         }
 
-        // Format disease name
-        const diseaseName = formatDiseaseName(diseaseClass);
-
-        // Update the UI
-        document.getElementById('disease-name').textContent = diseaseName;
-
-        // Populate symptoms list
-        const symptomsList = document.getElementById('symptoms-list');
-        symptomsList.innerHTML = ''; // Clear previous content
-        diseaseInfo.Symptoms.forEach((symptom) => {
-            const li = document.createElement('li');
-            li.textContent = symptom;
-            symptomsList.appendChild(li);
-        });
-
-        // Update severity level with icon
-        const severityLevel = document.getElementById('severity-level');
-        const severityIcon = severityLevel.querySelector('.severity-icon');
-        const severityText = severityLevel.querySelector('.severity-text');
-        const severity = diseaseInfo.Severity || 'Moderate';
-
-        severityText.textContent = severity;
-        severityIcon.className = 'severity-icon'; // Reset class
-        if (severity.toLowerCase() === 'high') {
-            severityIcon.classList.add('high');
-            severityIcon.innerHTML = '⚠️'; // Warning icon for high severity
-        } else if (severity.toLowerCase() === 'moderate') {
-            severityIcon.classList.add('moderate');
-            severityIcon.innerHTML = '🔸'; // Orange diamond icon for moderate severity
-        } else {
-            severityIcon.classList.add('none');
-            severityIcon.innerHTML = '✅'; // Checkmark icon for no severity
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
-        // Display similar diseases
-        document.getElementById('similar-diseases').textContent = diseaseInfo.Similar_Diseases.join(', ');
-    }
-
-    // Handle file input change to display the selected image and its name
-    document.getElementById('file-upload').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                // Reset the result section
-                document.getElementById('result-section').style.display = 'none';
-                document.getElementById('prediction').textContent = '';
-                document.getElementById('confidence').textContent = '';
-                document.getElementById('image-name').textContent = '';
-                document.getElementById('uploaded-image').src = '';
-
-                // Display the selected image and its name
-                document.getElementById('preview-image').src = event.target.result;
-                document.getElementById('preview-image-name').textContent = file.name;
-                document.getElementById('preview-section').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Handle form submission
-    document.getElementById('upload-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-
-        // Show spinner
-        const spinner = document.createElement('div');
-        spinner.className = 'spinner';
-        document.querySelector('.upload-section').appendChild(spinner);
-
-        // Simulate a 1.5-second delay for analysis
-        setTimeout(() => {
-            fetch('/disease_recognition', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Remove spinner
-                spinner.remove();
-
-                if (data.success) {
-                    // Hide the preview section
-                    document.getElementById('preview-section').style.display = 'none';
-
-                    // Show SweetAlert notification
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Analyzed Successfully!',
-                        text: `Image "${data.image_url}" has been uploaded, quality checked, and analyzed.`,
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        // Update the result section dynamically
-                        document.getElementById('prediction').textContent = data.prediction;
-                        document.getElementById('confidence').textContent = data.confidence.toFixed(2);
-                        document.getElementById('image-name').textContent = data.image_url;
-                        document.getElementById('uploaded-image').src = `/static/uploads/${data.image_url}`;
-
-                        // Display disease information
-                        displayDiseaseInfo(data.prediction);
-
-                        // Show the result section
-                        document.getElementById('result-section').style.display = 'block';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Upload Failed',
-                        text: data.error || 'There was an issue uploading your image. Please try again.',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            })
-            .catch(error => {
-                spinner.remove();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred. Please try again.',
-                    confirmButtonText: 'OK'
-                });
-            });
-        }, 1000); // 1-second delay
-    });
-   </script>
-
-<script>
-    const plant_disease_info = {
-        'Apple___Apple_scab': {
-            'Symptoms': [
-                'Olive-green or black velvety spots on leaves',
-                'Yellowing and premature leaf drop',
-                'Scabby, cracked fruit surface',
-                'Lesions on young twigs',
-                'Reduced fruit yield'
-            ],
-            'Similar_Diseases': ['Cedar Apple Rust', 'Sooty Blotch'],
-            'Severity': 'High'
-        },
-        'Apple___Black_rot': {
-            'Symptoms': [
-                'Circular brown lesions on leaves',
-                'Sunken black spots on fruit',
-                'Fruit shriveling and mummification',
-                'Bark cankers on branches',
-                'Wilting of shoots'
-            ],
-            'Similar_Diseases': ['Bitter Rot', 'Frogeye Leaf Spot'],
-            'Severity': 'Moderate'
-        },
-        'Apple___Cedar_rust': {
-            'Symptoms': [
-                'Orange gelatinous spots on apple leaves',
-                'Yellowing and premature defoliation',
-                'Twig infections leading to branch dieback',
-                'Gall formation on juniper trees (alternate host)',
-                'Fruit deformation and blemishes'
-            ],
-            'Similar_Diseases': ['Quince Rust', 'Hawthorn Rust'],
-            'Severity': 'Moderate'
-        },
-        'Apple___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Blueberry___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Cherry_(including_sour)___Powdery_mildew': {
-            'Symptoms': [
-                'White powdery fungal growth on leaves and twigs',
-                'Curled and distorted leaves',
-                'Premature leaf drop',
-                'Stunted fruit development',
-                'Reduced photosynthesis efficiency'
-            ],
-            'Similar_Diseases': ['Rust', 'Leaf Spot'],
-            'Severity': 'Moderate'
-        },
-        'Cherry_(including_sour)___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
-            'Symptoms': [
-                'Narrow, rectangular grayish-brown lesions on leaves',
-                'Yellow halo around spots',
-                'Leaf necrosis and premature death',
-                'Reduced grain filling',
-                'High humidity accelerates disease progression'
-            ],
-            'Similar_Diseases': ['Common Rust', 'Northern Leaf Blight'],
-            'Severity': 'High'
-        },
-        'Corn_(maize)___Common_rust_': {
-            'Symptoms': [
-                'Reddish-brown pustules on leaves',
-                'Pustules release powdery rust spores',
-                'Leaves may yellow and die prematurely',
-                'Weakened plant leading to reduced yields',
-                'Occurs more in cool, wet conditions'
-            ],
-            'Similar_Diseases': ['Gray Leaf Spot', 'Southern Rust'],
-            'Severity': 'Moderate'
-        },
-        'Corn_(maize)___Northern_Leaf_Blight': {
-            'Symptoms': [
-                'Long, cigar-shaped gray-green lesions on leaves',
-                'Lesions turn tan and develop spores',
-                'Premature leaf wilting and death',
-                'Reduced ear development and yield loss',
-                'More severe in warm, humid environments'
-            ],
-            'Similar_Diseases': ['Gray Leaf Spot', 'Southern Corn Leaf Blight'],
-            'Severity': 'High'
-        },
-        'Corn_(maize)___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Grape___Black_rot': {
-            'Symptoms': [
-                'Small, circular brown spots on leaves with black edges',
-                'Dark sunken lesions on fruit that later shrivel into hard black mummies',
-                'Infected stems develop dark streaks',
-                'Premature leaf drop and reduced fruit yield',
-                'Sticky spores visible on infected areas in humid conditions'
-            ],
-            'Similar_Diseases': ['Grape Downy Mildew', 'Grape Powdery Mildew'],
-            'Severity': 'High'
-        },
-        'Grape___Esca_(Black_Measles)': {
-            'Symptoms': [
-                'Dark streaks appear on woody stems',
-                'Irregular brown spots on leaves with yellow halos',
-                'Grapes show sunken brown lesions and dry out',
-                'Sudden vine collapse in severe cases',
-                'Black fungal spores present on pruning wounds'
-            ],
-            'Similar_Diseases': ['Botryosphaeria Canker', 'Eutypa Dieback'],
-            'Severity': 'High'
-        },
-        'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': {
-            'Symptoms': [
-                'Irregular dark brown leaf spots with yellow halos',
-                'Severe infection leads to leaf curling and premature drop',
-                'Leaves develop a brittle texture',
-                'Spots merge, forming large necrotic areas',
-                'Reduced fruit quality due to leaf loss'
-            ],
-            'Similar_Diseases': ['Downy Mildew', 'Anthracnose'],
-            'Severity': 'Moderate'
-        },
-        'Grape___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Orange___Haunglongbing_(Citrus_greening)': {
-            'Symptoms': [
-                'Yellowing leaves with asymmetrical blotches',
-                'Small, lopsided, bitter-tasting fruits',
-                'Premature fruit drop',
-                'Twig dieback and tree decline',
-                'Slow tree growth with sparse canopy'
-            ],
-            'Similar_Diseases': ['Citrus Tristeza Virus', 'Citrus Canker'],
-            'Severity': 'High'
-        },
-        'Peach___Bacterial_spot': {
-            'Symptoms': [
-                'Small, water-soaked lesions on leaves and fruit',
-                'Lesions turn dark brown with irregular edges',
-                'Premature leaf drop leads to defoliation',
-                'Fruits develop black, sunken pits',
-                'Weak growth due to leaf loss'
-            ],
-            'Similar_Diseases': ['Peach Scab', 'Coryneum Blight'],
-            'Severity': 'Moderate'
-        },
-        'Peach___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Pepper,_bell___Bacterial_spot': {
-            'Symptoms': [
-                'Small, dark, water-soaked spots on leaves',
-                'Leaf spots grow and merge, causing defoliation',
-                'Sunken, black lesions on fruit',
-                'Fruit cracking and distortion',
-                'Reduced yield and weak plants'
-            ],
-            'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
-            'Severity': 'Moderate'
-        },
-        'Pepper,_bell___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Potato___Early_blight': {
-            'Symptoms': [
-                'Small, dark brown spots with concentric rings on older leaves',
-                'Yellowing of surrounding leaf tissue, forming a "target-like" pattern',
-                'Lesions expand, causing premature defoliation',
-                'Dark sunken spots on tubers with dry, leathery texture',
-                'Weakened plants leading to reduced tuber production'
-            ],
-            'Similar_Diseases': ['Late Blight', 'Bacterial Wilt'],
-            'Severity': 'High'
-        },
-        'Potato___Late_blight': {
-            'Symptoms': [
-                'Large, dark water-soaked lesions on leaves',
-                'White fungal growth under humid conditions',
-                'Rapid leaf wilting and death',
-                'Dark brown lesions on tubers',
-                'Foul smell in infected potatoes'
-            ],
-            'Similar_Diseases': ['Early Blight', 'Blackleg'],
-            'Severity': 'High'
-        },
-        'Potato___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Raspberry___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Soybean___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Squash___Powdery_mildew': {
-            'Symptoms': [
-                'White powdery spots on leaves and stems',
-                'Yellowing and curling of leaves',
-                'Premature leaf drop',
-                'Stunted plant growth',
-                'Reduced fruit yield'
-            ],
-            'Similar_Diseases': ['Downy Mildew', 'Leaf Spot'],
-            'Severity': 'Moderate'
-        },
-        'Strawberry___Leaf_scorch': {
-            'Symptoms': [
-                'Reddish-purple spots on leaves',
-                'Leaves dry out and curl at the edges',
-                'Premature defoliation',
-                'Reduced fruit size and yield',
-                'Weakened plants'
-            ],
-            'Similar_Diseases': ['Leaf Spot', 'Powdery Mildew'],
-            'Severity': 'Moderate'
-        },
-        'Strawberry___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        },
-        'Tomato___Bacterial_spot': {
-            'Symptoms': [
-                'Small, dark, water-soaked spots on leaves',
-                'Leaf spots grow and merge, causing defoliation',
-                'Sunken, black lesions on fruit',
-                'Fruit cracking and distortion',
-                'Reduced yield and weak plants'
-            ],
-            'Similar_Diseases': ['Anthracnose', 'Gray Mold'],
-            'Severity': 'Moderate'
-        },
-        'Tomato___Early_blight': {
-            'Symptoms': [
-                'Dark, concentric rings on older leaves',
-                'Yellowing and wilting of leaves',
-                'Stem lesions with dark, sunken spots',
-                'Fruit rot and premature drop',
-                'Reduced plant vigor'
-            ],
-            'Similar_Diseases': ['Late Blight', 'Septoria Leaf Spot'],
-            'Severity': 'High'
-        },
-        'Tomato___Late_blight': {
-            'Symptoms': [
-                'Dark, water-soaked lesions on leaves',
-                'White mold-like growth under leaves',
-                'Rapid spread during humid conditions',
-                'Brown sunken spots on fruits',
-                'Defoliation and plant collapse'
-            ],
-            'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
-            'Severity': 'High'
-        },
-        'Tomato___Leaf_Mold': {
-            'Symptoms': [
-                'Yellow spots on upper leaf surfaces',
-                'Grayish-white mold on lower leaf surfaces',
-                'Leaf curling and premature drop',
-                'Reduced fruit yield',
-                'Weakened plants'
-            ],
-            'Similar_Diseases': ['Powdery Mildew', 'Early Blight'],
-            'Severity': 'Moderate'
-        },
-        'Tomato___Septoria_leaf_spot': {
-            'Symptoms': [
-                'Small, circular spots with gray centers and dark edges',
-                'Yellowing and wilting of leaves',
-                'Premature leaf drop',
-                'Reduced fruit yield',
-                'Weakened plants'
-            ],
-            'Similar_Diseases': ['Early Blight', 'Leaf Mold'],
-            'Severity': 'Moderate'
-        },
-        'Tomato___Spider_mites Two-spotted_spider_mite': {
-            'Symptoms': [
-                'Fine webbing on leaves and stems',
-                'Yellow or white speckling on leaves',
-                'Leaf curling and wilting',
-                'Reduced plant vigor',
-                'Premature leaf drop'
-            ],
-            'Similar_Diseases': ['Aphid Infestation', 'Thrips Damage'],
-            'Severity': 'Moderate'
-        },
-        'Tomato___Target_Spot': {
-            'Symptoms': [
-                'Dark, concentric rings on leaves and stems',
-                'Yellowing and wilting of leaves',
-                'Premature leaf drop',
-                'Reduced fruit yield',
-                'Weakened plants'
-            ],
-            'Similar_Diseases': ['Early Blight', 'Septoria Leaf Spot'],
-            'Severity': 'Moderate'
-        },
-        'Tomato___Tomato_Yellow_Leaf_Curl_Virus': {
-            'Symptoms': [
-                'Upward curling of leaves',
-                'Yellowing and stunted growth',
-                'Reduced fruit production',
-                'Whitefly infestations',
-                'Brittle leaves with vein clearing'
-            ],
-            'Similar_Diseases': ['Tomato Mosaic Virus', 'Cucumber Mosaic Virus'],
-            'Severity': 'High'
-        },
-        'Tomato___Tomato_mosaic_virus': {
-            'Symptoms': [
-                'Mottled light and dark green patterns on leaves',
-                'Leaf curling and distortion',
-                'Stunted plant growth',
-                'Reduced fruit yield',
-                'Fruit discoloration and deformation'
-            ],
-            'Similar_Diseases': ['Tomato Yellow Leaf Curl Virus', 'Cucumber Mosaic Virus'],
-            'Severity': 'High'
-        },
-        'Tomato___healthy': {
-            'Symptoms': ['No disease symptoms detected'],
-            'Similar_Diseases': ['None'],
-            'Severity': 'None'
-        }
-    };
-</script>
-
-<!-- SweetAlert Script for Feedback Submission -->
-<script>
-    // Handle Feedback Form Submission
-    document.getElementById('feedback-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        // Get form data
-        const accuracy = document.getElementById('accuracy').value;
-        const rating = document.getElementById('rating').value;
-        const comments = document.getElementById('comments').value;
-
-        // Validate form inputs
-        if (!accuracy || !rating || !comments) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please fill out all fields before submitting!',
-            });
-            return;
+        .sidebar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 20px;
+            border: 3px solid #3498db;
         }
 
-        // Send feedback data to the backend
-        fetch('/submit_feedback', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                accuracy: accuracy,
-                rating: rating,
-                comments: comments
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Feedback Sent!',
-                    text: 'Thank you for helping us improve our system.',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    // Reset the form
-                    document.getElementById('feedback-form').reset();
-                    stars.forEach(star => star.classList.remove('selected')); // Reset stars
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'An error occurred. Please try again.',
-                    confirmButtonText: 'OK'
-                });
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #34495e;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .manage-users-panel {
+            display: none; /* Hidden by default */
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .manage-users-panel h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .user-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .action-buttons button.edit {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .action-buttons button.delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .action-buttons button.add {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .action-buttons button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100px;
             }
+
+            .sidebar h4,
+            .sidebar a span {
+                display: none;
+            }
+
+            .sidebar a {
+                text-align: center;
+            }
+
+            .sidebar a i {
+                margin-right: 0;
+            }
+
+            .content {
+                margin-left: 100px;
+                width: calc(100% - 100px);
+            }
+        }
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background: #2c3e50;
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .disease-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.system-reports-panel {
+    display: none; /* Hidden by default */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-left: 250px; /* Align with the sidebar */
+    width: calc(100% - 250px); /* Adjust width to fit content */
+}
+
+.system-reports-panel.active {
+    display: block; /* Show when active */
+}
+
+/* admin settings styles */
+.settings-panel {
+    display: none; /* Hidden by default */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.settings-panel.active {
+    display: block; /* Show when active */
+}
+
+.profile-pic-preview {
+    max-width: 100px;
+    height: auto;
+    border-radius: 50%;
+    margin-top: 10px;
+    display: none; /* Hidden by default */
+}
+
+.password-field .input-group-text {
+    cursor: pointer;
+    background-color: #fff;
+    border-left: none;
+    transition: background-color 0.3s ease;
+}
+
+.password-field .input-group-text:hover {
+    background-color: #f8f9fa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .settings-panel {
+        padding: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group-append {
+        margin-top: 10px;
+    }
+    .action-buttons {
+    margin-top: 10px;
+}
+
+.action-buttons button {
+    margin-right: 5px;
+}
+}
+
+/* Interactive Styles */
+.btn-primary {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+.spinner-border {
+    margin-left: 10px;
+}
+ </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="/static/img/team-3.jpg" alt="Admin Profile">
+        <h4>Admin Panel</h4>
+        <a href="#" id="manage-users-link"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+        <a href="#" id="update-database-link"><i class="fas fa-database"></i> <span>Update Database</span></a>
+        <a href="#" id="system-reports-link"><i class="fas fa-chart-line"></i> <span>System Reports</span></a>
+        <a href="#" id="settings-link"><i class="fas fa-cogs"></i> <span>Settings</span></a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h2 class="mb-4">Admin Dashboard</h2>
+      <!-- Cards Section -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card p-3 bg-primary text-white">
+            <h4>Total Users</h4>
+            <p id="total-users">Loading...</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 bg-success text-white">
+            <h4>Reports Generated</h4>
+            <p id="total-reports">Loading...</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 bg-warning text-dark">
+            <h4>Active Diagnoses</h4>
+            <p id="active-diagnoses">Loading...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to fetch and display dashboard counts
+function fetchAndDisplayDashboardCounts() {
+    fetch('/admin/dashboard_counts')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Update the Total Users card
+            document.getElementById('total-users').textContent = data.total_users;
+
+            // Update the Reports Generated card
+            document.getElementById('total-reports').textContent = data.total_reports;
+
+            // Update the Active Diagnoses card
+            document.getElementById('active-diagnoses').textContent = data.active_diagnoses;
         })
         .catch(error => {
+            console.error('Error fetching dashboard counts:', error);
+            alert('Failed to fetch dashboard counts. Please try again.');
+        });
+}
+
+// Fetch and display dashboard counts when the page loads
+document.addEventListener('DOMContentLoaded', fetchAndDisplayDashboardCounts);
+</script>
+
+<!-- Add this in your head section -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- Manage Users Panel -->
+<div class="manage-users-panel" id="manage-users-panel">
+    <h3>Manage Users</h3>
+    <button class="btn add mb-3" onclick="addUser()">
+        <i class="fas fa-plus"></i> Add User
+    </button>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="users-table-body">
+            <!-- Users will be dynamically populated here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Add this at the end of your body -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+ // Function to fetch and display users
+function fetchAndDisplayUsers() {
+    fetch('/admin/users')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(users => {
+            console.log('Fetched users:', users); // Debugging line
+            const tableBody = document.getElementById('users-table-body');
+            tableBody.innerHTML = '';  // Clear existing rows
+
+            if (!users || users.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="text-center">No users found</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-user-id', user.User_ID);
+
+                // Name column
+                const nameCell = document.createElement('td');
+                nameCell.textContent = user.Full_Name || `${user.First_Name} ${user.Last_Name}`;
+                row.appendChild(nameCell);
+
+                // Email column
+                const emailCell = document.createElement('td');
+                emailCell.textContent = user.Email;
+                row.appendChild(emailCell);
+
+                // Password column (masked)
+                const passwordCell = document.createElement('td');
+                passwordCell.textContent = '********'; // Mask password for security
+                row.appendChild(passwordCell);
+
+                // Role column with dropdown
+                const roleCell = document.createElement('td');
+                const roleSelect = document.createElement('select');
+                roleSelect.className = 'role-select';
+                roleSelect.innerHTML = `
+                    <option value="admin" ${user.Role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="farmer" ${user.Role === 'farmer' ? 'selected' : ''}>Farmer</option>
+                    <option value="agronomist" ${user.Role === 'agronomist' ? 'selected' : ''}>Agronomist</option>
+                    <option value="researcher" ${user.Role === 'researcher' ? 'selected' : ''}>Researcher</option>
+                `;
+                roleSelect.addEventListener('change', (e) => updateUserRole(user.User_ID, e.target.value));
+                roleCell.appendChild(roleSelect);
+                row.appendChild(roleCell);
+
+                // Actions column
+                const actionsCell = document.createElement('td');
+                actionsCell.className = 'action-buttons';
+
+                // Delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete';
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.onclick = (e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    confirmDeleteUser(user.User_ID, user.Full_Name || `${user.First_Name} ${user.Last_Name}`);
+                };
+                actionsCell.appendChild(deleteButton);
+
+                row.appendChild(actionsCell);
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching users:', error);
             Swal.fire({
+                title: 'Error!',
+                text: 'Failed to fetch users. Please try again.',
                 icon: 'error',
-                title: 'Error',
-                text: 'An error occurred. Please try again.',
                 confirmButtonText: 'OK'
             });
         });
+}
+
+// Update user role
+function updateUserRole(userId, newRole) {
+    Swal.fire({
+        title: 'Update User Role',
+        text: `Are you sure you want to change this user's role to ${newRole}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Update',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/update_user_role/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ role: newRole })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'User role updated successfully',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to update user role');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user role:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    fetchAndDisplayUsers(); // Refresh to show correct role
+                });
+            });
+        } else {
+            // Revert the select value if cancelled
+            fetchAndDisplayUsers(); // Refresh to get original values
+        }
     });
+}
 
-    // Star Rating System
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('rating');
+// Confirm and delete user
+function confirmDeleteUser(userId, userName) {
+    Swal.fire({
+        title: 'Delete User',
+        html: `Are you sure you want to delete <strong>${userName}</strong>?<br><br>This action cannot be undone!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteUser(userId);
+        }
+    });
+}
 
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const value = star.getAttribute('data-value');
-            ratingInput.value = value; // Set the hidden input value
-            stars.forEach(s => s.classList.remove('selected')); // Reset all stars
-            for (let i = 0; i < value; i++) {
-                stars[i].classList.add('selected'); // Highlight selected stars
-            }
+// Delete user function
+function deleteUser(userId) {
+    fetch(`/admin/delete_user/${userId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'User has been deleted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                fetchAndDisplayUsers(); // Refresh the table
+            });
+        } else {
+            throw new Error(data.error || 'Failed to delete user');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting user:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
         });
     });
+}
 
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    fetchAndDisplayUsers();
+    
+    // Add error handling for the fetch operation
+    if (typeof fetch === 'undefined') {
+        console.error('Fetch API is not available in this browser');
+        Swal.fire({
+            title: 'Error!',
+            text: 'Your browser does not support modern features required by this page.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+});
 </script>
-
-    <!-- Footer Start -->
-    <div class="container-fluid bg-footer bg-primary text-white mt-5">
-        <div class="container">
-            <div class="row gx-5">
-                <div class="col-lg-8 col-md-6">
-                    <div class="row gx-5">
-                        <div class="col-lg-4 col-md-12 pt-5 mb-5">
-                            <h4 class="text-white mb-4">Get In Touch</h4>
-                            <div class="d-flex mb-2">
-                                <i class="bi bi-geo-alt text-white me-2"></i>
-                                <p class="text-white mb-0">Nairobi, Kenya</p>
-                            </div>
-                            <div class="d-flex mb-2">
-                                <i class="bi bi-envelope-open text-white me-2"></i>
-                                <p class="text-white mb-0">info@gunduzi.ai</p>
-                            </div>
-                            <div class="d-flex mb-2">
-                                <i class="bi bi-telephone text-white me-2"></i>
-                                <p class="text-white mb-0">+254 768653509</p>
-                            </div>
-                            <div class="d-flex mt-4">
-                                <a class="btn btn-secondary btn-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-secondary btn-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-secondary btn-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-secondary btn-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
-                            <h4 class="text-white mb-4">Quick Links</h4>
-                            <div class="d-flex flex-column justify-content-start">
-                                <a class="text-white mb-2" href="/"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
-                                <a class="text-white mb-2" href="/about"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
-                                <a class="text-white mb-2" href="/disease_recognition"><i class="bi bi-arrow-right text-white me-2"></i>Disease recognition</a>
-                                <a class="text-white mb-2" href="/expert"><i class="bi bi-arrow-right text-white me-2"></i>Our Experts</a>
-                                <a class="text-white" href="/contact"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
-                            <h4 class="text-white mb-4">Popular Links</h4>
-                            <div class="d-flex flex-column justify-content-start">
-                                <a class="text-white mb-2" href="/"><i class="bi bi-arrow-right text-white me-2"></i>Home</a>
-                                <a class="text-white mb-2" href="/disease_recognition"><i class="bi bi-arrow-right text-white me-2"></i>Disease recognition</a>
-                                <a class="text-white mb-2" href="/about"><i class="bi bi-arrow-right text-white me-2"></i>About Us</a>
-                                <a class="text-white mb-2" href="/expert"><i class="bi bi-arrow-right text-white me-2"></i>Our Experts </a>
-                                <a class="text-white" href="/contact"><i class="bi bi-arrow-right text-white me-2"></i>Contact Us</a>
-                            </div>
-                        </div>
-                    </div>
+    
+        <!-- Charts Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h3>User Activity (Line Graph)</h3>
+                    <canvas id="userChart"></canvas>
                 </div>
-                <div class="col-lg-4 col-md-6 mt-lg-n5">
-                    <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 bg-secondary p-5">
-                        <h4 class="text-white">Newsletter</h4>
-                        <h6 class="text-white">Subscribe Our Newsletter</h6>
-                        <p>To get more information and notifications on our updates</p>
-                        <form action="">
-                            <div class="input-group">
-                                <input type="text" class="form-control border-white p-3" placeholder="Your Email">
-                                <button class="btn btn-primary">Sign Up</button>
-                            </div>
-                        </form>
-                    </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h3>System Performance (Bar Graph)</h3>
+                    <canvas id="performanceChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container-fluid bg-dark text-white py-4">
-        <div class="container text-center">
-            <p class="mb-0">&copy; <a class="text-secondary fw-bold" href="#">GunduziAi AI-driven Plant Disease detection System</a>. All Rights Reserved. Designed by <a class="text-secondary fw-bold" href="Gunduzi">Gunduzi</a></p>
+
+<!-- Update Database Modal -->
+<div class="modal fade" id="updateDatabaseModal" tabindex="-1" aria-labelledby="updateDatabaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateDatabaseModalLabel">Disease Database Management</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Existing Diseases Section -->
+                <div class="existing-diseases mb-4">
+                    <h4>Existing Plant Diseases</h4>
+                    <div class="disease-list" id="diseaseList">
+                        <!-- Disease items will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Add/Edit Disease Form -->
+                <form id="treatmentForm">
+                    <div class="form-group">
+                        <h4>Add Plant Diseases</h4>
+                        <label for="diseaseName">Disease Name</label>
+                        <input type="text" id="diseaseName" name="diseaseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="symptoms">Symptoms</label>
+                        <textarea id="symptoms" name="symptoms" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preventiveMeasures">Preventive Measures</label>
+                        <textarea id="preventiveMeasures" name="preventiveMeasures" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="chemicalTreatments">Chemical Treatments</label>
+                        <textarea id="chemicalTreatments" name="chemicalTreatments" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="organicSolutions">Organic Solutions</label>
+                        <textarea id="organicSolutions" name="organicSolutions" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="bestPractices">Best Farming Practices</label>
+                        <textarea id="bestPractices" name="bestPractices" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="diseaseImage">Upload Disease Image</label>
+                        <input type="file" id="diseaseImage" name="diseaseImage" accept="image/*">
+                        <img id="diseaseImagePreview" src="#" alt="Disease Image Preview" class="disease-image" style="display: none;">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Save Disease</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteDisease()">Delete Disease</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
-    <!-- Footer End -->
+</div>
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-secondary py-3 fs-4 back-to-top"><i class="bi bi-arrow-up"></i></a>
+<script>
 
+// Fetch and display existing diseases
+function fetchDiseases() {
+    fetch('/admin/get_diseases')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const diseaseList = document.getElementById('diseaseList');
+                diseaseList.innerHTML = ''; // Clear existing content
+                data.diseases.forEach(disease => {
+                    // Construct the image path based on the disease name
+                     // Manually configure image paths for specific diseases
+                    let imageName;
+                    switch (disease.Disease_Name) {
+                        case 'Apple___Apple_scab':
+                            imageName = 'Apple_Apple_scab.JPG';
+                            break;
+                        case 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot':
+                            imageName = 'Corn_(maize)_Cercospora_leaf_spot_Gray_leaf_spot.JPG';
+                            break;
+                        case 'Tomato___Spider_mites Two-spotted_spider_mite':
+                            imageName = 'Tomato_Spider_mites_Two-spotted_spider_mite.JPG';
+                            break;
+                        default:
+                            imageName = disease.Disease_Name.replace(/ /g, '_') + '.JPG'; // Replace spaces with underscores and add .jpg
+                    }
+                    const imagePath = `/static/uploads/${imageName}`;
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+                    const diseaseItem = `
+                        <div class="disease-item card mb-3" data-id="${disease.Disease_ID}">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <img src="${imagePath}" alt="${disease.Disease_Name}" class="disease-image img-fluid" onerror="this.src='/static/uploads/download.jpg';">
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h5 class="card-title">${disease.Disease_Name}</h5>
+                                        <p class="card-text"><strong>Symptoms:</strong> ${disease.Symptoms}</p>
+                                        <p class="card-text"><strong>Preventive Measures:</strong> ${disease.Treatment_Recommendations}</p>
+                                        <p class="card-text"><strong>Severity Level:</strong> ${disease.Severity_Level}</p>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary" onclick="editDisease(${disease.Disease_ID})">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(${disease.Disease_ID})">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    diseaseList.insertAdjacentHTML('beforeend', diseaseItem);
+                });
+            } else {
+                alert('Error fetching diseases: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching diseases:', error);
+            alert('Failed to fetch diseases. Please try again.');
+        });
+}
 
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+// Call fetchDiseases when the modal is shown
+document.getElementById('updateDatabaseModal').addEventListener('shown.bs.modal', fetchDiseases);
+</script>
+
+<script>
+    function editDisease(diseaseId) {
+    alert(`Edit disease with ID: ${diseaseId}`);
+    // Implement edit functionality here
+}
+
+function deleteDisease(diseaseId) {
+    if (confirm('Are you sure you want to delete this disease?')) {
+        alert(`Delete disease with ID: ${diseaseId}`);
+        // Implement delete functionality here
+    }
+}
+</script>
+<script>
+    document.getElementById('treatmentForm').addEventListener('submit', function (e) {
+    e.preventDefault();  // Prevent the default form submission
+
+    // Get form data
+    const diseaseName = document.getElementById('diseaseName').value;
+    const symptoms = document.getElementById('symptoms').value;
+    const preventiveMeasures = document.getElementById('preventiveMeasures').value;
+    const chemicalTreatments = document.getElementById('chemicalTreatments').value;
+    const organicSolutions = document.getElementById('organicSolutions').value;
+    const bestPractices = document.getElementById('bestPractices').value;
+
+    // Prepare the data to send to the backend
+    const formData = {
+        disease_name: diseaseName,
+        symptoms: symptoms,
+        preventive_measures: preventiveMeasures,
+        chemical_treatments: chemicalTreatments,
+        organic_solutions: organicSolutions,
+        best_farming_practices: bestPractices
+    };
+
+    // Send the data to the backend
+    fetch('/admin/save_treatment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+                    const Toast = Swal.mixin({
+                      toast: true,
+                      position: "top-end",
+                      showConfirmButton: false,
+                      timer: 3500,
+                      timerProgressBar: true,
+                      didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                      },
+                    });
+                    Toast.fire({
+                      icon: "success",
+                      title: "Treatment data saved successfully!",
+                    })
+            // alert('Treatment data saved successfully!');
+            fetchDiseases(); // Refresh the disease list
+            document.getElementById('treatmentForm').reset();  // Clear the form
+        } else {
+            // alert('Error saving treatment data: ' + data.error);
+            Swal.fire("Error", "Error saving treatment data!.", "error");
+        }
+    })
+    .catch(error => {
+        console.error('Error saving treatment data:', error);
+        // alert('Failed to save treatment data. Please try again.');
+        Swal.fire("Error", "Failed to save treatment data. Please try again..", "error");
+    });
+});
+</script>
+
+    <!-- JavaScript for Manage Users Panel -->
+    <script>
+        // Toggle Manage Users Panel
+        const manageUsersLink = document.getElementById('manage-users-link');
+        const manageUsersPanel = document.getElementById('manage-users-panel');
+
+        manageUsersLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            manageUsersPanel.style.display = manageUsersPanel.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Dummy Functions for Actions
+        function addUser() {
+            alert('Add User functionality will be implemented here.');
+        }
+
+        function editUser(userId) {
+            alert(`Edit User with ID: ${userId}`);
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                alert(`Delete User with ID: ${userId}`);
+            }
+        }
+    </script>
+
+    <!-- Chart.js Scripts -->
+    <script>
+        // Line Graph for User Activity
+        const userCtx = document.getElementById('userChart').getContext('2d');
+        new Chart(userCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'New Users',
+                    data: [10, 30, 50, 40, 60, 80],
+                    borderColor: '#3498db',
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Bar Graph for System Performance
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Diagnosis 1', 'Diagnosis 2', 'Diagnosis 3', 'Diagnosis 4'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [30, 50, 40, 60],
+                    backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript for Update Database Modal -->
+    <script>
+        // Show Update Database Modal
+        const updateDatabaseLink = document.getElementById('update-database-link');
+        const updateDatabaseModal = new bootstrap.Modal(document.getElementById('updateDatabaseModal'));
+
+        updateDatabaseLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            updateDatabaseModal.show();
+        });
+
+        // Handle Disease Image Preview
+        const diseaseImageInput = document.getElementById('diseaseImage');
+        const diseaseImagePreview = document.getElementById('diseaseImagePreview');
+
+        diseaseImageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    diseaseImagePreview.src = e.target.result;
+                    diseaseImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle Disease Form Submission
+        const diseaseForm = document.getElementById('diseaseForm');
+
+        diseaseForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const diseaseName = document.getElementById('diseaseName').value;
+            const symptoms = document.getElementById('symptoms').value;
+            const preventiveMeasures = document.getElementById('preventiveMeasures').value;
+            const chemicalTreatments = document.getElementById('chemicalTreatments').value;
+            const organicSolutions = document.getElementById('organicSolutions').value;
+            const bestPractices = document.getElementById('bestPractices').value;
+            const diseaseImage = diseaseImageInput.files[0];
+
+            // Here you would typically send this data to the server
+            console.log({
+                diseaseName,
+                symptoms,
+                preventiveMeasures,
+                chemicalTreatments,
+                organicSolutions,
+                bestPractices,
+                diseaseImage
+            });
+
+            alert('Disease information saved successfully!');
+            updateDatabaseModal.hide();
+        });
+
+        // Handle Delete Disease
+        function deleteDisease() {
+            if (confirm('Are you sure you want to delete this disease?')) {
+                alert('Disease deleted successfully!');
+                updateDatabaseModal.hide();
+            }
+        }
+    </script>
+   
+   <!-- System Reports Panel -->
+<div class="system-reports-panel" id="system-reports-panel">
+    <h3>System Reports</h3>
+
+    <!-- Report Filters -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label for="reportType">Select Report Type</label>
+            <select id="reportType" class="form-select">
+                <option value="loggedUsers">Logged-In Users</option>
+                <option value="plantDiseases">Plant Diseases</option>
+                <option value="userFeedback">User Feedback</option>
+                <option value="diseaseTrends">Disease Detection Trends</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="dateRange">Select Date Range</label>
+            <input type="date" id="dateRange" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-primary mt-4" onclick="generateReport()">
+                <i class="fas fa-chart-line"></i> Generate Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h3>Logged-In Users (Line Graph)</h3>
+                <canvas id="loggedUsersChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h3>Plant Diseases (Bar Graph)</h3>
+                <canvas id="plantDiseasesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+<!-- User Feedback Table -->
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="chart-container">
+            <h3>User Feedback</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody id="feedback-table-body">
+                    <!-- Feedback will be dynamically populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // Function to fetch and display feedback
+function fetchAndDisplayFeedback() {
+    fetch('/admin/feedback')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(feedback => {
+            const tableBody = document.getElementById('feedback-table-body');
+            tableBody.innerHTML = '';  // Clear existing rows
+
+            // Loop through the feedback and create table rows
+            feedback.forEach(item => {
+                const row = document.createElement('tr');
+
+                // User Name column
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.User_Name;
+                row.appendChild(nameCell);
+
+                // Email column
+                const emailCell = document.createElement('td');
+                emailCell.textContent = item.Email;
+                row.appendChild(emailCell);
+
+                // Feedback column
+                const feedbackCell = document.createElement('td');
+                feedbackCell.textContent = item.Feedback_Text;
+                row.appendChild(feedbackCell);
+
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching feedback:', error);
+            alert('Failed to fetch feedback. Please try again.');
+        });
+}
+
+// Fetch and display feedback when the page loads
+document.addEventListener('DOMContentLoaded', fetchAndDisplayFeedback);
+</script>
+
+    <!-- Export Buttons -->
+    <div class="row mt-4">
+        <div class="col-md-12 text-end">
+            <button class="btn btn-success" onclick="exportToPDF()">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </button>
+            <button class="btn btn-warning" onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Admin settings start -->
+<div class="content">
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settings-panel">
+      <h2 class="mb-4">Admin Settings</h2>
+      <form id="settingsForm">
+          <!-- Name -->
+          <div class="form-group">
+              <label for="adminName">Name</label>
+              <input type="text" id="adminName" name="adminName" class="form-control" placeholder="Enter your name" required>
+          </div>
+
+          <!-- Profile Picture -->
+          <div class="form-group">
+              <label for="profilePic">Profile Picture</label>
+              <input type="file" id="profilePic" name="profilePic" class="form-control" accept="image/*">
+              <img id="profilePicPreview" src="#" alt="Profile Picture Preview" class="profile-pic-preview" style="display: none;">
+          </div>
+
+          <!-- Login Email -->
+          <div class="form-group">
+              <label for="adminEmail">Login Email</label>
+              <input type="email" id="adminEmail" name="adminEmail" class="form-control" placeholder="Enter your email" required>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group password-field">
+              <label for="adminPassword">Password</label>
+              <div class="input-group">
+                  <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="Enter new password" required>
+                  <div class="input-group-append">
+                      <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('adminPassword')">
+                          <i class="fas fa-eye"></i>
+                      </span>
+                  </div>
+              </div>
+              <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group password-field">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="input-group">
+                  <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" required>
+                  <div class="input-group-append">
+                      <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
+                          <i class="fas fa-eye"></i>
+                      </span>
+                  </div>
+              </div>
+              <small class="form-text text-muted">Passwords must match.</small>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-group">
+              <button type="submit" class="btn btn-primary" id="submitButton">
+                  <i class="fas fa-save"></i> Save Changes
+              </button>
+              <div class="spinner-border text-primary d-none" id="loadingSpinner" role="status">
+                  <span class="sr-only">Loading...</span>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>
+
+<script>
+// Toggle Settings Panel
+const settingsLink = document.getElementById('settings-link');
+const settingsPanel = document.getElementById('settings-panel');
+
+settingsLink.addEventListener('click', function (e) {
+  e.preventDefault(); // Prevent the default link behavior
+  settingsPanel.classList.toggle('active'); // Toggle the 'active' class
+});
+
+// Handle Profile Picture Preview
+const profilePicInput = document.getElementById('profilePic');
+const profilePicPreview = document.getElementById('profilePicPreview');
+const sidebarProfilePic = document.querySelector('.sidebar img'); // Sidebar profile picture
+
+profilePicInput.addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+          profilePicPreview.src = e.target.result;
+          profilePicPreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+  }
+});
+
+// Handle Settings Form Submission
+document.getElementById('settingsForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  // Show loading spinner
+  const submitButton = document.getElementById('submitButton');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  submitButton.disabled = true;
+  loadingSpinner.classList.remove('d-none');
+
+  // Simulate API call delay
+  setTimeout(() => {
+      // Get form values
+      const adminName = document.getElementById('adminName').value;
+      const adminEmail = document.getElementById('adminEmail').value;
+      const adminPassword = document.getElementById('adminPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      // Validate passwords match
+      if (adminPassword !== confirmPassword) {
+          alert('Passwords do not match. Please try again.');
+          submitButton.disabled = false;
+          loadingSpinner.classList.add('d-none');
+          return;
+      }
+
+      // Update the sidebar profile picture if a new image is selected
+      if (profilePicInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              sidebarProfilePic.src = e.target.result; // Update the sidebar image
+          };
+          reader.readAsDataURL(profilePicInput.files[0]);
+      }
+
+      // Simulate sending data to the server
+      console.log('Updating settings with:', {
+          name: adminName,
+          email: adminEmail,
+          password: adminPassword,
+          profilePic: profilePicInput.files[0] ? profilePicInput.files[0].name : 'No file selected'
+      });
+
+      alert('Settings updated successfully!');
+      settingsPanel.classList.remove('active'); // Hide the settings panel after submission
+      submitButton.disabled = false;
+      loadingSpinner.classList.add('d-none');
+  }, 2000); // Simulate 2-second delay
+});
+
+// Toggle Password Visibility
+function togglePasswordVisibility(fieldId) {
+  const passwordField = document.getElementById(fieldId);
+  const toggleIcon = passwordField.nextElementSibling.querySelector('i');
+
+  if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      toggleIcon.classList.remove('fa-eye');
+      toggleIcon.classList.add('fa-eye-slash');
+  } else {
+      passwordField.type = 'password';
+      toggleIcon.classList.remove('fa-eye-slash');
+      toggleIcon.classList.add('fa-eye');
+  }
+}
+</script>
+<!-- Admin settings End -->
+
+<script>
+// Initialize Charts
+let loggedUsersChart, plantDiseasesChart;
+
+function initializeCharts() {
+    const loggedUsersCtx = document.getElementById('loggedUsersChart').getContext('2d');
+    loggedUsersChart = new Chart(loggedUsersCtx, {
+        type: 'line',
+        data: {
+            labels: reportData.loggedUsers.labels,
+            datasets: [{
+                label: 'Logged-In Users',
+                data: reportData.loggedUsers.data,
+                borderColor: '#3498db',
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    const plantDiseasesCtx = document.getElementById('plantDiseasesChart').getContext('2d');
+    plantDiseasesChart = new Chart(plantDiseasesCtx, {
+        type: 'bar',
+        data: {
+            labels: reportData.plantDiseases.labels,
+            datasets: [{
+                label: 'Plant Diseases',
+                data: reportData.plantDiseases.data,
+                backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Generate Report
+function generateReport() {
+    const reportType = document.getElementById('reportType').value;
+    const dateRange = document.getElementById('dateRange').value;
+
+    // Update charts based on selected report type
+    if (reportType === 'loggedUsers') {
+        loggedUsersChart.data.labels = reportData.loggedUsers.labels;
+        loggedUsersChart.data.datasets[0].data = reportData.loggedUsers.data;
+        loggedUsersChart.update();
+    } else if (reportType === 'plantDiseases') {
+        plantDiseasesChart.data.labels = reportData.plantDiseases.labels;
+        plantDiseasesChart.data.datasets[0].data = reportData.plantDiseases.data;
+        plantDiseasesChart.update();
+    }
+
+    alert(`Report generated for ${reportType} on ${dateRange}`);
+}
+
+// Dummy Data for Reports
+const reportData = {
+    loggedUsers: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        data: [50, 70, 60, 90, 80, 100]
+    },
+    plantDiseases: {
+        labels: ['Apple Scab', 'Tomato Blight', 'Powdery Mildew', 'Leaf Spot'],
+        data: [30, 50, 40, 60]
+    },
+};
+
+// Export to PDF using jsPDF
+function exportToPDF() {
+    const { jsPDF } = window.jspdf; // Initialize jsPDF
+    const doc = new jsPDF();
+
+    // Add System Report Title
+    doc.setFontSize(18);
+    doc.text('System Report', 10, 10);
+
+    // Add Logged-In Users Data
+    doc.setFontSize(12);
+    doc.text('Logged-In Users Data:', 10, 20);
+    doc.text(JSON.stringify(reportData.loggedUsers, null, 2), 10, 30);
+
+    // Add Plant Diseases Data
+    doc.text('Plant Diseases Data:', 10, 50);
+    doc.text(JSON.stringify(reportData.plantDiseases, null, 2), 10, 60);
+
+    // Add User Feedback Table
+    doc.text('User Feedback:', 10, 80);
+    let yPos = 90;
+    doc.setFontSize(10);
+    doc.text('User Name', 10, yPos);
+    doc.text('Email', 60, yPos);
+    doc.text('Feedback', 110, yPos);
+    yPos += 10;
+
+    reportData.userFeedback.forEach((row) => {
+        doc.text(row.name, 10, yPos);
+        doc.text(row.email, 60, yPos);
+        doc.text(row.feedback, 110, yPos);
+        yPos += 10;
+    });
+
+    // Save the PDF
+    doc.save('system-report.pdf');
+}
+
+// Export to Excel using SheetJS
+function exportToExcel() {
+    // Create worksheets for each report
+    const loggedUsersWs = XLSX.utils.json_to_sheet(
+        reportData.loggedUsers.labels.map((label, index) => ({
+            Month: label,
+            Users: reportData.loggedUsers.data[index]
+        }))
+    );
+
+    const plantDiseasesWs = XLSX.utils.json_to_sheet(
+        reportData.plantDiseases.labels.map((label, index) => ({
+            Disease: label,
+            Cases: reportData.plantDiseases.data[index]
+        }))
+    );
+
+    const userFeedbackWs = XLSX.utils.json_to_sheet(reportData.userFeedback);
+
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, loggedUsersWs, 'Logged Users');
+    XLSX.utils.book_append_sheet(wb, plantDiseasesWs, 'Plant Diseases');
+    XLSX.utils.book_append_sheet(wb, userFeedbackWs, 'User Feedback');
+
+    // Save the workbook as an Excel file
+    XLSX.writeFile(wb, 'system-report.xlsx');
+}
+// Toggle System Reports Panel
+const systemReportsLink = document.getElementById('system-reports-link');
+const systemReportsPanel = document.getElementById('system-reports-panel');
+
+systemReportsLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    systemReportsPanel.classList.toggle('active');
+});
+
+// Initialize charts on page load
+document.addEventListener('DOMContentLoaded', initializeCharts);
+</script>
+
+<script>
+    // Logout Functionality
+    document.querySelector('.sidebar a[href="#"]:last-child').addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent the default link behavior
+    
+        // Clear the admin's session or token (simulated here)
+        localStorage.removeItem('adminToken'); // Example: Remove token from localStorage
+        sessionStorage.removeItem('adminSession'); // Example: Remove session data
+    
+        // Redirect to the login page
+        window.location.href = '/logout'; 
+    });
+    </script>
 </body>
 </html>
