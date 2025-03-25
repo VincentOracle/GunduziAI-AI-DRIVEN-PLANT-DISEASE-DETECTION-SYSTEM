@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, send_from_directory, url_for, jsonify, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
+from sqlalchemy import distinct, text
 import random  
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
@@ -646,6 +646,165 @@ def get_users():
         return jsonify(users_data)
     except Exception as e:
         print(f"Error fetching users: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+#SYSTEM REPORTS:
+# Add these new routes to your app.py
+# Reports Routes (updated)
+@app.route("/admin/reports/logged_users")
+def get_logged_users_report():
+    try:
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        # Validate dates
+        if not start_date or not end_date:
+            return jsonify({"success": False, "error": "Start and end dates are required"}), 400
+
+        # Query to get logged-in users count by date with date filtering
+        result = db.session.query(
+            func.date(Diagnosis_Results.Diagnosis_Date).label('date'),
+            func.count(distinct(Diagnosis_Results.Image_ID)).label('user_count')
+        ).filter(
+            Diagnosis_Results.Diagnosis_Date >= start_date,
+            Diagnosis_Results.Diagnosis_Date <= end_date
+        ).group_by(
+            func.date(Diagnosis_Results.Diagnosis_Date)
+        ).order_by(
+            func.date(Diagnosis_Results.Diagnosis_Date)
+        ).all()
+
+        # Format data for Chart.js
+        dates = [str(row.date) for row in result]
+        counts = [row.user_count for row in result]
+
+        return jsonify({
+            "success": True,
+            "labels": dates,
+            "data": counts
+        })
+    except Exception as e:
+        print(f"Error fetching logged users report: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/reports/plant_diseases")
+def get_plant_diseases_report():
+    try:
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        # Query to get disease frequency with date filtering
+        result = db.session.query(
+            Diseases.Disease_Name,
+            func.count(Diagnosis_Results.Result_ID).label('count')
+        ).join(
+            Diagnosis_Results, Diagnosis_Results.Disease_ID == Diseases.Disease_ID
+        ).filter(
+            Diagnosis_Results.Diagnosis_Date >= start_date,
+            Diagnosis_Results.Diagnosis_Date <= end_date
+        ).group_by(
+            Diseases.Disease_Name
+        ).order_by(
+            func.count(Diagnosis_Results.Result_ID).desc()
+        ).all()
+
+        # Format data for Chart.js
+        diseases = [row.Disease_Name for row in result]
+        counts = [row.count for row in result]
+
+        return jsonify({
+            "success": True,
+            "labels": diseases,
+            "data": counts
+        })
+    except Exception as e:
+        print(f"Error fetching plant diseases report: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/reports/user_feedback")
+def get_user_feedback_report():
+    try:
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        # Query to get all feedback with user details and date filtering
+        feedback = db.session.query(
+            Feedback,
+            Users
+        ).join(
+            Users, Feedback.User_ID == Users.User_ID
+        ).filter(
+            Feedback.Feedback_Date >= start_date,
+            Feedback.Feedback_Date <= end_date
+        ).order_by(
+            Feedback.Feedback_Date.desc()
+        ).all()
+
+        # Format data for table
+        feedback_list = [{
+            "user_name": f"{user.First_Name} {user.Last_Name}",
+            "email": user.Email,
+            "feedback": feedback.Feedback_Text,
+            "rating": feedback.System_Rating,
+            "date": str(feedback.Feedback_Date)
+        } for feedback, user in feedback]
+
+        return jsonify({
+            "success": True,
+            "feedback": feedback_list
+        })
+    except Exception as e:
+        print(f"Error fetching user feedback report: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/reports/disease_trends")
+def get_disease_trends_report():
+    try:
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        # Query to get disease trends over time with date filtering
+        result = db.session.query(
+            func.date(Diagnosis_Results.Diagnosis_Date).label('date'),
+            Diseases.Disease_Name,
+            func.count(Diagnosis_Results.Result_ID).label('count')
+        ).join(
+            Diseases, Diagnosis_Results.Disease_ID == Diseases.Disease_ID
+        ).filter(
+            Diagnosis_Results.Diagnosis_Date >= start_date,
+            Diagnosis_Results.Diagnosis_Date <= end_date
+        ).group_by(
+            func.date(Diagnosis_Results.Diagnosis_Date),
+            Diseases.Disease_Name
+        ).order_by(
+            func.date(Diagnosis_Results.Diagnosis_Date)
+        ).all()
+
+        # Format data for multi-line chart
+        dates = sorted(list(set([str(row.date) for row in result])))
+        diseases = list(set([row.Disease_Name for row in result]))
+        
+        datasets = []
+        for disease in diseases:
+            counts = []
+            for date in dates:
+                count = next((row.count for row in result if str(row.date) == date and row.Disease_Name == disease), 0)
+                counts.append(count)
+            
+            datasets.append({
+                "label": disease,
+                "data": counts,
+                "borderColor": f"#{random.randint(0, 0xFFFFFF):06x}",  # Random color
+                "fill": False
+            })
+
+        return jsonify({
+            "success": True,
+            "labels": dates,
+            "datasets": datasets
+        })
+    except Exception as e:
+        print(f"Error fetching disease trends report: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
     
 # Run the Flask App
