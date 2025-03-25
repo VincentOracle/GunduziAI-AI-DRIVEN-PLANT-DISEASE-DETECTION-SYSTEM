@@ -399,7 +399,7 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <img src="/static/img/team-3.jpg" alt="Admin Profile">
+        <img src="/static/img/avatars-1.jpg" alt="Admin Profile">
         <h4>Admin Panel</h4>
         <a href="#" id="manage-users-link"><i class="fas fa-users"></i> <span>Manage Users</span></a>
         <a href="#" id="update-database-link"><i class="fas fa-database"></i> <span>Update Database</span></a>
@@ -705,18 +705,65 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="row">
             <div class="col-md-6">
                 <div class="chart-container">
-                    <h3>User Activity (Line Graph)</h3>
+                    <h3>Users Activity (Line Graph)</h3>
                     <canvas id="userChart"></canvas>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="chart-container">
-                    <h3>System Performance (Bar Graph)</h3>
+                    <h3>Latest System Performance (Bar Graph)</h3>
                     <canvas id="performanceChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
+     <!-- Chart.js Scripts -->
+     <script>
+        // Line Graph for User Activity
+        const userCtx = document.getElementById('userChart').getContext('2d');
+        new Chart(userCtx, {
+            type: 'line',
+            data: {
+                labels: ['Dec', 'Jan', 'Feb', 'March', 'Apr', 'May'],
+                datasets: [{
+                    label: 'New Users',
+                    data: [1, 30, 50, 80, 0, 0],
+                    borderColor: '#3498db',
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Bar Graph for System Performance
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Diagnosis 1', 'Diagnosis 2', 'Diagnosis 3', 'Diagnosis 4','Diagnosis 5'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [40, 50, 40, 60, 65],
+                    backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c','#6ecd71']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 
 <!-- Update Database Modal -->
 <div class="modal fade" id="updateDatabaseModal" tabindex="-1" aria-labelledby="updateDatabaseModalLabel" aria-hidden="true">
@@ -954,53 +1001,7 @@ function deleteDisease(diseaseId) {
         }
     </script>
 
-    <!-- Chart.js Scripts -->
-    <script>
-        // Line Graph for User Activity
-        const userCtx = document.getElementById('userChart').getContext('2d');
-        new Chart(userCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'New Users',
-                    data: [10, 30, 50, 40, 60, 80],
-                    borderColor: '#3498db',
-                    fill: false,
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // Bar Graph for System Performance
-        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(performanceCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Diagnosis 1', 'Diagnosis 2', 'Diagnosis 3', 'Diagnosis 4'],
-                datasets: [{
-                    label: 'Performance',
-                    data: [30, 50, 40, 60],
-                    backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c']
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
+   
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1143,10 +1144,10 @@ function deleteDisease(diseaseId) {
 </div>
 
 <script>
+
 // Global chart variable
 let mainChart = null;
 let currentReportData = null;
-
 // Initialize date pickers with default values
 document.addEventListener('DOMContentLoaded', function() {
     const today = new Date();
@@ -1372,7 +1373,7 @@ function getChartOptions(title) {
     };
 }
 
-// Export to PDF
+// Export to PDF with enhanced styling
 function exportToPDF() {
     if (!currentReportData) {
         Swal.fire('Error', 'No report data to export', 'error');
@@ -1384,88 +1385,210 @@ function exportToPDF() {
     const reportType = document.getElementById('reportType').value;
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
+    const adminName = sessionStorage.getItem('adminName') || 'Admin';
     
-    // Add title
-    doc.setFontSize(18);
-    doc.text(`System Report: ${getReportTitle(reportType)}`, 10, 10);
-    doc.setFontSize(12);
-    doc.text(`Date Range: ${startDate} to ${endDate}`, 10, 20);
+    // Add header
+    function addHeader() {
+        doc.setFillColor(40, 116, 166);  // GunduziAi blue
+        doc.rect(0, 0, doc.internal.pageSize.width, 20, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.text('GunduziAi System Report', 105, 15, { align: 'center' });
+    }
+    
+    // Add footer with page numbers
+    function addFooter(pageNumber) {
+        doc.setFillColor(40, 116, 166);
+        doc.rect(0, doc.internal.pageSize.height - 20, doc.internal.pageSize.width, 20, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.text(`Generated by: ${adminName}`, 20, doc.internal.pageSize.height - 15);
+        doc.text(`Page ${pageNumber}`, 105, doc.internal.pageSize.height - 15, { align: 'center' });
+        doc.text(new Date().toLocaleString(), 190, doc.internal.pageSize.height - 15, { align: 'right' });
+    }
+    
+    // Add title section
+    function addTitle() {
+        doc.setFontSize(20);
+        doc.setTextColor(40, 116, 166);
+        doc.text(getReportTitle(reportType), 105, 40, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 50, { align: 'center' });
+    }
+    
+    let pageNumber = 1;
+    addHeader();
+    addTitle();
+    addFooter(pageNumber);
     
     // Add report content based on type
-    let yPos = 30;
+    let yPos = 70;
     
     switch(reportType) {
         case 'loggedUsers':
-            doc.text('Logged-In Users Over Time:', 10, yPos);
+            doc.setFontSize(14);
+            doc.setTextColor(40, 116, 166);
+            doc.text('Logged-In Users Over Time:', 15, yPos);
             yPos += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
             currentReportData.labels.forEach((date, index) => {
-                doc.text(`${date}: ${currentReportData.data[index]} users`, 15, yPos);
+                if (yPos > 250) {
+                    doc.addPage();
+                    pageNumber++;
+                    addHeader();
+                    addFooter(pageNumber);
+                    yPos = 40;
+                }
+                doc.text(`${date}: ${currentReportData.data[index]} users`, 20, yPos);
                 yPos += 10;
             });
             break;
             
         case 'plantDiseases':
-            doc.text('Plant Disease Frequency:', 10, yPos);
+            doc.setFontSize(14);
+            doc.setTextColor(40, 116, 166);
+            doc.text('Plant Disease Frequency:', 15, yPos);
             yPos += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
             currentReportData.labels.forEach((disease, index) => {
-                doc.text(`${disease}: ${currentReportData.data[index]} diagnoses`, 15, yPos);
+                if (yPos > 250) {
+                    doc.addPage();
+                    pageNumber++;
+                    addHeader();
+                    addFooter(pageNumber);
+                    yPos = 40;
+                }
+                doc.text(`${disease}: ${currentReportData.data[index]} diagnoses`, 20, yPos);
                 yPos += 10;
             });
             break;
             
         case 'userFeedback':
-            doc.text('User Feedback Summary:', 10, yPos);
+            // Main summary
+            doc.setFontSize(14);
+            doc.setTextColor(40, 116, 166);
+            doc.text('User Feedback Summary:', 15, yPos);
             yPos += 10;
-            doc.text(`Total Feedback: ${currentReportData.feedback.length}`, 15, yPos);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Total Feedback: ${currentReportData.feedback.length}`, 20, yPos);
             yPos += 10;
             
             // Rating distribution
-            doc.text('Rating Distribution:', 10, yPos);
+            doc.setFontSize(14);
+            doc.setTextColor(40, 116, 166);
+            doc.text('Rating Distribution:', 15, yPos);
             yPos += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
             const ratings = [1, 2, 3, 4, 5];
             ratings.forEach(rating => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    pageNumber++;
+                    addHeader();
+                    addFooter(pageNumber);
+                    yPos = 40;
+                }
                 const count = currentReportData.feedback.filter(f => f.rating === rating).length;
-                doc.text(`${rating} stars: ${count} feedbacks`, 15, yPos);
+                doc.text(`${rating} stars: ${count} feedbacks (${Math.round((count/currentReportData.feedback.length)*100)}%)`, 20, yPos);
                 yPos += 10;
             });
             
-            // Add feedback table if space allows
-            if (yPos < 250) {
-                doc.text('Feedback Details:', 10, yPos);
-                yPos += 10;
+            // Add feedback table
+            if (currentReportData.feedback.length > 0) {
+                if (yPos > 200) {
+                    doc.addPage();
+                    pageNumber++;
+                    addHeader();
+                    addFooter(pageNumber);
+                    yPos = 40;
+                }
                 
-                // Table headers
-                doc.text('User', 15, yPos);
+                doc.setFontSize(14);
+                doc.setTextColor(40, 116, 166);
+                doc.text('Feedback Details:', 15, yPos);
+                yPos += 15;
+                
+                // Table headers with background
+                doc.setFillColor(220, 220, 220);
+                doc.rect(15, yPos-5, 180, 10, 'F');
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('User', 20, yPos);
                 doc.text('Rating', 60, yPos);
-                doc.text('Feedback', 90, yPos);
+                doc.text('Feedback', 100, yPos);
+                doc.text('Date', 170, yPos);
                 yPos += 10;
                 
                 // Table rows
+                doc.setFont(undefined, 'normal');
                 currentReportData.feedback.forEach(feedback => {
-                    if (yPos > 280) {
+                    if (yPos > 270) {
                         doc.addPage();
-                        yPos = 20;
+                        pageNumber++;
+                        addHeader();
+                        addFooter(pageNumber);
+                        yPos = 40;
+                        // Redraw headers if new page
+                        doc.setFillColor(220, 220, 220);
+                        doc.rect(15, yPos-5, 180, 10, 'F');
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFontSize(12);
+                        doc.setFont(undefined, 'bold');
+                        doc.text('User', 20, yPos);
+                        doc.text('Rating', 60, yPos);
+                        doc.text('Feedback', 100, yPos);
+                        doc.text('Date', 170, yPos);
+                        yPos += 10;
+                        doc.setFont(undefined, 'normal');
                     }
                     
-                    doc.text(feedback.user_name, 15, yPos);
+                    // Alternate row colors
+                    if ((yPos/10) % 2 === 0) {
+                        doc.setFillColor(245, 245, 245);
+                        doc.rect(15, yPos-5, 180, 10, 'F');
+                    }
+                    
+                    doc.text(feedback.user_name.substring(0, 15), 20, yPos);
                     doc.text('★'.repeat(feedback.rating), 60, yPos);
-                    doc.text(feedback.feedback.substring(0, 50) + (feedback.feedback.length > 50 ? '...' : ''), 90, yPos);
+                    doc.text(feedback.feedback.substring(0, 30) + (feedback.feedback.length > 30 ? '...' : ''), 100, yPos);
+                    doc.text(feedback.date, 170, yPos);
                     yPos += 10;
                 });
             }
             break;
             
         case 'diseaseTrends':
-            doc.text('Disease Detection Trends:', 10, yPos);
+            doc.setFontSize(14);
+            doc.setTextColor(40, 116, 166);
+            doc.text('Disease Detection Trends:', 15, yPos);
             yPos += 10;
             
-            // For each date, show disease counts
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
             currentReportData.labels.forEach((date, dateIndex) => {
-                doc.text(date, 15, yPos);
+                if (yPos > 250) {
+                    doc.addPage();
+                    pageNumber++;
+                    addHeader();
+                    addFooter(pageNumber);
+                    yPos = 40;
+                }
+                doc.text(date, 20, yPos);
                 yPos += 10;
                 
                 currentReportData.datasets.forEach(disease => {
-                    doc.text(`${disease.label}: ${disease.data[dateIndex]}`, 20, yPos);
+                    doc.text(`${disease.label}: ${disease.data[dateIndex]}`, 25, yPos);
                     yPos += 10;
                 });
                 
@@ -1478,7 +1601,7 @@ function exportToPDF() {
     doc.save(`${getReportTitle(reportType)}_${startDate}_to_${endDate}.pdf`);
 }
 
-// Export to Excel
+// Enhanced Excel Export with styling
 function exportToExcel() {
     if (!currentReportData) {
         Swal.fire('Error', 'No report data to export', 'error');
@@ -1488,9 +1611,51 @@ function exportToExcel() {
     const reportType = document.getElementById('reportType').value;
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
+    const adminName = sessionStorage.getItem('adminName') || 'Admin';
     
     let worksheet;
     const workbook = XLSX.utils.book_new();
+    
+    // Common styling for headers
+    const headerStyle = {
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        fill: { fgColor: { rgb: "2874A6" } },  // GunduziAi blue
+        alignment: { horizontal: "center" },
+        border: {
+            top: { style: "thin", color: { rgb: "000000" } },
+            bottom: { style: "thin", color: { rgb: "000000" } },
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } }
+        }
+    };
+    
+    // Common styling for data cells
+    const dataStyle = {
+        border: {
+            top: { style: "thin", color: { rgb: "DDDDDD" } },
+            bottom: { style: "thin", color: { rgb: "DDDDDD" } },
+            left: { style: "thin", color: { rgb: "DDDDDD" } },
+            right: { style: "thin", color: { rgb: "DDDDDD" } }
+        }
+    };
+    
+    // Add metadata sheet
+    const metaSheet = XLSX.utils.aoa_to_sheet([
+        ["GunduziAi System Report", "", "", ""],
+        ["Report Type:", getReportTitle(reportType), "", ""],
+        ["Date Range:", `${startDate} to ${endDate}`, "", ""],
+        ["Generated By:", adminName, "", ""],
+        ["Generated On:", new Date().toLocaleString(), "", ""],
+        ["", "", "", ""]  // Empty row for spacing
+    ]);
+    
+    // Apply styles to metadata sheet
+    metaSheet["!cols"] = [{wch: 15}, {wch: 30}, {wch: 15}, {wch: 30}];
+    metaSheet["A1"].s = {
+        font: { bold: true, size: 16, color: { rgb: "2874A6" } }
+    };
+    
+    XLSX.utils.book_append_sheet(workbook, metaSheet, "Report Info");
     
     switch(reportType) {
         case 'loggedUsers':
@@ -1500,6 +1665,15 @@ function exportToExcel() {
                     'Logged Users': currentReportData.data[index]
                 }))
             );
+            
+            // Add title row
+            XLSX.utils.sheet_add_aoa(worksheet, [["Date", "Logged Users"]], { origin: "A1" });
+            
+            // Apply styles
+            worksheet["!cols"] = [{wch: 20}, {wch: 15}];
+            worksheet["A1"].s = headerStyle;
+            worksheet["B1"].s = headerStyle;
+            
             XLSX.utils.book_append_sheet(workbook, worksheet, "Logged Users");
             break;
             
@@ -1510,29 +1684,61 @@ function exportToExcel() {
                     'Diagnosis Count': currentReportData.data[index]
                 }))
             );
+            
+            // Add title row
+            XLSX.utils.sheet_add_aoa(worksheet, [["Disease", "Diagnosis Count"]], { origin: "A1" });
+            
+            // Apply styles
+            worksheet["!cols"] = [{wch: 40}, {wch: 15}];
+            worksheet["A1"].s = headerStyle;
+            worksheet["B1"].s = headerStyle;
+            
             XLSX.utils.book_append_sheet(workbook, worksheet, "Plant Diseases");
             break;
             
         case 'userFeedback':
-            // Create a worksheet with feedback data
+            // Main feedback sheet
             worksheet = XLSX.utils.json_to_sheet(
                 currentReportData.feedback.map(f => ({
                     'User Name': f.user_name,
                     Email: f.email,
                     Feedback: f.feedback,
-                    Rating: f.rating,
+                    Rating: '★'.repeat(f.rating),
                     Date: f.date
                 }))
             );
+            
+            // Add title row
+            XLSX.utils.sheet_add_aoa(worksheet, [["User Name", "Email", "Feedback", "Rating", "Date"]], { origin: "A1" });
+            
+            // Apply styles
+            worksheet["!cols"] = [{wch: 20}, {wch: 25}, {wch: 40}, {wch: 10}, {wch: 15}];
+            worksheet["A1"].s = headerStyle;
+            worksheet["B1"].s = headerStyle;
+            worksheet["C1"].s = headerStyle;
+            worksheet["D1"].s = headerStyle;
+            worksheet["E1"].s = headerStyle;
+            
             XLSX.utils.book_append_sheet(workbook, worksheet, "User Feedback");
             
-            // Add a second sheet with rating summary
+            // Rating summary sheet
             const ratingSummary = [1, 2, 3, 4, 5].map(rating => ({
-                Rating: rating,
-                Count: currentReportData.feedback.filter(f => f.rating === rating).length
+                Rating: '★'.repeat(rating),
+                Count: currentReportData.feedback.filter(f => f.rating === rating).length,
+                Percentage: Math.round((currentReportData.feedback.filter(f => f.rating === rating).length / currentReportData.feedback.length) * 100)
             }));
             
             const summarySheet = XLSX.utils.json_to_sheet(ratingSummary);
+            
+            // Add title row
+            XLSX.utils.sheet_add_aoa(summarySheet, [["Rating", "Count", "Percentage"]], { origin: "A1" });
+            
+            // Apply styles
+            summarySheet["!cols"] = [{wch: 10}, {wch: 10}, {wch: 15}];
+            summarySheet["A1"].s = headerStyle;
+            summarySheet["B1"].s = headerStyle;
+            summarySheet["C1"].s = headerStyle;
+            
             XLSX.utils.book_append_sheet(workbook, summarySheet, "Rating Summary");
             break;
             
@@ -1550,12 +1756,79 @@ function exportToExcel() {
             });
             
             worksheet = XLSX.utils.json_to_sheet(trendData);
+            
+            // Add title row
+            XLSX.utils.sheet_add_aoa(worksheet, [["Date", "Disease", "Count"]], { origin: "A1" });
+            
+            // Apply styles
+            worksheet["!cols"] = [{wch: 15}, {wch: 30}, {wch: 10}];
+            worksheet["A1"].s = headerStyle;
+            worksheet["B1"].s = headerStyle;
+            worksheet["C1"].s = headerStyle;
+            
             XLSX.utils.book_append_sheet(workbook, worksheet, "Disease Trends");
             break;
     }
     
     // Save the workbook
     XLSX.writeFile(workbook, `${getReportTitle(reportType)}_${startDate}_to_${endDate}.xlsx`);
+}
+
+// Update pie chart options for better sizing
+function getChartOptions(title) {
+    const baseOptions = {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: title,
+                font: {
+                    size: 16
+                }
+            },
+            legend: {
+                position: 'top'
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        }
+    };
+    
+    // Special options for pie charts
+    if (title === 'User Rating Distribution') {
+        return {
+            ...baseOptions,
+            maintainAspectRatio: false,
+            aspectRatio: 1.5,  // Makes the pie chart more oval than round
+            plugins: {
+                ...baseOptions.plugins,
+                legend: {
+                    position: 'right',
+                    labels: {
+                        boxWidth: 15,
+                        padding: 15
+                    }
+                }
+            }
+        };
+    }
+    
+    return baseOptions;
 }
 
 // Helper function to get report title
@@ -1569,6 +1842,7 @@ function getReportTitle(reportType) {
     return titles[reportType] || 'System Report';
 }
 </script>
+
 <script>
     // Toggle System Reports Panel
 const systemReportsLink = document.getElementById('system-reports-link');
@@ -1579,6 +1853,167 @@ systemReportsLink.addEventListener('click', function (e) {
     systemReportsPanel.classList.toggle('active');
 });
 </script>
+
+<!-- Admin settings start -->
+<div class="content">
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <h2 class="mb-4">Admin Settings</h2>
+        <form id="settingsForm">
+            <!-- Name -->
+            <div class="form-group">
+                <label for="adminName">Name</label>
+                <input type="text" id="adminName" name="adminName" class="form-control" placeholder="Enter your name" required>
+            </div>
+  
+            <!-- Profile Picture -->
+            <div class="form-group">
+                <label for="profilePic">Profile Picture</label>
+                <input type="file" id="profilePic" name="profilePic" class="form-control" accept="image/*">
+                <img id="profilePicPreview" src="#" alt="Profile Picture Preview" class="profile-pic-preview" style="display: none;">
+            </div>
+  
+            <!-- Login Email -->
+            <div class="form-group">
+                <label for="adminEmail">Login Email</label>
+                <input type="email" id="adminEmail" name="adminEmail" class="form-control" placeholder="Enter your email" required>
+            </div>
+  
+            <!-- Password -->
+            <div class="form-group password-field">
+                <label for="adminPassword">Password</label>
+                <div class="input-group">
+                    <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="Enter new password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('adminPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+            </div>
+  
+            <!-- Confirm Password -->
+            <div class="form-group password-field">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Passwords must match.</small>
+            </div>
+  
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" id="submitButton">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <div class="spinner-border text-primary d-none" id="loadingSpinner" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+  
+  <script>
+  // Toggle Settings Panel
+  const settingsLink = document.getElementById('settings-link');
+  const settingsPanel = document.getElementById('settings-panel');
+  
+  settingsLink.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent the default link behavior
+    settingsPanel.classList.toggle('active'); // Toggle the 'active' class
+  });
+  
+  // Handle Profile Picture Preview
+  const profilePicInput = document.getElementById('profilePic');
+  const profilePicPreview = document.getElementById('profilePicPreview');
+  const sidebarProfilePic = document.querySelector('.sidebar img'); // Sidebar profile picture
+  
+  profilePicInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            profilePicPreview.src = e.target.result;
+            profilePicPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+  });
+  
+  // Handle Settings Form Submission
+  document.getElementById('settingsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+  
+    // Show loading spinner
+    const submitButton = document.getElementById('submitButton');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    submitButton.disabled = true;
+    loadingSpinner.classList.remove('d-none');
+  
+    // Simulate API call delay
+    setTimeout(() => {
+        // Get form values
+        const adminName = document.getElementById('adminName').value;
+        const adminEmail = document.getElementById('adminEmail').value;
+        const adminPassword = document.getElementById('adminPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+  
+        // Validate passwords match
+        if (adminPassword !== confirmPassword) {
+            alert('Passwords do not match. Please try again.');
+            submitButton.disabled = false;
+            loadingSpinner.classList.add('d-none');
+            return;
+        }
+  
+        // Update the sidebar profile picture if a new image is selected
+        if (profilePicInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                sidebarProfilePic.src = e.target.result; // Update the sidebar image
+            };
+            reader.readAsDataURL(profilePicInput.files[0]);
+        }
+  
+        // Simulate sending data to the server
+        console.log('Updating settings with:', {
+            name: adminName,
+            email: adminEmail,
+            password: adminPassword,
+            profilePic: profilePicInput.files[0] ? profilePicInput.files[0].name : 'No file selected'
+        });
+  
+        alert('Settings updated successfully!');
+        settingsPanel.classList.remove('active'); // Hide the settings panel after submission
+        submitButton.disabled = false;
+        loadingSpinner.classList.add('d-none');
+    }, 2000); // Simulate 2-second delay
+  });
+  
+  // Toggle Password Visibility
+  function togglePasswordVisibility(fieldId) {
+    const passwordField = document.getElementById(fieldId);
+    const toggleIcon = passwordField.nextElementSibling.querySelector('i');
+  
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+  }
+  </script>
+  <!-- Admin settings End -->
 <script>
     // Logout Functionality
     document.querySelector('.sidebar a[href="#"]:last-child').addEventListener('click', function (e) {
