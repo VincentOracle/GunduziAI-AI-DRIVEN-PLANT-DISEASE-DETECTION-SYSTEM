@@ -286,7 +286,7 @@ def disease_recognition():
                 # Save the diagnosis result to the Diagnosis_Results table
                 disease = Diseases.query.filter_by(Disease_Name=predicted_label).first()
                 if not disease:
-                    return jsonify({"success": False, "error": "Disease not found in database"})
+                    return jsonify({"success": False, "error": "Disease not found in our database, upload better quality plant image"})
 
                 new_diagnosis = Diagnosis_Results(
                     Image_ID=new_image.Image_ID,
