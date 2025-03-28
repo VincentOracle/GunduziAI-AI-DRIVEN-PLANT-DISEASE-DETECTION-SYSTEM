@@ -629,25 +629,21 @@ function updateUserRole(userId, newRole) {
         }
     });
 }
+// JavaScript for Manage Users Panel 
+        // Toggle Manage Users Panel
+        const manageUsersLink = document.getElementById('manage-users-link');
+        const manageUsersPanel = document.getElementById('manage-users-panel');
 
-// Confirm and delete user
-function confirmDeleteUser(userId, userName) {
-    Swal.fire({
-        title: 'Delete User',
-        html: `Are you sure you want to delete <strong>${userName}</strong>?<br><br>This action cannot be undone!`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            deleteUser(userId);
+        manageUsersLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            manageUsersPanel.style.display = manageUsersPanel.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Dummy Functions for Actions
+        function addUser() {
+            alert('Add User functionality will be implemented here.');
         }
-    });
-}
-
+     
 // Delete user function
 function deleteUser(userId) {
     fetch(`/admin/delete_user/${userId}`, {
@@ -684,6 +680,24 @@ function deleteUser(userId) {
     });
 }
 
+// Confirm and delete user
+function confirmDeleteUser(userId, userName) {
+    Swal.fire({
+        title: 'Delete User',
+        html: `Are you sure you want to delete <strong>${userName}</strong>?<br><br>This action cannot be undone!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteUser(userId);
+        }
+    });
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     fetchAndDisplayUsers();
@@ -717,6 +731,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
     </div>
+
      <!-- Chart.js Scripts -->
      <script>
         // Line Graph for User Activity
@@ -856,31 +871,31 @@ function fetchDiseases() {
                     }
                     const imagePath = `/static/uploads/${imageName}`;
 
-                    const diseaseItem = `
-                        <div class="disease-item card mb-3" data-id="${disease.Disease_ID}">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <img src="${imagePath}" alt="${disease.Disease_Name}" class="disease-image img-fluid" onerror="this.src='/static/uploads/download.jpg';">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h5 class="card-title">${disease.Disease_Name}</h5>
-                                        <p class="card-text"><strong>Symptoms:</strong> ${disease.Symptoms}</p>
-                                        <p class="card-text"><strong>Preventive Measures:</strong> ${disease.Treatment_Recommendations}</p>
-                                        <p class="card-text"><strong>Severity Level:</strong> ${disease.Severity_Level}</p>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-primary" onclick="editDisease(${disease.Disease_ID})">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteDisease(${disease.Disease_ID})">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+const diseaseItem = `
+    <div class="disease-item card mb-3" data-id="${disease.Disease_ID}">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <img src="${imagePath}" alt="${disease.Disease_Name}" class="disease-image img-fluid" onerror="this.src='/static/uploads/download.jpg';">
+                </div>
+                <div class="col-md-9">
+                    <h5 class="card-title">${disease.Disease_Name}</h5>
+                    <p class="card-text"><strong>Symptoms:</strong> ${disease.Symptoms}</p>
+                    <p class="card-text"><strong>Preventive Measures:</strong> ${disease.Treatment_Recommendations}</p>
+                    <p class="card-text"><strong>Severity Level:</strong> ${disease.Severity_Level}</p>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="editDisease(${disease.Disease_ID})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteDisease(${disease.Disease_ID}, '${disease.Disease_Name.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
                     diseaseList.insertAdjacentHTML('beforeend', diseaseItem);
                 });
             } else {
@@ -897,19 +912,6 @@ function fetchDiseases() {
 document.getElementById('updateDatabaseModal').addEventListener('shown.bs.modal', fetchDiseases);
 </script>
 
-<script>
-    function editDisease(diseaseId) {
-    alert(`Edit disease with ID: ${diseaseId}`);
-    // Implement edit functionality here
-}
-
-function deleteDisease(diseaseId) {
-    if (confirm('Are you sure you want to delete this disease?')) {
-        alert(`Delete disease with ID: ${diseaseId}`);
-        // Implement delete functionality here
-    }
-}
-</script>
 <script>
     document.getElementById('treatmentForm').addEventListener('submit', function (e) {
     e.preventDefault();  // Prevent the default form submission
@@ -974,7 +976,7 @@ function deleteDisease(diseaseId) {
 });
 </script>
 
-    <!-- JavaScript for Manage Users Panel -->
+    <!-- JavaScript for Manage Users Panel
     <script>
         // Toggle Manage Users Panel
         const manageUsersLink = document.getElementById('manage-users-link');
@@ -999,10 +1001,10 @@ function deleteDisease(diseaseId) {
                 alert(`Delete User with ID: ${userId}`);
             }
         }
-    </script>
+        
+    </script> -->
 
    
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1061,15 +1063,69 @@ function deleteDisease(diseaseId) {
             updateDatabaseModal.hide();
         });
 
-        // Handle Delete Disease
-        function deleteDisease() {
-            if (confirm('Are you sure you want to delete this disease?')) {
-                alert('Disease deleted successfully!');
-                updateDatabaseModal.hide();
+        
+function editDisease(diseaseId) {
+    alert(`Edit disease with ID: ${diseaseId}`);
+    // Implement edit functionality here
+}
+
+function deleteDisease(diseaseId, diseaseName) {
+    Swal.fire({
+        title: 'Delete Disease',
+        html: `Are you sure you want to delete <strong>${diseaseName}</strong>?<br><br>This will also delete all related diagnosis records!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            return fetch(`/admin/delete_disease/${diseaseId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error); });
+                }
+                return response.json();
+            })
+            .catch(error => {
+                Swal.showValidationMessage(
+                    `Request failed: ${error}`
+                );
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (result.value.success) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Disease has been deleted successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    fetchDiseases(); // Refresh the disease list
+                });
+            } else {
+                throw new Error(result.value.error || 'Failed to delete disease');
             }
         }
+    }).catch(error => {
+        console.error('Error deleting disease:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+}
     </script>
-  <!-- System Reports Panel (updated version) -->
+
+
+  <!-- System Reports Panel (Final version) -->
 <div class="system-reports-panel" id="system-reports-panel">
     <h3>System Reports</h3>
 
