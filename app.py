@@ -122,7 +122,7 @@ class Feedback(db.Model):
     Feedback_Date = db.Column(db.Date, nullable=False)
     Prediction_Accuracy = db.Column(db.Integer, nullable=False)
     System_Rating = db.Column(db.Integer, nullable=False)
-    Feedback_Text = db.Column(db.String(200), nullable=False)
+    Feedback_Text = db.Column(db.String(20000), nullable=False)
 
 # Create Database Tables
 with app.app_context():
@@ -868,6 +868,83 @@ def delete_disease(disease_id):
         print(f"Error deleting disease: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
     
+# Edit Diseases Information
+@app.route("/admin/get_treatment_by_id/<int:disease_id>", methods=["GET"])
+def get_treatment_by_id(disease_id):
+    try:
+        treatment = Treatment_Recommendations.query.filter_by(Disease_ID=disease_id).first()
+        if treatment:
+            treatment_data = {
+                "Treatment_ID": treatment.Treatment_ID,
+                "Disease_ID": treatment.Disease_ID,
+                "Disease_Name": treatment.Disease_Name,
+                "Symptoms": treatment.Symptoms,
+                "Preventive_Measures": treatment.Preventive_Measures,
+                "Chemical_Treatments": treatment.Chemical_Treatments,
+                "Organic_Solutions": treatment.Organic_Solutions,
+                "Best_Farming_Practices": treatment.Best_Farming_Practices
+            }
+            return jsonify({"success": True, "treatment": treatment_data})
+        else:
+            return jsonify({"success": False, "error": "No treatment recommendations found for this disease"})
+    except Exception as e:
+        print(f"Error fetching treatment recommendations: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/update_treatment/<int:treatment_id>", methods=["PUT"])
+def update_treatment(treatment_id):
+    try:
+        data = request.get_json()
+        
+        # Update Treatment_Recommendations table
+        treatment = Treatment_Recommendations.query.get(treatment_id)
+        if not treatment:
+            return jsonify({"success": False, "error": "Treatment not found"}), 404
+            
+        treatment.Symptoms = data.get("Symptoms", treatment.Symptoms)
+        treatment.Preventive_Measures = data.get("Preventive_Measures", treatment.Preventive_Measures)
+        treatment.Chemical_Treatments = data.get("Chemical_Treatments", treatment.Chemical_Treatments)
+        treatment.Organic_Solutions = data.get("Organic_Solutions", treatment.Organic_Solutions)
+        treatment.Best_Farming_Practices = data.get("Best_Farming_Practices", treatment.Best_Farming_Practices)
+        
+        # Also update the Diseases table
+        disease = Diseases.query.get(treatment.Disease_ID)
+        if disease:
+            disease.Disease_Name = data.get("Disease_Name", disease.Disease_Name)
+            disease.Symptoms = data.get("Symptoms", disease.Symptoms)
+            disease.Treatment_Recommendations = data.get("Preventive_Measures", disease.Treatment_Recommendations)
+        
+        db.session.commit()
+        
+        return jsonify({"success": True, "message": "Treatment and Disease updated successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating treatment and disease: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+# @app.route("/admin/update_treatment/<int:treatment_id>", methods=["PUT"])
+# def update_treatment(treatment_id):
+#     try:
+#         data = request.get_json()
+        
+#         treatment = Treatment_Recommendations.query.get(treatment_id)
+#         if not treatment:
+#             return jsonify({"success": False, "error": "Treatment not found"}), 404
+            
+#         treatment.Symptoms = data.get("Symptoms", treatment.Symptoms)
+#         treatment.Preventive_Measures = data.get("Preventive_Measures", treatment.Preventive_Measures)
+#         treatment.Chemical_Treatments = data.get("Chemical_Treatments", treatment.Chemical_Treatments)
+#         treatment.Organic_Solutions = data.get("Organic_Solutions", treatment.Organic_Solutions)
+#         treatment.Best_Farming_Practices = data.get("Best_Farming_Practices", treatment.Best_Farming_Practices)
+        
+#         db.session.commit()
+        
+#         return jsonify({"success": True, "message": "Treatment updated successfully"})
+#     except Exception as e:
+#         db.session.rollback()
+#         print(f"Error updating treatment: {e}")
+#         return jsonify({"success": False, "error": str(e)}), 500
+ 
 # Run the Flask App
 if __name__ == "__main__":
     app.run(debug=True)

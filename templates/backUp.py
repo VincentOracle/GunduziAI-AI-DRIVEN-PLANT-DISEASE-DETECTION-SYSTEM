@@ -70,7 +70,7 @@ class Users(db.Model, UserMixin):
     Phone_number = db.Column(db.Integer, nullable=False)
     Email = db.Column(db.String(100), unique=True, nullable=False)
     Password = db.Column(db.String(100), nullable=False)
-
+    
     def get_id(self):
         return self.User_ID
 
@@ -122,7 +122,7 @@ class Feedback(db.Model):
     Feedback_Date = db.Column(db.Date, nullable=False)
     Prediction_Accuracy = db.Column(db.Integer, nullable=False)
     System_Rating = db.Column(db.Integer, nullable=False)
-    Feedback_Text = db.Column(db.String(200), nullable=False)
+    Feedback_Text = db.Column(db.String(20000), nullable=False)
 
 # Create Database Tables
 with app.app_context():
@@ -605,26 +605,7 @@ def update_user_role(user_id):
         print(f"Error updating user role: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
     
-
-@app.route("/admin/delete_user/<int:user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    if not is_logged_in() or session.get('first_name') != "Admin":
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
-
-    try:
-        user = Users.query.get(user_id)
-        if not user:
-            return jsonify({"success": False, "error": "User not found"}), 404
-
-        db.session.delete(user)
-        db.session.commit()
-
-        return jsonify({"success": True, "message": "User deleted successfully"})
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error deleting user: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
-
+# ADMIN GET USERS
 @app.route("/admin/users", methods=["GET"])
 def get_users():
     try:
@@ -646,6 +627,53 @@ def get_users():
         return jsonify(users_data)
     except Exception as e:
         print(f"Error fetching users: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+ 
+# DELETE USERS
+@app.route("/admin/delete_user/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    if not is_logged_in() or session.get('first_name') != "Admin":
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+
+    try:
+        # Start transaction
+        db.session.begin()
+
+        # Get the user with all relationships
+        user = Users.query.get(user_id)
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        # Get all plant images for this user
+        plant_images = Plant_Images.query.filter_by(User_ID=user_id).all()
+        
+        # Delete related records for each plant image
+        for image in plant_images:
+            # Delete feedback for diagnosis results
+            Feedback.query.filter(
+                Feedback.Diagnosis_ID.in_(
+                    db.session.query(Diagnosis_Results.Result_ID)
+                    .filter_by(Image_ID=image.Image_ID)
+                )
+            ).delete(synchronize_session=False)
+            
+            # Delete diagnosis results
+            Diagnosis_Results.query.filter_by(Image_ID=image.Image_ID).delete()
+        
+        # Delete plant images
+        Plant_Images.query.filter_by(User_ID=user_id).delete()
+        
+        # Delete direct feedback
+        Feedback.query.filter_by(User_ID=user_id).delete()
+        
+        # Finally delete the user
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "User deleted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting user: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
     
 #SYSTEM REPORTS:
@@ -817,11 +845,20 @@ def delete_disease(disease_id):
         if not disease:
             return jsonify({"success": False, "error": "Disease not found"}), 404
 
-        # First delete related records to maintain referential integrity
+        # First get all diagnosis results for this disease
+        diagnosis_results = Diagnosis_Results.query.filter_by(Disease_ID=disease_id).all()
+        
+        # Delete related feedback for each diagnosis result
+        for diagnosis in diagnosis_results:
+            Feedback.query.filter_by(Diagnosis_ID=diagnosis.Result_ID).delete()
+        
+        # Now delete the diagnosis results
         Diagnosis_Results.query.filter_by(Disease_ID=disease_id).delete()
+        
+        # Delete treatment recommendations
         Treatment_Recommendations.query.filter_by(Disease_ID=disease_id).delete()
         
-        # Now delete the disease
+        # Finally delete the disease
         db.session.delete(disease)
         db.session.commit()
 
