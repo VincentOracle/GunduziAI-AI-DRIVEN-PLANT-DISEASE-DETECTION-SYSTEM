@@ -1,0 +1,9 @@
+GunduziAI is an AI-driven platform designed to empower Kenyan farmers by detecting plant diseases (e.g., tomatoes, maize, potatoes) via image analysis. Leveraging Convolutional Neural Networks (CNNs), the system classifies diseases with high accuracy and provides tailored treatment recommendations. Key features include:  
+
+- **Real-Time Diagnosis:** Farmers upload leaf images via a web/mobile interface to receive instant AI-powered disease detection.  
+- **Expert Collaboration:** Agronomists validate uncertain cases through an integrated consultation system.  
+- **Data-Driven Insights:** Researchers access anonymized disease trends to improve agricultural practices.  
+
+Built with Python (TensorFlow/Flask), PostgreSQL, and Firebase, GunduziAI addresses food security challenges by reducing crop losses. The system aligns with Kenya’s climate resilience goals and targets smallholder farmers with limited tech access. Future scalability includes IoT integration and offline mobile support.  
+
+**Keywords:** AI, Plant Disease Detection, CNN, Precision Agriculture, Kenya.  

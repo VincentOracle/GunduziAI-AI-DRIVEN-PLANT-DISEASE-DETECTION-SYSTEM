@@ -67,7 +67,8 @@ class Users(db.Model, UserMixin):
     First_Name = db.Column(db.String(50), nullable=False)
     Last_Name = db.Column(db.String(50), nullable=False)
     Role = db.Column(db.String(50), nullable=False)
-    Phone_number = db.Column(db.Integer, nullable=False)
+    Phone_number = db.Column(db.BigInteger, unique=True, nullable=False)
+    # Phone_number = db.Column(db.Integer, nullable=False)
     Email = db.Column(db.String(100), unique=True, nullable=False)
     Password = db.Column(db.String(100), nullable=False)
     
@@ -921,30 +922,6 @@ def update_treatment(treatment_id):
         db.session.rollback()
         print(f"Error updating treatment and disease: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
-    
-# @app.route("/admin/update_treatment/<int:treatment_id>", methods=["PUT"])
-# def update_treatment(treatment_id):
-#     try:
-#         data = request.get_json()
-        
-#         treatment = Treatment_Recommendations.query.get(treatment_id)
-#         if not treatment:
-#             return jsonify({"success": False, "error": "Treatment not found"}), 404
-            
-#         treatment.Symptoms = data.get("Symptoms", treatment.Symptoms)
-#         treatment.Preventive_Measures = data.get("Preventive_Measures", treatment.Preventive_Measures)
-#         treatment.Chemical_Treatments = data.get("Chemical_Treatments", treatment.Chemical_Treatments)
-#         treatment.Organic_Solutions = data.get("Organic_Solutions", treatment.Organic_Solutions)
-#         treatment.Best_Farming_Practices = data.get("Best_Farming_Practices", treatment.Best_Farming_Practices)
-        
-#         db.session.commit()
-        
-#         return jsonify({"success": True, "message": "Treatment updated successfully"})
-#     except Exception as e:
-#         db.session.rollback()
-#         print(f"Error updating treatment: {e}")
-#         return jsonify({"success": False, "error": str(e)}), 500
- 
 # Run the Flask App
 if __name__ == "__main__":
     app.run(debug=True)
