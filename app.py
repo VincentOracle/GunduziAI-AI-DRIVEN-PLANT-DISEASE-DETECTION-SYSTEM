@@ -260,7 +260,7 @@ def disease_recognition():
 
                 # Process the image for prediction
                 image = Image.open(filepath)
-                image = image.resize((128, 128))  # Resize image to match model input size
+                image = image.resize((128, 128))  # Resize image to match model input size for quality check
                 input_arr = tf.keras.preprocessing.image.img_to_array(image)
                 img_array = np.array([input_arr])
 
