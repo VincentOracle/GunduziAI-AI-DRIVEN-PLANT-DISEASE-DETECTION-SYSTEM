@@ -1009,13 +1009,11 @@ document.getElementById('updateDatabaseModal').addEventListener('shown.bs.modal'
             fetchDiseases(); // Refresh the disease list
             document.getElementById('treatmentForm').reset();  // Clear the form
         } else {
-            // alert('Error saving treatment data: ' + data.error);
             Swal.fire("Error", "Error saving treatment data!.", "error");
         }
     })
     .catch(error => {
         console.error('Error saving treatment data:', error);
-        // alert('Failed to save treatment data. Please try again.');
         Swal.fire("Error", "Failed to save treatment data. Please try again..", "error");
     });
 });
