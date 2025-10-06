@@ -26,6 +26,9 @@ An intelligent plant disease detection platform leveraging Convolutional Neural 
 
 GunduziAI addresses critical food security challenges in Kenya by providing smallholder farmers with accessible AI-powered plant disease detection. The system analyzes leaf images to identify diseases across multiple crops including tomatoes, maize, potatoes, and fruits, delivering instant diagnoses and evidence-based treatment recommendations.
 
+<img width="1600" height="900" alt="Screenshot (415)" src="https://github.com/user-attachments/assets/a9ac6e59-ab35-4d1a-b708-c1ad8c73f5e7" />
+
+
 ### Vision
 To revolutionize agricultural practices in East Africa through accessible AI technology, reducing crop losses and improving farmer livelihoods.
 
@@ -190,6 +193,9 @@ gunicorn -w 4 -b 0.0.0.0:5000 app:app
 - Pre-trained models are available in `/models` directory
 - Sample test images in `/data/samples`
 - Default test credentials (if implemented)
+
+
+<img width="1600" height="900" alt="Screenshot (404)" src="https://github.com/user-attachments/assets/411aab8a-878c-4edf-881b-53575b160171" />
 
 ## 🧠 Model Details
 
@@ -511,4 +517,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **GunduziAI** - *Illuminating the path to healthier crops and sustainable agriculture in Kenya.*
 
 *Last Updated: January 2024*  
-*Project Status: Active Development*
+*Project Status: Complete Development*
+
+# USER INTERFACES AND DASHBORADS
+
+<img width="1600" height="900" alt="Screenshot (417)" src="https://github.com/user-attachments/assets/78792ed5-2363-4b21-9098-4476273e7192" />
+<img width="1600" height="900" alt="Screenshot (416)" src="https://github.com/user-attachments/assets/e0161eb3-d323-4691-9809-e8dd17508037" />
+<img width="1600" height="900" alt="Screenshot (415)" src="https://github.com/user-attachments/assets/96b08084-2266-46cd-9352-88352c2766be" />
+<img width="1600" height="900" alt="Screenshot (413)" src="https://github.com/user-attachments/assets/0234176f-b1ce-4185-b0e6-62f50abfcd12" />
+<img width="1600" height="900" alt="Screenshot (412)" src="https://github.com/user-attachments/assets/fe3a14c2-1a69-43b2-9b57-470f9e4ba3b6" />
+<img width="1600" height="900" alt="Screenshot (404)" src="https://github.com/user-attachments/assets/58e98e87-5042-47fa-8df2-42fad47f92df" />
+<img width="1600" height="900" alt="Screenshot (403)" src="https://github.com/user-attachments/assets/cb472692-2bfa-45df-8a9c-9c14474ba65f" />
+<img width="1600" height="900" alt="Screenshot (431)" src="https://github.com/user-attachments/assets/f6aa1222-9cf3-489d-9c32-05f72a4f3af1" />
+<img width="1600" height="900" alt="Screenshot (419)" src="https://github.com/user-attachments/assets/f907fd43-00c3-4ce8-9016-0250ed1d1875" />
+<img width="1600" height="900" alt="Screenshot (418)" src="https://github.com/user-attachments/assets/3e95fbd6-fdb3-4cdd-909f-d6425312b7cb" />
+
