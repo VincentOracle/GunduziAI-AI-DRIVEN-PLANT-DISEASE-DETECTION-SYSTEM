@@ -27,7 +27,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Database Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:were8368@localhost/gunduziai'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'DATABASE_URL'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
