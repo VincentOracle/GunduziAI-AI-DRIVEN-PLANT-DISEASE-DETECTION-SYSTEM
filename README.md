@@ -6,7 +6,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-An intelligent plant disease detection platform leveraging Convolutional Neural Networks (CNNs) to empower Kenyan farmers with real-time crop health diagnostics and treatment recommendations.
+This is an intelligent plant disease detection platform leveraging Convolutional Neural Networks (CNNs) to empower Kenyan farmers with real-time crop health diagnostics and treatment recommendations.
 
 ## 🌱 Table of Contents
 
