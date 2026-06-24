@@ -1,4 +1,4 @@
-# GunduziAI - An AI-Driven Plant Disease Detection System
+# GunduziAI - An AI-Driven Plant leaf Disease Detection System
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.10%2B-orange)
